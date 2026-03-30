@@ -4,8 +4,8 @@
 
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Language](https://img.shields.io/badge/Language-Kotlin-blue)
-![Status](https://img.shields.io/badge/Status-Specification-red)
-![Version](https://img.shields.io/badge/Version-0.1.0-blue)
+![Status](https://img.shields.io/badge/Status-Pre--Alpha-orange)
+![Version](https://img.shields.io/badge/Version-0.01--Pre--Alpha-blue)
 
 ## 📱 Sobre o Projeto
 
@@ -19,6 +19,18 @@
 - 🔒 Segurança Total (pagamento retido, documentos validados)
 - ⭐ Transparência (avaliações reais)
 - 🎁 Sistema de Bonificações
+
+---
+
+## ⬇️ Download APK
+
+**Versão atual:** [v0.01 Pre-Alpha](https://github.com/Deivisan/CNH-mais/releases/tag/v0.01-pre-alpha)
+
+```
+📦 CNH-mais-debug.apk (16.8 MB)
+📅 Data: 30/03/2026
+🔧 Build: Kotlin + Jetpack Compose
+```
 
 ---
 
@@ -38,36 +50,48 @@
 
 ---
 
-## 📊 Status do Projeto
+## 📊 Telas do App (16 total)
 
-| Fase | Status | Progresso |
-|------|--------|-----------|
-| 📋 Especificação | 🔄 Em Andamento | 80% |
-| 🎨 Design UI/UX | ⏳ Pendente | 0% |
-| 📱 Frontend Android | ⏳ Pendente | 0% |
-| ⚙️ Backend | ⏳ Pendente | 0% |
-| 🚀 Lançamento | ⏳ Pendente | 0% |
+### 👑 Admin (6 telas)
+| Tela | Descrição |
+|------|-----------|
+| Home | Dashboard com estatísticas |
+| Instrutores | Lista de instrutores cadastrados |
+| Alunos | Gerenciamento de candidatos |
+| Aulas | Visualizar todas as aulas |
+| Financeiro | Receitas e estatísticas |
+| Configurações | Configurações do sistema |
+
+### 🎓 Candidato (5 telas)
+| Tela | Descrição |
+|------|-----------|
+| Home | Progresso + instrutor assigned |
+| Minhas Aulas | Aulas agendadas e históricas |
+| Encontrar Instrutor | Buscar novo instrutor |
+| Comprar Aulas | Adquirir pacote |
+| Meu Perfil | Informações pessoais |
+
+### 🚗 Instrutor (5 telas)
+| Tela | Descrição |
+|------|-----------|
+| Home | Resumo hoje + próxima aula |
+| Agenda | Gerenciar disponibilidade |
+| Aulas | Ver aulas agendadas |
+| Financeiro | Ver ganhos e estatísticas |
+| Meu Perfil | Editar informações |
 
 ---
 
-## 🎯 Próximas Missões
+## 🛠️ Tech Stack
 
-### 🚀 MISSÃO 1: Especificação Completa
-- [x] Visão geral do projeto
-- [x] Fluxo candidato
-- [x] Fluxo instrutor
-- [x] Sistema de match
-- [x] Sistema de bonificações
-
-### 🎨 MISSÃO 2: Design UI/UX
-- [ ] Criar wireframes
-- [ ] Definir componentes
-- [ ] Prototipar fluxos
-
-### 💻 MISSÃO 3: Desenvolvimento
-- [ ] Setup Android (Kotlin + Compose)
-- [ ] Implementar backend
-- [ ] Integrar serviços
+| Tecnologia | Uso |
+|------------|-----|
+| Kotlin | Linguagem |
+| Jetpack Compose | UI Framework |
+| Material 3 | Design System |
+| Navigation Compose | Navegação |
+| Gradle 8.10 | Build System |
+| Android SDK 34 | Target SDK |
 
 ---
 
@@ -76,11 +100,11 @@
 | Documento | Descrição |
 |-----------|-----------|
 | [SPEC.md](./docs/SPEC.md) | Visão geral do projeto |
-| [PERFIL-INSTRUTOR.md](./docs/PERFIL-INSTRUTOR.md) | Perfil do instrutor (visão candidato) - 10 seções |
-| [PAINEL-INSTRUTOR.md](./docs/PAINEL-INSTRUTOR.md) | Área do instrutor no app - 10 abas |
-| [AGENDA-INSTRUTOR.md](./docs/AGENDA-INSTRUTOR.md) | Sistema de agenda interativa |
-| [BACKOFFICE.md](./docs/BACKOFFICE.md) | Painel administrativo - 12 blocos |
-| [VISAO-CANDIDATO.md](./docs/VISAO-CANDIDATO.md) | Fluxo completo do candidato |
+| [PERFIL-INSTRUTOR.md](./docs/PERFIL-INSTRUTOR.md) | Perfil do instrutor (10 seções) |
+| [PAINEL-INSTRUTOR.md](./docs/PAINEL-INSTRUTOR.md) | Área do instrutor (10 abas) |
+| [AGENDA-INSTRUTOR.md](./docs/AGENDA-INSTRUTOR.md) | Sistema de agenda |
+| [BACKOFFICE.md](./docs/BACKOFFICE.md) | Painel administrativo (12 blocos) |
+| [VISAO-CANDIDATO.md](./docs/VISAO-CANDIDATO.md) | Fluxo do candidato |
 | [SISTEMA-MATCH.md](./docs/SISTEMA-MATCH.md) | Algoritmo de matching |
 | [BONIFICACOES.md](./docs/BONIFICACOES.md) | Sistema de recompensas |
 | [AGENTS.md](./AGENTS.md) | Contexto para agentes IA |
@@ -91,17 +115,44 @@
 
 ```
 CNH-mais/
-├── app/                   # Android (Kotlin + Compose)
+├── app/                        # Android (Kotlin + Compose)
 │   └── src/main/
-├── backend/               # API (Bun + Express)
-│   └── src/
-├── docs/                  # 8 documentos de especificação
-├── AGENTS.md              # Contexto para IA
-└── README.md
+│       └── java/com/cnhplus/
+│           ├── MainActivity.kt
+│           ├── navigation/     # NavHost + Screen
+│           ├── screens/       # 16 telas
+│           ├── data/          # Models + EmulatedData
+│           └── ui/theme/      # Theme CNH+
+├── docs/                       # 8 documentos
+├── CNH-mais-debug.apk         # APK release
+├── AGENTS.md                   # Contexto IA
+└── PROJECT_README.md
 ```
+
+---
+
+## 🔄 Changelog
+
+### v0.01 Pre-Alpha (30/03/2026)
+- ✅ APK debug compilado (16.8MB)
+- ✅ 16 telas implementadas
+- ✅ Navigation completa
+- ✅ Theme CNH+ aplicado
+- ✅ Dados emulados
+
+---
+
+## 📌 Próximos Passos
+
+- [ ] Rebuild APK (fix build issues)
+- [ ] ViewModels com estado real
+- [ ] Backend (Bun + Supabase)
+- [ ] Autenticação
+- [ ] FCM Notificações
+- [ ] Mercado Pago integração
 
 ---
 
 ## 👤 Autor
 
-**Deivison Santana** (@deivisan) | **Versão:** 0.1.0
+**Deivison Santana** (@deivisan) | **Versão:** 0.01 Pre-Alpha

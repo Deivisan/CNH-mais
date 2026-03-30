@@ -197,46 +197,52 @@ score = (especialidade_match * 30) +
 
 ```
 CNH-mais/
-├── app/src/main/
-│   ├── java/com/cnhplus/
-│   │   ├── ui/
-│   │   │   ├── screens/        # Telas
-│   │   │   ├── components/     # Componentes reutilizáveis
-│   │   │   └── theme/          # Tema (cores, tipografia)
-│   │   ├── domain/
-│   │   │   ├── model/          # Modelos de dados
-│   │   │   ├── repository/     # Repositórios
-│   │   │   └── usecase/        # Casos de uso
-│   │   ├── data/
-│   │   │   ├── remote/         # API calls
-│   │   │   ├── local/          # Local storage
-│   │   │   └── repository/     # Implementações
-│   │   ├── di/                 # Injeção de dependência
-│   │   └── util/               # Utilitários
-│   └── res/                    # Recursos Android
+├── index.html                  # Landing Page (GitHub Pages)
+├── AGENTS.md                   # Contexto para agentes IA
+├── PROJECT_README.md           # Documentação do projeto
+├── .nojekyll                   # GitHub Pages config
+├── app/src/main/               # App Android (futuro)
+│   └── java/com/cnhplus/
 │
-├── backend/src/
-│   ├── routes/                 # Endpoints API
-│   ├── middleware/             # Intermediadores
-│   ├── services/               # Lógica de negócio
-│   └── utils/                  # Utilitários
+├── backend/src/                # Backend API (futuro)
 │
 └── docs/                       # Documentação
-    ├── SPEC.md                 # Este arquivo
-    ├── PERFIL-INSTRUTOR.md     # Perfil público
-    ├── PAINEL-INSTRUTOR.md     # Área do instrutor
-    ├── AGENDA-INSTRUTOR.md     # Sistema de agenda
-    ├── BACKOFFICE.md           # Painel admin
-    ├── VISAO-CANDIDATO.md      # Fluxo candidato
-    ├── SISTEMA-MATCH.md        # Algoritmo
-    └── BONIFICACOES.md         # Recompensas
+    ├── SPEC.md
+    ├── PERFIL-INSTRUTOR.md
+    ├── PAINEL-INSTRUTOR.md
+    ├── AGENDA-INSTRUTOR.md
+    ├── BACKOFFICE.md
+    ├── VISAO-CANDIDATO.md
+    ├── SISTEMA-MATCH.md
+    └── BONIFICACOES.md
 ```
+
+## 🌐 Landing Page (index.html)
+
+### Dados Emulados (ativos atualmente)
+| Dado | Valor | Tooltip ao clicar |
+|------|-------|-------------------|
+| Instrutores | 500+ 🚗 | 500+ em 12 estados, taxa aprovação 87% |
+| Alunos | 10.000+ 🎓 | 10.000+ formados, 92% passaram na 1ª |
+| Nota média | 4.8 ⭐ | 4.8/5.0, 2.500+ avaliações |
+
+### Instrutores de Exemplo (Landing Page)
+| Nome | Local | Especialidade |
+|------|-------|---------------|
+| Carlos Silva | Cuiabá - MT | Iniciantes, ansiedade |
+| Maria Santos | **Feira de Santana - BA** | Baliza, provas práticas |
+| Pedro Oliveira | Belo Horizonte - MG | Carro próprio |
+
+### Contato (Footer)
+- **WhatsApp:** (71) 8300-0722
+- **Email:** suporte@cnhmais.com.br
+- **Endereço:** Rua das Flores, 123 - Feira de Santana, BA
 
 ---
 
 ## ✅ Checklists de Desenvolvimento
 
-### Fase 1: Especificação (80%)
+### Fase 1: Especificação (100%) ✅
 - [x] Visão geral do projeto
 - [x] Fluxo candidato (8 etapas)
 - [x] Fluxo instrutor (10 abas)
@@ -245,12 +251,14 @@ CNH-mais/
 - [x] Algoritmo de match
 - [x] Sistema de bonificações
 
-### Fase 2: Design UI/UX
-- [ ] Wireframes das telas
-- [ ] Componentes visuais
-- [ ] Protótipos
+### Fase 2: Landing Page (100%) ✅
+- [x] Design responsivo
+- [x] Cores CNH+ (azul/celeste)
+- [x] Seções: Hero, Sobre, Como Funciona, Diferenciais, Instrutores, CTA, Footer
+- [x] Dados emulados com tooltips interativos
+- [x] Hospedagem GitHub Pages
 
-### Fase 3: Desenvolvimento Frontend
+### Fase 3: App Android (0%)
 - [ ] Setup Android (Kotlin + Compose)
 - [ ] Tema com cores CNH+
 - [ ] Telas de candidato
@@ -258,7 +266,7 @@ CNH-mais/
 - [ ] Navegação
 - [ ] Integração API
 
-### Fase 4: Desenvolvimento Backend
+### Fase 4: Backend (0%)
 - [ ] Setup Bun + Express
 - [ ] API REST
 - [ ] Database Supabase
@@ -266,12 +274,12 @@ CNH-mais/
 - [ ] Mercado Pago
 - [ ] FCM
 
-### Fase 5: Testes
+### Fase 5: Testes (0%)
 - [ ] Unitários
 - [ ] Integração
 - [ ] UI
 
-### Fase 6: Lançamento
+### Fase 6: Lançamento (0%)
 - [ ] Play Store
 - [ ] Marketing
 
@@ -290,11 +298,12 @@ CNH-mais/
 
 ## 🔗 Links Úteis
 
-- Repo: https://github.com/Deivisan/CNH-mais
-- Docs: ./docs/
+- **Landing Page:** https://deivisan.github.io/CNH-mais/
+- **Repo:** https://github.com/Deivisan/CNH-mais
+- **Docs:** ./docs/
 
 ---
 
 **Última atualização:** 30/03/2026
 **Autor:** Deivison Santana (@deivisan)
-**Versão:** 0.1.0
+**Versão:** 0.2.0 - Landing Page no ar!

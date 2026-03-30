@@ -1,0 +1,21 @@
+# Android
+*.iml
+.gradle/
+local.properties
+build/
+app/build/
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Backend
+node_modules/
+dist/
+.env
+
+# Misc
+*.log
+*.keystore

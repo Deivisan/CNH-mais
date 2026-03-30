@@ -71,17 +71,37 @@
 
 ---
 
+## 📋 Documentação
+
+| Documento | Descrição |
+|-----------|-----------|
+| [SPEC.md](./docs/SPEC.md) | Visão geral do projeto |
+| [PERFIL-INSTRUTOR.md](./docs/PERFIL-INSTRUTOR.md) | Perfil do instrutor (visão candidato) - 10 seções |
+| [PAINEL-INSTRUTOR.md](./docs/PAINEL-INSTRUTOR.md) | Área do instrutor no app - 10 abas |
+| [AGENDA-INSTRUTOR.md](./docs/AGENDA-INSTRUTOR.md) | Sistema de agenda interativa |
+| [BACKOFFICE.md](./docs/BACKOFFICE.md) | Painel administrativo - 12 blocos |
+| [VISAO-CANDIDATO.md](./docs/VISAO-CANDIDATO.md) | Fluxo completo do candidato |
+| [SISTEMA-MATCH.md](./docs/SISTEMA-MATCH.md) | Algoritmo de matching |
+| [BONIFICACOES.md](./docs/BONIFICACOES.md) | Sistema de recompensas |
+| [AGENTS.md](./AGENTS.md) | Contexto para agentes IA |
+
+---
+
 ## 📂 Estrutura
 
 ```
-CNH+/
-├── app/           # Android (Kotlin + Compose)
-├── backend/       # API (Bun + Express)
-└── docs/          # Especificações
+CNH-mais/
+├── app/                   # Android (Kotlin + Compose)
+│   └── src/main/
+├── backend/               # API (Bun + Express)
+│   └── src/
+├── docs/                  # 8 documentos de especificação
+├── AGENTS.md              # Contexto para IA
+└── README.md
 ```
 
 ---
 
 ## 👤 Autor
 
-**Deivison Santana** (@deivisan)
+**Deivison Santana** (@deivisan) | **Versão:** 0.1.0

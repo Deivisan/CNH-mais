@@ -25,6 +25,20 @@ Para hospedar no GitHub Pages:
 
 A landing page estará disponível em: `https://deivisan.github.io/CNH-mais/`
 
+### Demo PWA (fluxo completo emulado)
+
+Também há uma demo navegável em `./demo-pwa/` para apresentar o produto em modo app:
+
+- URL esperada (quando publicado): `https://deivisan.github.io/CNH-mais/demo-pwa/`
+- Inclui login/cadastro dos 3 perfis, chat emulado, mapas e telas funcionais "entre aspas"
+- Ideal para validação do fluxo antes do backend/apk final
+
+Documentos de gestão da Demo PWA:
+
+- `docs/ROADMAP-DEMO-PWA-20DIAS.md`
+- `docs/CHECKLIST-VALIDACAO-DEMO-PWA.md`
+- `docs/ESPEC-COBERTURA-DEMO-PWA.md`
+
 ## Estrutura
 
 ```
@@ -40,3 +54,8 @@ landing/
 - ✅ Animações CSS (float, hover effects)
 - ✅ Sem dependências externas (exceto Google Fonts)
 - ✅ Totalmente estática
+
+## Status atual
+
+- ⏸️ Landing principal do APK: **em pausa** aguardando aprovação de visual e designer
+- 🚀 Demo PWA: pronta para evolução e apresentação de fluxo completo

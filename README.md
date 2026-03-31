@@ -32,6 +32,9 @@
 🔧 Build: Kotlin + Jetpack Compose
 ```
 
+> ⏸️ **Status atual da landing principal do APK:** aguardando aprovação de visual e designer.
+> Enquanto isso, a equipe pode usar a **Demo PWA emulada** para validar o fluxo completo: `./demo-pwa/`
+
 ---
 
 ## 🎨 Identidade Visual
@@ -108,6 +111,10 @@
 | [SISTEMA-MATCH.md](./docs/SISTEMA-MATCH.md) | Algoritmo de matching |
 | [BONIFICACOES.md](./docs/BONIFICACOES.md) | Sistema de recompensas |
 | [AGENTS.md](./AGENTS.md) | Contexto para agentes IA |
+| [demo-pwa/README.md](./demo-pwa/README.md) | Guia da Demo PWA emulada |
+| [ROADMAP-DEMO-PWA-20DIAS.md](./docs/ROADMAP-DEMO-PWA-20DIAS.md) | Roadmap de execução (20 dias) |
+| [CHECKLIST-VALIDACAO-DEMO-PWA.md](./docs/CHECKLIST-VALIDACAO-DEMO-PWA.md) | Checklist de validação real |
+| [ESPEC-COBERTURA-DEMO-PWA.md](./docs/ESPEC-COBERTURA-DEMO-PWA.md) | Matriz: especificação x cobertura |
 
 ---
 

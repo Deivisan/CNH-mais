@@ -198,6 +198,7 @@ score = (especialidade_match * 30) +
 ```
 CNH-mais/
 ├── index.html                  # Landing Page (GitHub Pages)
+├── demo-pwa/                   # Demo PWA navegável (estático)
 ├── AGENTS.md                   # Contexto para agentes IA
 ├── PROJECT_README.md           # Documentação do projeto
 ├── .nojekyll                   # GitHub Pages config
@@ -214,8 +215,43 @@ CNH-mais/
     ├── BACKOFFICE.md
     ├── VISAO-CANDIDATO.md
     ├── SISTEMA-MATCH.md
-    └── BONIFICACOES.md
+    ├── BONIFICACOES.md
+    ├── ROADMAP-DEMO-PWA-20DIAS.md
+    ├── CHECKLIST-VALIDACAO-DEMO-PWA.md
+    └── ESPEC-COBERTURA-DEMO-PWA.md
 ```
+
+---
+
+## 🌐 Estratégia Web Atual (Landing + Demo PWA)
+
+### 1) Landing principal (`/index.html`)
+- Mantida como vitrine do APK e posicionamento do produto
+- Status atual: **aguardando aprovação de visual e designer**
+- Deve permanecer simples e objetiva para comunicação institucional
+
+### 2) Demo PWA (`/demo-pwa/`)
+- Ambiente navegável completo para validação de fluxo ponta-a-ponta
+- 100% estático (compatível com GitHub Pages)
+- Inclui:
+  - login/cadastro dos 3 perfis (emulado)
+  - fluxo candidato/instrutor/admin
+  - chat emulado
+  - mapas emulados com OpenStreetMap embed
+  - painel admin com tela de gerenciamento do instrutor (12 blocos)
+
+### 3) Limitações técnicas do Pages (assumidas)
+- Sem backend/server-side
+- Sem autenticação real segura no servidor
+- Sem banco de dados real
+- Sem websocket real
+
+### 4) Documentos de governança da demo
+- `docs/ROADMAP-DEMO-PWA-20DIAS.md`
+- `docs/CHECKLIST-VALIDACAO-DEMO-PWA.md`
+- `docs/ESPEC-COBERTURA-DEMO-PWA.md`
+
+Esses arquivos são a referência oficial de progresso, validação e aderência à especificação.
 
 ## 🌐 Landing Page (index.html)
 
@@ -304,6 +340,6 @@ CNH-mais/
 
 ---
 
-**Última atualização:** 30/03/2026
+**Última atualização:** 31/03/2026
 **Autor:** Deivison Santana (@deivisan)
-**Versão:** 0.2.0 - Landing Page no ar!
+**Versão:** 0.3.0 - Landing + Demo PWA navegável

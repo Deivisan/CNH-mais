@@ -14,6 +14,12 @@
 </head>
 <body>
   <div class="demo-tag">🚀 modo sistema emulado • experiência contínua tipo app (pwa)</div>
+  <div class="ambient-bg" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+    <span class="grid-noise"></span>
+  </div>
 
   <header class="app-topbar">
     <div class="app-topbar-inner">
@@ -144,7 +150,7 @@
 
           <section class="app-main">
             <div class="app-topline">
-              <div class="system-pill" id="pill-auth">auth: conectada (emulado)</div>
+              <div class="system-pill pulse" id="pill-auth">auth: conectada (emulado)</div>
               <div class="system-pill" id="pill-ai">ia: local fallback</div>
               <div class="system-pill" id="pill-map">mapa: pronto</div>
               <button class="btn flat" id="btn-logout">sair</button>
@@ -382,10 +388,20 @@
                   <div class="card" style="margin-top:0.65rem;">
                     <h4>navegação emulada</h4>
                     <p id="map-route-text" class="muted">rota pronta. aguardando destino.</p>
+                    <div class="route-progress-wrap">
+                      <div class="route-progress-track">
+                        <div id="route-progress-bar" class="route-progress-bar"></div>
+                      </div>
+                      <div id="route-progress-label" class="muted">0%</div>
+                    </div>
                     <div style="display:flex; gap:0.45rem; margin-top:0.45rem;">
                       <button class="btn" id="btn-map-start">iniciar rota</button>
+                      <button class="btn flat" id="btn-map-pause">pausar</button>
                       <button class="btn secondary" id="btn-map-arrived">cheguei</button>
                     </div>
+                    <ul class="list" id="route-steps" style="margin-top:0.55rem;">
+                      <li>aguardando rota...</li>
+                    </ul>
                   </div>
                 </aside>
                 <section class="map-full-right">
@@ -430,6 +446,14 @@
         </div>
       </section>
     </section>
+
+    <nav class="mobile-dock" aria-label="navegação rápida">
+      <button data-go-view="view-auth">🔐</button>
+      <button data-go-panel="panel-cand-home">🏠</button>
+      <button data-go-panel="panel-cand-chat">💬</button>
+      <button data-go-panel="panel-mapas-full">🗺️</button>
+      <button data-go-panel="panel-runtime">📡</button>
+    </nav>
   </main>
 
   <div class="toast" id="toast"></div>

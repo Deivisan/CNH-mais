@@ -29,7 +29,11 @@ const mapCanvasFull = document.getElementById('map-canvas-full');
 const mapSearch = document.getElementById('map-search');
 const mapRouteText = document.getElementById('map-route-text');
 const btnMapStart = document.getElementById('btn-map-start');
+const btnMapPause = document.getElementById('btn-map-pause');
 const btnMapArrived = document.getElementById('btn-map-arrived');
+const routeProgressBar = document.getElementById('route-progress-bar');
+const routeProgressLabel = document.getElementById('route-progress-label');
+const routeSteps = document.getElementById('route-steps');
 
 const btnSaveAI = document.getElementById('save-ai-config');
 const btnClearAI = document.getElementById('clear-ai-config');
@@ -61,7 +65,10 @@ const state = {
   activeScreen: 'view-auth',
   activePanel: 'panel-cand-home',
   destination: null,
-  aiMode: 'fallback local'
+  aiMode: 'fallback local',
+  routeProgress: 0,
+  routeTimer: null,
+  routeRunning: false
 };
 
 const roleDefaultPanel = {
@@ -102,6 +109,23 @@ function syncRuntimeUI() {
   if (rtAI) rtAI.textContent = state.aiMode;
   if (pillAI) pillAI.textContent = `ia: ${state.aiMode}`;
   if (pillMap) pillMap.textContent = `mapa: ${state.destination || 'pronto'}`;
+}
+
+function renderRouteProgress() {
+  const pct = Math.max(0, Math.min(100, Math.round(state.routeProgress)));
+  if (routeProgressBar) routeProgressBar.style.width = `${pct}%`;
+  if (routeProgressLabel) routeProgressLabel.textContent = `${pct}%`;
+}
+
+function setRouteSteps(destination) {
+  if (!routeSteps) return;
+  const steps = [
+    'saída do ponto atual',
+    'seguir pela via principal',
+    'ajuste para rota local',
+    `aproximação final para ${destination}`
+  ];
+  routeSteps.innerHTML = steps.map((s, i) => `<li>${i + 1}. ${s}</li>`).join('');
 }
 
 function setScreen(screenId) {
@@ -155,6 +179,9 @@ function updateMap(point) {
   if (!point || !mapCanvasFull) return;
   mapCanvasFull.src = buildMapUrl(point.lat, point.lon);
   state.destination = point.label;
+  state.routeProgress = 0;
+  renderRouteProgress();
+  setRouteSteps(point.label);
   if (mapRouteText) mapRouteText.textContent = `rota ajustada para ${point.label}`;
   syncRuntimeUI();
   addRuntimeEvent(`mapa reposicionado para ${point.label}`);
@@ -182,6 +209,41 @@ function appendChat(text, side = 'bot') {
   bubble.textContent = text;
   candChatThread.appendChild(bubble);
   candChatThread.scrollTop = candChatThread.scrollHeight;
+}
+
+function stopRouteSimulation() {
+  if (state.routeTimer) {
+    clearInterval(state.routeTimer);
+    state.routeTimer = null;
+  }
+  state.routeRunning = false;
+}
+
+function startRouteSimulation() {
+  if (!state.destination) {
+    showToast('defina um destino primeiro');
+    return;
+  }
+
+  if (state.routeRunning) return;
+
+  state.routeRunning = true;
+  addRuntimeEvent(`simulação de rota iniciada para ${state.destination}`);
+
+  state.routeTimer = setInterval(() => {
+    state.routeProgress += Math.random() * 8 + 4;
+    if (state.routeProgress >= 100) {
+      state.routeProgress = 100;
+      renderRouteProgress();
+      stopRouteSimulation();
+      appendChat('navegação finalizada: cheguei no destino ✅ ah ops, eu sou só uma ia, programada por Deivison. 😄', 'bot');
+      if (mapRouteText) mapRouteText.textContent = `rota concluída em ${state.destination}`;
+      addRuntimeEvent(`rota concluída em ${state.destination}`);
+      showToast('rota concluída');
+      return;
+    }
+    renderRouteProgress();
+  }, 900);
 }
 
 function getAIConfig() {
@@ -333,6 +395,19 @@ function bindBasicEvents() {
     });
   });
 
+  const mobileDockButtons = Array.from(document.querySelectorAll('.mobile-dock [data-go-view], .mobile-dock [data-go-panel]'));
+  mobileDockButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (btn.dataset.goView) {
+        setScreen(btn.dataset.goView);
+      }
+      if (btn.dataset.goPanel) {
+        setScreen('view-app');
+        setPanel(btn.dataset.goPanel);
+      }
+    });
+  });
+
   menuButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
       setPanel(btn.dataset.panel);
@@ -429,11 +504,24 @@ function bindChatAndMapEvents() {
       return;
     }
     if (mapRouteText) mapRouteText.textContent = `navegação iniciada para ${state.destination}`;
-    addRuntimeEvent(`navegação iniciada para ${state.destination}`);
     showToast('navegação iniciada');
+    startRouteSimulation();
+  });
+
+  btnMapPause?.addEventListener('click', () => {
+    if (!state.routeRunning) {
+      showToast('rota não está em execução');
+      return;
+    }
+    stopRouteSimulation();
+    addRuntimeEvent('simulação de rota pausada');
+    showToast('rota pausada');
   });
 
   btnMapArrived?.addEventListener('click', () => {
+    stopRouteSimulation();
+    state.routeProgress = 100;
+    renderRouteProgress();
     appendChat('cheguei no destino ✅ ah ops, eu sou só uma ia, programada por Deivison. 😄', 'bot');
     addRuntimeEvent('destino concluído');
     showToast('rota finalizada');
@@ -521,6 +609,7 @@ function init() {
   loadAIConfigToForm();
   setRole('candidato');
   syncRuntimeUI();
+  renderRouteProgress();
 
   btnRecompute?.addEventListener('click', recomputeSimulation);
   addRuntimeEvent('sistema pronto para emulação contínua');

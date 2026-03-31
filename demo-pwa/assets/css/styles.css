@@ -789,3 +789,141 @@ body {
 .text-secondary { color: var(--text-secondary); }
 .fw-500 { font-weight: 500; }
 .fw-700 { font-weight: 700; }
+
+/* ============================================ */
+/* BOTTOM NAV EXPANDIDO */
+/* ============================================ */
+.bottom-nav-expanded {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--surface);
+  border-top: 1px solid var(--divider);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0;
+  z-index: 100;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+}
+
+.bottom-nav-expanded .nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.3s;
+  position: relative;
+  font-size: 12px;
+}
+
+.bottom-nav-expanded .nav-item.active {
+  color: var(--primary);
+}
+
+.bottom-nav-expanded .nav-item .material-symbols-rounded {
+  font-size: 24px;
+}
+
+.bottom-nav-expanded .nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  background: var(--primary);
+  border-radius: 0 0 3px 3px;
+}
+
+/* Menu "Mais" */
+.more-menu {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 999;
+  display: none;
+  align-items: flex-end;
+  animation: fadeIn 0.3s;
+}
+
+.more-menu.active {
+  display: flex;
+}
+
+.more-menu-content {
+  width: 100%;
+  background: var(--surface);
+  border-radius: 24px 24px 0 0;
+  padding: 24px 16px 32px;
+  animation: slideUp 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.more-menu-content h3 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-primary);
+}
+
+.more-menu-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: none;
+  background: transparent;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 16px;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.more-menu-item:hover {
+  background: var(--background);
+}
+
+.more-menu-item .material-symbols-rounded {
+  font-size: 28px;
+  color: var(--primary);
+}
+
+.more-menu-close {
+  width: 100%;
+  padding: 14px;
+  margin-top: 16px;
+  border: 2px solid var(--divider);
+  background: var(--surface);
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.more-menu-close:hover {
+  background: var(--divider);
+}

@@ -374,3 +374,94 @@ const candidato = {
   }
   
 };
+
+// Extender navegação com novas telas
+const originalRender = candidato.render;
+candidato.render = function(screen) {
+  const content = document.getElementById('candidato-content');
+  
+  // Telas extras
+  if (screen === 'chat') {
+    content.innerHTML = this.renderChat();
+  } else if (screen === 'notificacoes') {
+    content.innerHTML = this.renderNotificacoes();
+  } else if (screen === 'avaliacoes') {
+    content.innerHTML = this.renderAvaliacoes();
+  } else if (screen === 'pagamentos') {
+    content.innerHTML = this.renderPagamentos();
+  } else if (screen === 'mapa') {
+    content.innerHTML = this.renderMapa();
+  } else if (screen === 'indicacoes') {
+    content.innerHTML = this.renderIndicacoes();
+  } else {
+    // Telas originais
+    originalRender.call(this, screen);
+    return;
+  }
+  
+  content.classList.add('fade-in');
+  
+  // Fechar menu "Mais" se estiver aberto
+  const moreMenu = document.getElementById('more-menu');
+  if (moreMenu) moreMenu.classList.remove('active');
+  
+  // Atualizar bottom nav
+  document.querySelectorAll('.bottom-nav-expanded .nav-item').forEach(item => {
+    item.classList.remove('active');
+    if (item.dataset.screen === screen) {
+      item.classList.add('active');
+    }
+  });
+};
+
+// Toggle menu "Mais"
+candidato.toggleMoreMenu = function() {
+  const moreMenu = document.getElementById('more-menu');
+  if (!moreMenu) {
+    // Criar menu se não existir
+    const html = `
+      <div class="more-menu" id="more-menu">
+        <div class="more-menu-content">
+          <h3>Mais Opções</h3>
+          <button class="more-menu-item" onclick="candidato.navigate('instrutor')">
+            <span class="material-symbols-rounded">person</span>
+            <span>Meu Instrutor</span>
+          </button>
+          <button class="more-menu-item" onclick="candidato.navigate('avaliacoes')">
+            <span class="material-symbols-rounded">star</span>
+            <span>Avaliações</span>
+          </button>
+          <button class="more-menu-item" onclick="candidato.navigate('pagamentos')">
+            <span class="material-symbols-rounded">payments</span>
+            <span>Pagamentos</span>
+          </button>
+          <button class="more-menu-item" onclick="candidato.navigate('indicacoes')">
+            <span class="material-symbols-rounded">card_giftcard</span>
+            <span>Indicações</span>
+          </button>
+          <button class="more-menu-item" onclick="candidato.navigate('notificacoes')">
+            <span class="material-symbols-rounded">notifications</span>
+            <span>Notificações</span>
+          </button>
+          <button class="more-menu-item" onclick="candidato.navigate('perfil')">
+            <span class="material-symbols-rounded">account_circle</span>
+            <span>Meu Perfil</span>
+          </button>
+          <button class="more-menu-close" onclick="candidato.toggleMoreMenu()">Fechar</button>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', html);
+    
+    // Click fora fecha
+    setTimeout(() => {
+      document.getElementById('more-menu').addEventListener('click', (e) => {
+        if (e.target.id === 'more-menu') {
+          candidato.toggleMoreMenu();
+        }
+      });
+    }, 100);
+  }
+  
+  document.getElementById('more-menu').classList.toggle('active');
+};

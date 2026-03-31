@@ -1,0 +1,240 @@
+/* ============================================ */
+/* SISTEMA DE TEMAS - CNH+ */
+/* ============================================ */
+
+/* Tema Padrão (Azul CNH+) - Já no styles.css */
+
+/* Tema Escuro (Dark Mode) */
+[data-theme="dark"] {
+  --primary: #87CEEB;
+  --primary-light: #4A90D9;
+  --secondary: #2E5A8F;
+  --accent: #1E3A5F;
+  
+  --surface: #1E1E1E;
+  --background: #121212;
+  --text-primary: #E0E0E0;
+  --text-secondary: #B0B0B0;
+  --divider: #333333;
+  
+  --shadow-1: 0 1px 3px rgba(0,0,0,0.5), 0 1px 2px rgba(0,0,0,0.6);
+  --shadow-2: 0 3px 6px rgba(0,0,0,0.6), 0 3px 6px rgba(0,0,0,0.7);
+  --shadow-3: 0 10px 20px rgba(0,0,0,0.7), 0 6px 6px rgba(0,0,0,0.8);
+}
+
+/* Tema Verde (Natureza) */
+[data-theme="nature"] {
+  --primary: #2E7D32;
+  --primary-light: #388E3C;
+  --secondary: #66BB6A;
+  --accent: #A5D6A7;
+  
+  --surface: #FFFFFF;
+  --background: #F1F8E9;
+  --text-primary: #1B5E20;
+  --text-secondary: #558B2F;
+  --divider: #C5E1A5;
+}
+
+/* Tema Roxo (Premium) */
+[data-theme="premium"] {
+  --primary: #6A1B9A;
+  --primary-light: #8E24AA;
+  --secondary: #AB47BC;
+  --accent: #CE93D8;
+  
+  --surface: #FFFFFF;
+  --background: #F3E5F5;
+  --text-primary: #4A148C;
+  --text-secondary: #7B1FA2;
+  --divider: #E1BEE7;
+}
+
+/* Tema Laranja (Energia) */
+[data-theme="sunset"] {
+  --primary: #E65100;
+  --primary-light: #F57C00;
+  --secondary: #FF9800;
+  --accent: #FFB74D;
+  
+  --surface: #FFFFFF;
+  --background: #FFF3E0;
+  --text-primary: #BF360C;
+  --text-secondary: #E64A19;
+  --divider: #FFCCBC;
+}
+
+/* Tema Rosa (Delicado) */
+[data-theme="rose"] {
+  --primary: #C2185B;
+  --primary-light: #D81B60;
+  --secondary: #EC407A;
+  --accent: #F48FB1;
+  
+  --surface: #FFFFFF;
+  --background: #FCE4EC;
+  --text-primary: #880E4F;
+  --text-secondary: #AD1457;
+  --divider: #F8BBD0;
+}
+
+/* Tema Oceano (Calmante) */
+[data-theme="ocean"] {
+  --primary: #006064;
+  --primary-light: #00838F;
+  --secondary: #00ACC1;
+  --accent: #4DD0E1;
+  
+  --surface: #FFFFFF;
+  --background: #E0F7FA;
+  --text-primary: #004D40;
+  --text-secondary: #00695C;
+  --divider: #B2EBF2;
+}
+
+/* ============================================ */
+/* SELETOR DE TEMAS FLUTUANTE */
+/* ============================================ */
+
+.theme-fab {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  border: none;
+  box-shadow: var(--shadow-3);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.theme-fab:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.theme-fab:active {
+  transform: scale(0.95) rotate(90deg);
+}
+
+.theme-fab .material-symbols-rounded {
+  font-size: 28px;
+}
+
+/* Painel de Temas */
+.theme-panel {
+  position: fixed;
+  bottom: 145px;
+  right: 20px;
+  width: 280px;
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: var(--shadow-3);
+  z-index: 998;
+  opacity: 0;
+  transform: translateY(20px) scale(0.9);
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+.theme-panel.active {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: all;
+}
+
+.theme-panel h3 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0 0 12px 0;
+  color: var(--text-primary);
+}
+
+.theme-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.theme-option {
+  aspect-ratio: 1;
+  border-radius: 12px;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.theme-option::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));
+}
+
+.theme-option.active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 4px var(--primary);
+}
+
+.theme-option::after {
+  content: '✓';
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.theme-option.active::after {
+  opacity: 1;
+}
+
+/* Cores específicas de cada tema */
+.theme-option[data-theme="default"] { --theme-primary: #1E3A5F; --theme-accent: #87CEEB; }
+.theme-option[data-theme="dark"] { --theme-primary: #121212; --theme-accent: #87CEEB; }
+.theme-option[data-theme="nature"] { --theme-primary: #2E7D32; --theme-accent: #A5D6A7; }
+.theme-option[data-theme="premium"] { --theme-primary: #6A1B9A; --theme-accent: #CE93D8; }
+.theme-option[data-theme="sunset"] { --theme-primary: #E65100; --theme-accent: #FFB74D; }
+.theme-option[data-theme="rose"] { --theme-primary: #C2185B; --theme-accent: #F48FB1; }
+.theme-option[data-theme="ocean"] { --theme-primary: #006064; --theme-accent: #4DD0E1; }
+
+/* Animação de troca de tema */
+@keyframes theme-transition {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.theme-transitioning * {
+  animation: theme-transition 0.3s ease-in-out;
+}
+
+/* Ajuste para mobile */
+@media (max-width: 768px) {
+  .theme-fab {
+    bottom: 70px;
+    right: 16px;
+  }
+  
+  .theme-panel {
+    bottom: 135px;
+    right: 16px;
+    width: calc(100vw - 32px);
+    max-width: 280px;
+  }
+}

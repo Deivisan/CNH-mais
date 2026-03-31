@@ -21,7 +21,13 @@
   <!-- Material Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
   
+  <!-- Leaflet CSS (Mapas) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
   <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/themes.css">
+  <link rel="stylesheet" href="assets/css/onboarding.css">
+  <link rel="stylesheet" href="assets/css/extra-screens.css">
 </head>
 <body>
   
@@ -82,8 +88,8 @@
       <!-- Conteúdo dinâmico injetado via JS -->
     </main>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
+    <!-- Bottom Navigation EXPANDIDO -->
+    <nav class="bottom-nav-expanded">
       <button class="nav-item active" data-screen="home" onclick="candidato.navigate('home')">
         <span class="material-symbols-rounded">home</span>
         <span>Início</span>
@@ -92,15 +98,51 @@
         <span class="material-symbols-rounded">event</span>
         <span>Aulas</span>
       </button>
-      <button class="nav-item" data-screen="instrutor" onclick="candidato.navigate('instrutor')">
-        <span class="material-symbols-rounded">person</span>
-        <span>Instrutor</span>
+      <button class="nav-item" data-screen="chat" onclick="candidato.navigate('chat')">
+        <span class="material-symbols-rounded">chat</span>
+        <span>Chat</span>
       </button>
-      <button class="nav-item" data-screen="perfil" onclick="candidato.navigate('perfil')">
-        <span class="material-symbols-rounded">account_circle</span>
-        <span>Perfil</span>
+      <button class="nav-item" data-screen="mapa" onclick="candidato.navigate('mapa')">
+        <span class="material-symbols-rounded">map</span>
+        <span>Mapa</span>
+      </button>
+      <button class="nav-item" data-screen="more" onclick="candidato.toggleMoreMenu()">
+        <span class="material-symbols-rounded">more_horiz</span>
+        <span>Mais</span>
       </button>
     </nav>
+    
+    <!-- Menu "Mais" (overlay) -->
+    <div class="more-menu" id="more-menu">
+      <div class="more-menu-content">
+        <h3>Mais Opções</h3>
+        <button class="more-menu-item" onclick="candidato.navigate('instrutor')">
+          <span class="material-symbols-rounded">person</span>
+          <span>Meu Instrutor</span>
+        </button>
+        <button class="more-menu-item" onclick="candidato.navigate('avaliacoes')">
+          <span class="material-symbols-rounded">star</span>
+          <span>Avaliações</span>
+        </button>
+        <button class="more-menu-item" onclick="candidato.navigate('pagamentos')">
+          <span class="material-symbols-rounded">payments</span>
+          <span>Pagamentos</span>
+        </button>
+        <button class="more-menu-item" onclick="candidato.navigate('indicacoes')">
+          <span class="material-symbols-rounded">card_giftcard</span>
+          <span>Indicações</span>
+        </button>
+        <button class="more-menu-item" onclick="candidato.navigate('notificacoes')">
+          <span class="material-symbols-rounded">notifications</span>
+          <span>Notificações</span>
+        </button>
+        <button class="more-menu-item" onclick="candidato.navigate('perfil')">
+          <span class="material-symbols-rounded">account_circle</span>
+          <span>Meu Perfil</span>
+        </button>
+        <button class="more-menu-close" onclick="candidato.toggleMoreMenu()">Fechar</button>
+      </div>
+    </div>
 
   </div>
 
@@ -222,11 +264,23 @@
   <!-- Drawer Overlay -->
   <div id="drawer-overlay" class="drawer-overlay"></div>
 
-  <!-- Scripts -->
+  <!-- Scripts (ordem importa!) -->
+  <!-- Leaflet (Mapas) -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- Core -->
   <script src="assets/js/data.js"></script>
+  <script src="assets/js/themes.js"></script>
+  <script src="assets/js/onboarding.js"></script>
+  <script src="assets/js/maps.js"></script>
+  
+  <!-- Módulos por perfil -->
   <script src="assets/js/candidato.js"></script>
+  <script src="assets/js/candidato-extra.js"></script>
   <script src="assets/js/instrutor.js"></script>
   <script src="assets/js/admin.js"></script>
+  
+  <!-- App principal (último) -->
   <script src="assets/js/app.js"></script>
   
   <!-- Service Worker -->

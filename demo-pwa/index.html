@@ -33,37 +33,55 @@
 <body>
   
   <!-- ============================================ -->
-  <!-- SELETOR DE PERFIL (Tela Inicial) -->
+  <!-- SELETOR DE PERFIL (Fallback - usado no logout) -->
   <!-- ============================================ -->
-  <div id="profile-selector" class="screen active">
+  <div id="profile-selector" class="screen">
     <div class="profile-selector-container">
       <div class="logo-container">
         <div class="app-logo">CNH+</div>
         <p class="tagline">Sua CNH mais fácil</p>
       </div>
-      
-      <h1>Entrar como</h1>
-      
+
+      <h1>Qual seu perfil?</h1>
+
       <div class="profile-cards">
-        <button class="profile-card" onclick="app.login('candidato')">
+        <button class="profile-card" onclick="onboarding.selectProfile('candidato')">
           <span class="material-symbols-rounded">school</span>
-          <h2>Candidato</h2>
-          <p>Aprender a dirigir</p>
+          <h2>Sou Candidato</h2>
+          <p>Quero aprender a dirigir</p>
         </button>
-        
-        <button class="profile-card" onclick="app.login('instrutor')">
+
+        <button class="profile-card" onclick="onboarding.selectProfile('instrutor')">
           <span class="material-symbols-rounded">drive_eta</span>
-          <h2>Instrutor</h2>
-          <p>Dar aulas</p>
+          <h2>Sou Instrutor</h2>
+          <p>Quero dar aulas de direção</p>
         </button>
-        
-        <button class="profile-card" onclick="app.login('admin')">
+
+        <button class="profile-card" onclick="onboarding.selectProfile('admin')">
           <span class="material-symbols-rounded">admin_panel_settings</span>
-          <h2>Administrador</h2>
-          <p>Gerenciar plataforma</p>
+          <h2>Sou Administrador</h2>
+          <p>Gerenciar a plataforma</p>
         </button>
       </div>
-      
+
+      <div class="quick-login-fallback">
+        <div class="qlf-divider"><span>Acesso rápido (demo)</span></div>
+        <div class="qlf-buttons">
+          <button class="qlf-btn candidato" onclick="onboarding.quickLogin('candidato')">
+            <span class="material-symbols-rounded">school</span>
+            <span>João Silva</span>
+          </button>
+          <button class="qlf-btn instrutor" onclick="onboarding.quickLogin('instrutor')">
+            <span class="material-symbols-rounded">drive_eta</span>
+            <span>Maria Santos</span>
+          </button>
+          <button class="qlf-btn admin" onclick="onboarding.quickLogin('admin')">
+            <span class="material-symbols-rounded">admin_panel_settings</span>
+            <span>Backoffice</span>
+          </button>
+        </div>
+      </div>
+
       <p class="demo-notice">Demo navegável - Dados simulados</p>
     </div>
   </div>

@@ -227,7 +227,7 @@ const instrutor = {
       </div>
       
       <div class="card">
-        <button class="btn btn-primary" style="width: 100%;">Salvar Alterações</button>
+        <button class="btn btn-primary" style="width: 100%;" onclick="onboarding.showToast('Alterações salvas com sucesso!', 'success')">Salvar Alterações</button>
       </div>
     `;
   },
@@ -293,11 +293,11 @@ const instrutor = {
       </div>
       
       <div class="card">
-        <button class="btn btn-primary" style="width: 100%; margin-bottom: 12px;">
+        <button class="btn btn-primary" style="width: 100%; margin-bottom: 12px;" onclick="onboarding.showToast('Selecione um horário no calendário para adicionar', 'info')">
           <span class="material-symbols-rounded" style="font-size: 18px;">add</span>
           <span>Adicionar Horário</span>
         </button>
-        <button class="btn btn-outlined" style="width: 100%;">
+        <button class="btn btn-outlined" style="width: 100%;" onclick="onboarding.showToast('Gerenciamento de bloqueios em desenvolvimento', 'info')">
           Gerenciar Bloqueios
         </button>
       </div>
@@ -411,7 +411,7 @@ const instrutor = {
       <div class="card" style="margin-top: 0; background: linear-gradient(135deg, var(--success) 0%, #2E7D32 100%); color: white;">
         <div style="font-size: 14px; opacity: 0.9; margin-bottom: 4px;">Saldo Disponível</div>
         <div style="font-size: 36px; font-weight: 700; margin-bottom: 16px;">${helpers.formatCurrency(this.data.saldoDisponivel)}</div>
-        <button class="btn" style="background: white; color: var(--success); width: 100%;">
+        <button class="btn" style="background: white; color: var(--success); width: 100%;" onclick="onboarding.showToast('Solicitação de repasse enviada! Pagamento em até 24h.', 'success')">
           Solicitar Repasse
         </button>
       </div>

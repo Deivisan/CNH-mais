@@ -219,7 +219,7 @@ Object.assign(candidato, {
             <div class="avaliacao-item">
               <div class="avaliacao-header">
                 <span class="avaliacao-data">${av.data}</span>
-                <span class="avaliacao-nota">${helpers.renderStars(av.nota)}</span>
+                <span class="avaliacao-nota">${helpers.getStars(av.nota)}</span>
               </div>
               <div class="avaliacao-comentario">
                 <p><strong>Você:</strong> ${av.comentario}</p>

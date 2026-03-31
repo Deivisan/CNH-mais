@@ -122,14 +122,57 @@ const globalFeatures = {
   // ==================== NOTIFICAÇÕES PUSH ====================
   
   initPushNotifications() {
-    // Simular notificações periódicas
-    setTimeout(() => {
-      this.showPushNotification('Nova aula agendada', 'João Silva agendou aula para 02/04 às 09:00', 'event');
-    }, 10000);
-    
-    setTimeout(() => {
-      this.showPushNotification('Pagamento recebido', 'Repasse de R$ 420,00 foi processado', 'payments');
-    }, 20000);
+    // ⛔ NÃO disparar notificações antes do login
+    // As notificações serão iniciadas por app.login() após login
+  },
+
+  // Chamado por app.login() após login bem-sucedido
+  startNotificationsForProfile(profile) {
+    // Limpar timers anteriores
+    if (this._notifTimers) {
+      this._notifTimers.forEach(t => clearTimeout(t));
+    }
+    this._notifTimers = [];
+
+    if (profile === 'instrutor') {
+      this._notifTimers.push(setTimeout(() => {
+        if (app.currentProfile === 'instrutor') {
+          this.showPushNotification('Nova aula agendada', 'João Silva agendou aula para 02/04 às 09:00', 'event');
+        }
+      }, 8000));
+
+      this._notifTimers.push(setTimeout(() => {
+        if (app.currentProfile === 'instrutor') {
+          this.showPushNotification('Pagamento recebido', 'Repasse de R$ 420,00 foi processado', 'payments');
+        }
+      }, 18000));
+
+    } else if (profile === 'candidato') {
+      this._notifTimers.push(setTimeout(() => {
+        if (app.currentProfile === 'candidato') {
+          this.showPushNotification('Aula amanhã', 'Sua aula com Maria Santos é amanhã às 14:00', 'event');
+        }
+      }, 8000));
+
+      this._notifTimers.push(setTimeout(() => {
+        if (app.currentProfile === 'candidato') {
+          this.showPushNotification('Lembrete', 'Você tem 3 aulas restantes no seu pacote', 'info');
+        }
+      }, 18000));
+
+    } else if (profile === 'admin') {
+      this._notifTimers.push(setTimeout(() => {
+        if (app.currentProfile === 'admin') {
+          this.showPushNotification('Nova disputa', 'Candidato abriu disputa sobre aula #4521', 'gavel');
+        }
+      }, 8000));
+
+      this._notifTimers.push(setTimeout(() => {
+        if (app.currentProfile === 'admin') {
+          this.showPushNotification('Instrutor pendente', 'Novo instrutor aguardando aprovação', 'person_add');
+        }
+      }, 18000));
+    }
   },
   
   showPushNotification(titulo, mensagem, icon = 'notifications') {
@@ -404,12 +447,12 @@ const globalFeatures = {
           refreshIndicator.style.transform = 'translateX(-50%) translateY(-100px)';
           
           // Simular reload
-          const currentScreen = app.currentScreen;
-          if (currentScreen === 'candidato' && candidato.currentScreen) {
+          const currentProfile = app.currentProfile;
+          if (currentProfile === 'candidato' && candidato.currentScreen) {
             candidato.navigate(candidato.currentScreen);
-          } else if (currentScreen === 'instrutor' && instrutor.currentScreen) {
+          } else if (currentProfile === 'instrutor' && instrutor.currentScreen) {
             instrutor.navigate(instrutor.currentScreen);
-          } else if (currentScreen === 'admin' && admin.currentTab) {
+          } else if (currentProfile === 'admin' && admin.currentTab) {
             admin.navigate(admin.currentTab);
           }
         }, 1000);

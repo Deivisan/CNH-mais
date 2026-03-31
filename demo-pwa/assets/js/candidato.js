@@ -153,7 +153,7 @@ const candidato = {
           <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 4px;">Seu código</div>
           <div style="font-size: 20px; font-weight: 700; color: var(--secondary); letter-spacing: 2px;">${this.data.indicacoes.codigo}</div>
         </div>
-        <button class="btn btn-outlined" style="width: 100%; margin-top: 12px;">
+        <button class="btn btn-outlined" style="width: 100%; margin-top: 12px;" onclick="candidato.compartilharCodigo()">
           Compartilhar Código
         </button>
       </div>
@@ -306,7 +306,7 @@ const candidato = {
       
       <!-- Contato -->
       <div class="card">
-        <button class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <button class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="candidato.navigate('chat')">
           <span class="material-symbols-rounded">chat</span>
           <span>Enviar Mensagem</span>
         </button>
@@ -363,10 +363,10 @@ const candidato = {
       
       <!-- Ações -->
       <div class="card">
-        <button class="btn btn-outlined" style="width: 100%; margin-bottom: 12px;">
+        <button class="btn btn-outlined" style="width: 100%; margin-bottom: 12px;" onclick="onboarding.showToast('Edição de perfil em desenvolvimento', 'info')">
           Editar Perfil
         </button>
-        <button class="btn btn-text" style="width: 100%; color: var(--error);">
+        <button class="btn btn-text" style="width: 100%; color: var(--error);" onclick="app.logout()">
           Sair da Conta
         </button>
       </div>

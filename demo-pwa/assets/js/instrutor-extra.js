@@ -611,7 +611,7 @@
       </div>
       
       <div class="card">
-        <button class="btn btn-error" style="width: 100%;">
+        <button class="btn btn-error" style="width: 100%;" onclick="app.logout()">
           Sair da Conta
         </button>
       </div>

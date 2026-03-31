@@ -36,7 +36,12 @@ const app = {
         admin.init();
         break;
     }
-    
+
+    // Iniciar notificações contextualizadas
+    if (typeof globalFeatures !== 'undefined') {
+      globalFeatures.startNotificationsForProfile(profile);
+    }
+
     // Registra no console
     console.log(`✅ Logado como: ${profile}`);
   },

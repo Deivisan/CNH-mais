@@ -155,6 +155,76 @@ body {
   margin-top: 20px;
 }
 
+/* Fallback: Login rápido no profile-selector estático */
+.quick-login-fallback {
+  margin-top: 16px;
+}
+
+.qlf-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.qlf-divider::before,
+.qlf-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(255,255,255,0.3);
+}
+
+.qlf-divider span {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  white-space: nowrap;
+}
+
+.qlf-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.qlf-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 8px;
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s;
+}
+
+.qlf-btn:hover {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-2px);
+}
+
+.qlf-btn:active {
+  transform: scale(0.95);
+}
+
+.qlf-btn .material-symbols-rounded {
+  font-size: 24px;
+}
+
+.qlf-btn.candidato .material-symbols-rounded { color: #81C784; }
+.qlf-btn.instrutor .material-symbols-rounded { color: #FFB74D; }
+.qlf-btn.admin .material-symbols-rounded { color: #F48FB1; }
+
+.qlf-btn span:last-child {
+  font-size: 11px;
+  opacity: 0.8;
+}
+
 /* ============================================ */
 /* APP BAR */
 /* ============================================ */

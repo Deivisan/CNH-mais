@@ -1,458 +1,242 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CNH+ Demo PWA - Sistema Emulado</title>
-  <meta name="description" content="CNH+ PWA em modo sistema: fluxo emulado ponta-a-ponta com IA opcional e experiência contínua estilo app." />
-  <meta name="theme-color" content="#0a1628" />
-  <link rel="manifest" href="app.webmanifest" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="assets/styles.css?v=claude-premium" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#1E3A5F">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  
+  <title>CNH+ | Aulas de Direção</title>
+  
+  <link rel="manifest" href="app.webmanifest">
+  <link rel="icon" type="image/png" href="assets/icons/icon-192x192.png">
+  <link rel="apple-touch-icon" href="assets/icons/icon-192x192.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Material Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,1,0" rel="stylesheet">
+  
+  <link rel="stylesheet" href="assets/css/styles.css">
 </head>
 <body>
-  <div class="demo-tag">⚡ claude sonnet premium edition • design reimaginado</div>
-  <div class="ambient-bg" aria-hidden="true"></div>
-
-  <header class="app-topbar">
-    <div class="app-topbar-inner">
-      <a class="brand" href="../">
-        <span class="brand-logo">🚗</span>
-        <span>CNH+ Demo PWA</span>
-      </a>
-      <div class="top-links">
-        <a class="chip-link" href="../">← landing</a>
-        <button class="chip-link" data-go-view="view-auth">autenticação</button>
-        <button class="chip-link" data-go-view="view-app">sistema</button>
-        <button class="chip-link" data-go-panel="panel-mapas-full">mapa full</button>
+  
+  <!-- ============================================ -->
+  <!-- SELETOR DE PERFIL (Tela Inicial) -->
+  <!-- ============================================ -->
+  <div id="profile-selector" class="screen active">
+    <div class="profile-selector-container">
+      <div class="logo-container">
+        <div class="app-logo">CNH+</div>
+        <p class="tagline">Sua CNH mais fácil</p>
       </div>
+      
+      <h1>Entrar como</h1>
+      
+      <div class="profile-cards">
+        <button class="profile-card" onclick="app.login('candidato')">
+          <span class="material-symbols-rounded">school</span>
+          <h2>Candidato</h2>
+          <p>Aprender a dirigir</p>
+        </button>
+        
+        <button class="profile-card" onclick="app.login('instrutor')">
+          <span class="material-symbols-rounded">drive_eta</span>
+          <h2>Instrutor</h2>
+          <p>Dar aulas</p>
+        </button>
+        
+        <button class="profile-card" onclick="app.login('admin')">
+          <span class="material-symbols-rounded">admin_panel_settings</span>
+          <h2>Administrador</h2>
+          <p>Gerenciar plataforma</p>
+        </button>
+      </div>
+      
+      <p class="demo-notice">Demo navegável - Dados simulados</p>
     </div>
-  </header>
+  </div>
 
-  <main class="container">
-    <section class="hero">
-      <h1>CNH+ PWA <span class="gradient-text">sistema de nova geração</span></h1>
-      <p>
-        Interface premium com glassmorphism avançado, animações cinematográficas e experiência fluida.
-        Arquitetura multi-perfil completa: candidato, instrutor e admin com fluxos dedicados.
-      </p>
-      <div class="hero-actions">
-        <button class="btn secondary" data-go-view="view-auth">🔐 entrar no sistema</button>
-        <button class="btn secondary" data-go-view="view-app">📲 abrir sistema</button>
-        <button class="btn secondary" data-go-panel="panel-ia-center">🧠 central de ia</button>
-        <button class="btn secondary" data-go-panel="panel-mapas-full">🗺️ mapa full</button>
-      </div>
-    </section>
+  <!-- ============================================ -->
+  <!-- APP CANDIDATO -->
+  <!-- ============================================ -->
+  <div id="app-candidato" class="screen">
+    
+    <!-- AppBar -->
+    <header class="app-bar">
+      <button class="icon-btn" onclick="app.logout()">
+        <span class="material-symbols-rounded">arrow_back</span>
+      </button>
+      <h1 id="candidato-title">CNH+</h1>
+      <button class="icon-btn" onclick="app.showNotifications()">
+        <span class="material-symbols-rounded">notifications</span>
+      </button>
+    </header>
 
-    <section class="system-shell">
-      <!-- tela de autenticação -->
-      <section class="screen active" id="view-auth">
-        <div class="auth-wrap">
-          <article class="auth-card">
-            <h2>acesso ao sistema</h2>
-            <p class="muted">selecione o perfil para carregar o app com contexto operacional emulado.</p>
-            <form class="form" id="form-login-system">
-              <div class="field">
-                <label for="auth-email">e-mail</label>
-                <input id="auth-email" type="email" value="demo@cnhmais.com" required />
-              </div>
-              <div class="field">
-                <label for="auth-pass">senha</label>
-                <input id="auth-pass" type="password" value="123456" required />
-              </div>
-              <div class="field">
-                <label for="auth-role">perfil</label>
-                <select id="auth-role">
-                  <option value="candidato">candidato</option>
-                  <option value="instrutor">instrutor</option>
-                  <option value="admin">admin</option>
-                </select>
-              </div>
-              <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;">
-                <button class="btn" type="submit">entrar no sistema</button>
-                <button class="btn secondary" type="button" id="btn-login-google">google (emulado)</button>
-              </div>
-            </form>
-          </article>
+    <!-- Conteúdo -->
+    <main class="content" id="candidato-content">
+      <!-- Conteúdo dinâmico injetado via JS -->
+    </main>
 
-          <article class="auth-card">
-            <h2>cadastro rápido</h2>
-            <p class="muted">carrega dados base para simulação do onboarding completo.</p>
-            <form class="form" id="form-register-system">
-              <div class="grid cols-2">
-                <div class="field"><label>nome</label><input value="João Almeida" /></div>
-                <div class="field"><label>cpf</label><input value="000.000.000-00" /></div>
-              </div>
-              <div class="grid cols-2">
-                <div class="field"><label>cidade</label><input value="Feira de Santana" /></div>
-                <div class="field"><label>celular</label><input value="(75) 99999-0000" /></div>
-              </div>
-              <button class="btn" type="submit">criar acesso emulado</button>
-            </form>
-          </article>
-        </div>
-      </section>
-
-      <!-- app principal -->
-      <section class="screen" id="view-app">
-        <div class="app-layout">
-          <aside class="app-sidebar">
-            <div class="sidebar-head">
-              <strong id="active-role-label">perfil: candidato</strong>
-              <span class="muted" id="system-clock">--:--</span>
-            </div>
-
-            <div class="sidebar-group" data-role-group="candidato">
-              <h4>candidato</h4>
-              <button class="menu-btn active" data-panel="panel-cand-home">🏠 home</button>
-              <button class="menu-btn" data-panel="panel-cand-onboarding">🧭 onboarding</button>
-              <button class="menu-btn" data-panel="panel-cand-aulas">📅 aulas</button>
-              <button class="menu-btn" data-panel="panel-cand-match">🤖 match</button>
-              <button class="menu-btn" data-panel="panel-cand-pagamentos">💳 pagamentos</button>
-              <button class="menu-btn" data-panel="panel-cand-chat">💬 chat inteligente</button>
-              <button class="menu-btn" data-panel="panel-cand-perfil">👤 perfil</button>
-            </div>
-
-            <div class="sidebar-group hidden" data-role-group="instrutor">
-              <h4>instrutor</h4>
-              <button class="menu-btn" data-panel="panel-inst-home">🏠 dashboard</button>
-              <button class="menu-btn" data-panel="panel-inst-publico">🪪 perfil público</button>
-              <button class="menu-btn" data-panel="panel-inst-agenda">🗓️ agenda</button>
-              <button class="menu-btn" data-panel="panel-inst-aulas">🚦 aulas</button>
-              <button class="menu-btn" data-panel="panel-inst-financeiro">💰 financeiro</button>
-              <button class="menu-btn" data-panel="panel-inst-bancario">🏦 bancário</button>
-              <button class="menu-btn" data-panel="panel-inst-disputas">⚖️ disputas</button>
-              <button class="menu-btn" data-panel="panel-inst-comunidade">👥 comunidade</button>
-            </div>
-
-            <div class="sidebar-group hidden" data-role-group="admin">
-              <h4>admin</h4>
-              <button class="menu-btn" data-panel="panel-admin-home">📊 dashboard</button>
-              <button class="menu-btn" data-panel="panel-admin-gestao">🧩 gestão instrutor (12 blocos)</button>
-              <button class="menu-btn" data-panel="panel-admin-financeiro">💹 financeiro</button>
-              <button class="menu-btn" data-panel="panel-admin-suporte">🆘 suporte</button>
-            </div>
-
-            <div class="sidebar-group">
-              <h4>global</h4>
-              <button class="menu-btn" data-panel="panel-mapas-full">🗺️ mapa full (aba dedicada)</button>
-              <button class="menu-btn" data-panel="panel-ia-center">🧠 central de ia</button>
-              <button class="menu-btn" data-panel="panel-runtime">📡 runtime emulado</button>
-            </div>
-          </aside>
-
-          <section class="app-main">
-            <div class="app-topline">
-              <div class="system-pill pulse" id="pill-auth">auth: conectada (emulado)</div>
-              <div class="system-pill" id="pill-ai">ia: local fallback</div>
-              <div class="system-pill" id="pill-map">mapa: pronto</div>
-              <button class="btn flat" id="btn-logout">sair</button>
-            </div>
-
-            <!-- candidato -->
-            <article class="panel active" id="panel-cand-home" data-role="candidato">
-              <h2>candidato • home operacional</h2>
-              <div class="grid cols-3">
-                <div class="card"><h4>progresso</h4><div class="kpi" id="kpi-progress">68%</div><p class="muted">8/12 aulas</p></div>
-                <div class="card"><h4>instrutor ativo</h4><div class="kpi" id="kpi-instrutor">maria santos</div><p class="muted">rating 4,8</p></div>
-                <div class="card"><h4>próxima aula</h4><div class="kpi" id="kpi-next">amanhã 08:00</div><p class="muted">fraga maia</p></div>
-              </div>
-              <div class="card" style="margin-top:0.75rem;">
-                <h4>ações vivas</h4>
-                <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.5rem;">
-                  <button class="btn flat" data-go-panel="panel-cand-chat">abrir chat</button>
-                  <button class="btn flat" data-go-panel="panel-cand-match">recalcular match</button>
-                  <button class="btn flat" data-go-panel="panel-mapas-full">abrir mapa full</button>
-                </div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-cand-onboarding" data-role="candidato">
-              <h2>candidato • onboarding contínuo</h2>
-              <div class="card">
-                <p class="muted">perfil comportamental e operacional impactando match em tempo real (emulado).</p>
-                <div class="grid cols-2" style="margin-top:0.5rem;">
-                  <div class="field"><label>experiência</label><select id="onb-exp"><option>nunca</option><option>poucas vezes</option><option>frequente</option></select></div>
-                  <div class="field"><label>ansiedade</label><select id="onb-anx"><option>alta</option><option>média</option><option>baixa</option></select></div>
-                  <div class="field"><label>tem carro</label><select id="onb-car"><option>não</option><option>às vezes</option><option>sim</option></select></div>
-                  <div class="field"><label>objetivo</label><select id="onb-obj"><option>aprender com calma</option><option>passar rápido</option><option>ficar muito bom</option></select></div>
-                </div>
-                <button class="btn" id="btn-recompute">recomendar plano</button>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-cand-aulas" data-role="candidato">
-              <h2>candidato • aulas</h2>
-              <ul class="list" id="cand-aulas-list">
-                <li><strong>31/03 • 08:00 • prática urbana</strong><p class="muted">instrutora maria • fraga maia</p></li>
-                <li><strong>02/04 • 09:00 • baliza</strong><p class="muted">instrutora maria • estacionamento central</p></li>
-              </ul>
-            </article>
-
-            <article class="panel" id="panel-cand-match" data-role="candidato">
-              <h2>candidato • engine de match</h2>
-              <p class="muted">score recalculado conforme onboarding e disponibilidade (emulado).</p>
-              <div class="table-wrap">
-                <table>
-                  <thead><tr><th>instrutor</th><th>especialidade</th><th>nota</th><th>distância</th><th>score</th><th>ação</th></tr></thead>
-                  <tbody id="match-table-body">
-                    <tr><td>maria santos</td><td>ansiedade/baliza</td><td>4.8</td><td>2.1 km</td><td>92</td><td><button class="btn flat choose-instrutor" data-name="maria santos">selecionar</button></td></tr>
-                    <tr><td>carlos silva</td><td>iniciantes</td><td>4.9</td><td>6.3 km</td><td>88</td><td><button class="btn flat choose-instrutor" data-name="carlos silva">selecionar</button></td></tr>
-                    <tr><td>pedro oliveira</td><td>carro próprio</td><td>4.7</td><td>4.5 km</td><td>84</td><td><button class="btn flat choose-instrutor" data-name="pedro oliveira">selecionar</button></td></tr>
-                  </tbody>
-                </table>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-cand-pagamentos" data-role="candidato">
-              <h2>candidato • pagamentos</h2>
-              <div class="grid cols-3">
-                <div class="card"><h4>básico</h4><p>8 aulas • R$ 960</p><button class="btn flat" data-action="comprar básico">comprar</button></div>
-                <div class="card"><h4>recomendado</h4><p>12 aulas • R$ 1.380</p><button class="btn flat" data-action="comprar recomendado">comprar</button></div>
-                <div class="card"><h4>intensivo</h4><p>20 aulas • R$ 2.180</p><button class="btn flat" data-action="comprar intensivo">comprar</button></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-cand-chat" data-role="candidato">
-              <h2>candidato • chat inteligente + ação no mapa</h2>
-              <div class="chat" data-chat="candidato">
-                <div class="chat-thread" id="cand-chat-thread">
-                  <div class="bubble bot">olá! diga um destino em feira de santana e eu tento ajustar a rota no mapa full 🧭</div>
-                </div>
-                <div class="chat-hint">exemplos: <code>me leve para fraga maia</code>, <code>rota para tomba</code>, <code>cheguei</code>.</div>
-                <div class="chat-input">
-                  <input type="text" id="cand-chat-input" placeholder="digite sua mensagem..." />
-                  <button class="btn" id="cand-chat-send" type="button">enviar</button>
-                </div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-cand-perfil" data-role="candidato">
-              <h2>candidato • perfil</h2>
-              <form class="form emulated-form" data-success="perfil atualizado">
-                <div class="grid cols-2">
-                  <div class="field"><label>nome</label><input value="João Almeida" /></div>
-                  <div class="field"><label>cidade</label><input value="Feira de Santana" /></div>
-                </div>
-                <button class="btn" type="submit">salvar</button>
-              </form>
-            </article>
-
-            <!-- instrutor -->
-            <article class="panel" id="panel-inst-home" data-role="instrutor">
-              <h2>instrutor • dashboard</h2>
-              <div class="grid cols-3">
-                <div class="card"><h4>aulas hoje</h4><div class="kpi">5</div></div>
-                <div class="card"><h4>pontualidade</h4><div class="kpi">96%</div></div>
-                <div class="card"><h4>saldo disponível</h4><div class="kpi">R$ 1.920</div></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-inst-publico" data-role="instrutor">
-              <h2>instrutor • perfil público</h2>
-              <div class="grid cols-2">
-                <div class="card"><h4>identidade/confiança</h4><p>⭐4,8 • verificado • feira de santana/ba</p></div>
-                <div class="card"><h4>indicadores</h4><p>1.250h • 340 alunos • 96% pontualidade</p></div>
-                <div class="card"><h4>bio</h4><p>didática calma com foco em aprovação técnica.</p></div>
-                <div class="card"><h4>currículo histórico</h4><p>autoescola alfa (2018-2021), central (2021-2023).</p></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-inst-agenda" data-role="instrutor">
-              <h2>instrutor • agenda operacional</h2>
-              <div class="table-wrap">
-                <table>
-                  <thead><tr><th>dia</th><th>turno</th><th>veículo</th><th>status</th><th>ação</th></tr></thead>
-                  <tbody>
-                    <tr><td>segunda</td><td>manhã</td><td>carro instrutor</td><td><span class="badge success">aberto</span></td><td><button class="btn flat" data-action="bloquear slot">bloquear</button></td></tr>
-                    <tr><td>terça</td><td>tarde</td><td>carro aluno</td><td><span class="badge success">aberto</span></td><td><button class="btn flat" data-action="bloquear slot">bloquear</button></td></tr>
-                    <tr><td>quarta</td><td>noite</td><td>ambos</td><td><span class="badge warn">lotado</span></td><td><button class="btn flat" data-action="abrir vaga">abrir vaga</button></td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <div class="grid cols-3" style="margin-top:0.75rem;">
-                <div class="card"><h4>projeção dia</h4><div class="kpi" id="proj-dia">R$ 480</div></div>
-                <div class="card"><h4>projeção semana</h4><div class="kpi" id="proj-semana">R$ 2.980</div></div>
-                <div class="card"><h4>projeção mês</h4><div class="kpi" id="proj-mes">R$ 11.420</div></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-inst-aulas" data-role="instrutor">
-              <h2>instrutor • aulas</h2>
-              <ul class="list">
-                <li><strong>07:30 • joão</strong><p class="muted">agendada</p></li>
-                <li><strong>09:00 • camila</strong><p class="muted">concluída</p></li>
-              </ul>
-            </article>
-
-            <article class="panel" id="panel-inst-financeiro" data-role="instrutor">
-              <h2>instrutor • financeiro</h2>
-              <div class="grid cols-2">
-                <div class="card"><h4>disponível</h4><div class="kpi">R$ 1.920</div></div>
-                <div class="card"><h4>pendente</h4><div class="kpi">R$ 460</div></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-inst-bancario" data-role="instrutor">
-              <h2>instrutor • dados bancários</h2>
-              <form class="form emulated-form" data-success="dados enviados para validação">
-                <div class="grid cols-2">
-                  <div class="field"><label>tipo</label><select><option>pix</option><option>conta</option></select></div>
-                  <div class="field"><label>titular</label><input value="Maria Santos" /></div>
-                </div>
-                <button class="btn" type="submit">salvar</button>
-              </form>
-            </article>
-
-            <article class="panel" id="panel-inst-disputas" data-role="instrutor">
-              <h2>instrutor • disputas</h2>
-              <ul class="list"><li><strong>disputa #2031</strong><p class="muted">em análise</p></li></ul>
-            </article>
-
-            <article class="panel" id="panel-inst-comunidade" data-role="instrutor">
-              <h2>instrutor • comunidade</h2>
-              <ul class="list"><li>dica: reduzir ansiedade com aquecimento de 10 min.</li></ul>
-            </article>
-
-            <!-- admin -->
-            <article class="panel" id="panel-admin-home" data-role="admin">
-              <h2>admin • dashboard</h2>
-              <div class="grid cols-3">
-                <div class="card"><h4>instrutores ativos</h4><div class="kpi">512</div></div>
-                <div class="card"><h4>alunos ativos</h4><div class="kpi">10.284</div></div>
-                <div class="card"><h4>gmv</h4><div class="kpi">R$ 428k</div></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-admin-gestao" data-role="admin">
-              <h2>admin • gerenciamento do instrutor (12 blocos)</h2>
-              <div class="grid cols-2">
-                <div class="card"><h4>1. identificação</h4><p>id, cpf mascarado, status, atividade.</p></div>
-                <div class="card"><h4>2. status operacional</h4><p>perfil/agenda/financeiro/termo carro.</p></div>
-                <div class="card"><h4>3. documentos</h4><p>rg/cnh, selfie, comprovação.</p></div>
-                <div class="card"><h4>4. perfil editável (visão admin)</h4><p>bio, tags, regiões, currículo.</p></div>
-                <div class="card"><h4>5. agenda</h4><p>abertos, bloqueados, ocupação.</p></div>
-                <div class="card"><h4>6. aulas</h4><p>id, status, confirmação, valor.</p></div>
-                <div class="card"><h4>7. financeiro interno</h4><p>faturado, pago, pendente, estorno.</p></div>
-                <div class="card"><h4>8. avaliações/conduta</h4><p>nota, flags, risco.</p></div>
-                <div class="card"><h4>9. disputas</h4><p>motivo, versões, decisão.</p></div>
-                <div class="card"><h4>10. comunicação/suporte</h4><p>chamados, mensagens, advertências.</p></div>
-                <div class="card"><h4>11. log de ações</h4><p>trilha auditável.</p></div>
-                <div class="card"><h4>12. ações administrativas</h4><p>suspender, travar, advertir, encerrar.</p></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-admin-financeiro" data-role="admin">
-              <h2>admin • financeiro</h2>
-              <div class="grid cols-3">
-                <div class="card"><h4>receita</h4><div class="kpi">R$ 428.000</div></div>
-                <div class="card"><h4>repasse</h4><div class="kpi">R$ 302.000</div></div>
-                <div class="card"><h4>taxa</h4><div class="kpi">R$ 126.000</div></div>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-admin-suporte" data-role="admin">
-              <h2>admin • suporte</h2>
-              <div class="chat" data-chat="admin">
-                <div class="chat-thread"><div class="bubble bot">ticket #1287 aberto.</div></div>
-                <div class="chat-input">
-                  <input type="text" placeholder="responder chamado..." />
-                  <button class="btn send-chat" type="button">enviar</button>
-                </div>
-              </div>
-            </article>
-
-            <!-- global -->
-            <article class="panel map-full" id="panel-mapas-full" data-role="all">
-              <h2>mapa full • aba dedicada</h2>
-              <div class="map-full-shell">
-                <aside class="map-full-left">
-                  <div class="field">
-                    <label for="map-search">destino / bairro</label>
-                    <input id="map-search" placeholder="ex: fraga maia" />
-                  </div>
-                  <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.5rem;">
-                    <button class="btn flat" data-map-dest="centro">centro</button>
-                    <button class="btn flat" data-map-dest="fraga maia">fraga maia</button>
-                    <button class="btn flat" data-map-dest="tomba">tomba</button>
-                    <button class="btn flat" data-map-dest="kalilândia">kalilândia</button>
-                    <button class="btn flat" data-map-dest="baliza">baliza</button>
-                  </div>
-                  <div class="card" style="margin-top:0.65rem;">
-                    <h4>navegação emulada</h4>
-                    <p id="map-route-text" class="muted">rota pronta. aguardando destino.</p>
-                    <div class="route-progress-wrap">
-                      <div class="route-progress-track">
-                        <div id="route-progress-bar" class="route-progress-bar"></div>
-                      </div>
-                      <div id="route-progress-label" class="muted">0%</div>
-                    </div>
-                    <div style="display:flex; gap:0.45rem; margin-top:0.45rem;">
-                      <button class="btn" id="btn-map-start">iniciar rota</button>
-                      <button class="btn flat" id="btn-map-pause">pausar</button>
-                      <button class="btn secondary" id="btn-map-arrived">cheguei</button>
-                    </div>
-                    <ul class="list" id="route-steps" style="margin-top:0.55rem;">
-                      <li>aguardando rota...</li>
-                    </ul>
-                  </div>
-                </aside>
-                <section class="map-full-right">
-                  <iframe id="map-canvas-full" class="map-frame-full" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=-38.9963%2C-12.2864%2C-38.9363%2C-12.2464&layer=mapnik&marker=-12.2664%2C-38.9663"></iframe>
-                </section>
-              </div>
-            </article>
-
-            <article class="panel" id="panel-ia-center" data-role="all">
-              <h2>central de ia • configuração local</h2>
-              <p class="muted">configuração da ia no navegador para comandos semânticos no chat/mapa. nenhuma chave é versionada no repositório.</p>
-              <form class="form" id="ai-config-form">
-                <div class="grid cols-2">
-                  <div class="field"><label for="ai-endpoint">endpoint</label><input id="ai-endpoint" value="https://integrate.api.nvidia.com/v1/chat/completions" /></div>
-                  <div class="field"><label for="ai-model">modelo</label><input id="ai-model" value="minimaxai/minimax-m2.5" /></div>
-                  <div class="field"><label for="ai-api-key">api key (local)</label><input id="ai-api-key" type="password" placeholder="colar aqui" /></div>
-                  <div class="field"><label for="ai-temperature">temperatura</label><input id="ai-temperature" type="number" step="0.1" min="0" max="1" value="0.2" /></div>
-                </div>
-                <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
-                  <button class="btn" type="button" id="save-ai-config">salvar local</button>
-                  <button class="btn secondary" type="button" id="clear-ai-config">limpar</button>
-                  <button class="btn flat" type="button" id="test-ai-config">testar chat/mapa</button>
-                </div>
-              </form>
-            </article>
-
-            <article class="panel" id="panel-runtime" data-role="all">
-              <h2>runtime emulado • monitor</h2>
-              <div class="grid cols-3">
-                <div class="card"><h4>estado sessão</h4><div class="kpi" id="rt-role">candidato</div></div>
-                <div class="card"><h4>destino atual</h4><div class="kpi" id="rt-destination">--</div></div>
-                <div class="card"><h4>modo ia</h4><div class="kpi" id="rt-ai">fallback local</div></div>
-              </div>
-              <div class="card" style="margin-top:0.75rem;">
-                <h4>eventos</h4>
-                <ul class="list" id="runtime-events">
-                  <li>sistema inicializado</li>
-                </ul>
-              </div>
-            </article>
-          </section>
-        </div>
-      </section>
-    </section>
-
-    <nav class="mobile-dock" aria-label="navegação rápida">
-      <button data-go-view="view-auth">🔐</button>
-      <button data-go-panel="panel-cand-home">🏠</button>
-      <button data-go-panel="panel-cand-chat">💬</button>
-      <button data-go-panel="panel-mapas-full">🗺️</button>
-      <button data-go-panel="panel-runtime">📡</button>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" data-screen="home" onclick="candidato.navigate('home')">
+        <span class="material-symbols-rounded">home</span>
+        <span>Início</span>
+      </button>
+      <button class="nav-item" data-screen="aulas" onclick="candidato.navigate('aulas')">
+        <span class="material-symbols-rounded">event</span>
+        <span>Aulas</span>
+      </button>
+      <button class="nav-item" data-screen="instrutor" onclick="candidato.navigate('instrutor')">
+        <span class="material-symbols-rounded">person</span>
+        <span>Instrutor</span>
+      </button>
+      <button class="nav-item" data-screen="perfil" onclick="candidato.navigate('perfil')">
+        <span class="material-symbols-rounded">account_circle</span>
+        <span>Perfil</span>
+      </button>
     </nav>
-  </main>
 
-  <div class="toast" id="toast"></div>
+  </div>
 
-  <script src="assets/app.js?v=claude-premium" defer></script>
+  <!-- ============================================ -->
+  <!-- APP INSTRUTOR -->
+  <!-- ============================================ -->
+  <div id="app-instrutor" class="screen">
+    
+    <!-- AppBar -->
+    <header class="app-bar">
+      <button class="icon-btn" id="instrutor-drawer-toggle">
+        <span class="material-symbols-rounded">menu</span>
+      </button>
+      <h1 id="instrutor-title">Dashboard</h1>
+      <button class="icon-btn" onclick="app.showNotifications()">
+        <span class="material-symbols-rounded">notifications</span>
+      </button>
+    </header>
+
+    <!-- Drawer Lateral -->
+    <aside id="instrutor-drawer" class="drawer">
+      <div class="drawer-header">
+        <img src="assets/img/instrutor-maria.jpg" alt="Maria Santos" class="drawer-avatar">
+        <h3>Maria Santos</h3>
+        <p>Verificada ✓</p>
+      </div>
+      <nav class="drawer-nav">
+        <button class="drawer-item active" data-screen="dashboard" onclick="instrutor.navigate('dashboard')">
+          <span class="material-symbols-rounded">dashboard</span>
+          <span>Dashboard</span>
+        </button>
+        <button class="drawer-item" data-screen="perfil" onclick="instrutor.navigate('perfil')">
+          <span class="material-symbols-rounded">person</span>
+          <span>Meu Perfil</span>
+        </button>
+        <button class="drawer-item" data-screen="agenda" onclick="instrutor.navigate('agenda')">
+          <span class="material-symbols-rounded">calendar_month</span>
+          <span>Agenda</span>
+        </button>
+        <button class="drawer-item" data-screen="midia" onclick="instrutor.navigate('midia')">
+          <span class="material-symbols-rounded">video_library</span>
+          <span>Mídia</span>
+        </button>
+        <button class="drawer-item" data-screen="resultados" onclick="instrutor.navigate('resultados')">
+          <span class="material-symbols-rounded">bar_chart</span>
+          <span>Resultados</span>
+        </button>
+        <button class="drawer-item" data-screen="financeiro" onclick="instrutor.navigate('financeiro')">
+          <span class="material-symbols-rounded">payments</span>
+          <span>Financeiro</span>
+        </button>
+        <button class="drawer-item" data-screen="bancarios" onclick="instrutor.navigate('bancarios')">
+          <span class="material-symbols-rounded">account_balance</span>
+          <span>Dados Bancários</span>
+        </button>
+        <button class="drawer-item" data-screen="aulas" onclick="instrutor.navigate('aulas')">
+          <span class="material-symbols-rounded">school</span>
+          <span>Aulas & Disputas</span>
+        </button>
+        <button class="drawer-item" data-screen="veiculo" onclick="instrutor.navigate('veiculo')">
+          <span class="material-symbols-rounded">directions_car</span>
+          <span>Veículo</span>
+        </button>
+        <button class="drawer-item" data-screen="comunidade" onclick="instrutor.navigate('comunidade')">
+          <span class="material-symbols-rounded">groups</span>
+          <span>Comunidade</span>
+        </button>
+        <button class="drawer-item" data-screen="suporte" onclick="instrutor.navigate('suporte')">
+          <span class="material-symbols-rounded">support_agent</span>
+          <span>Suporte</span>
+        </button>
+        <div class="drawer-divider"></div>
+        <button class="drawer-item" onclick="app.logout()">
+          <span class="material-symbols-rounded">logout</span>
+          <span>Sair</span>
+        </button>
+      </nav>
+    </aside>
+
+    <!-- Conteúdo -->
+    <main class="content with-drawer" id="instrutor-content">
+      <!-- Conteúdo dinâmico injetado via JS -->
+    </main>
+
+  </div>
+
+  <!-- ============================================ -->
+  <!-- APP ADMIN -->
+  <!-- ============================================ -->
+  <div id="app-admin" class="screen">
+    
+    <!-- AppBar -->
+    <header class="app-bar">
+      <button class="icon-btn" onclick="app.logout()">
+        <span class="material-symbols-rounded">arrow_back</span>
+      </button>
+      <h1 id="admin-title">Painel Administrativo</h1>
+      <button class="icon-btn" onclick="app.showNotifications()">
+        <span class="material-symbols-rounded">notifications</span>
+      </button>
+    </header>
+
+    <!-- Tabs Superiores -->
+    <nav class="tabs-nav" id="admin-tabs">
+      <button class="tab active" data-tab="overview" onclick="admin.navigate('overview')">Visão Geral</button>
+      <button class="tab" data-tab="instrutores" onclick="admin.navigate('instrutores')">Instrutores</button>
+      <button class="tab" data-tab="candidatos" onclick="admin.navigate('candidatos')">Candidatos</button>
+      <button class="tab" data-tab="financeiro" onclick="admin.navigate('financeiro')">Financeiro</button>
+      <button class="tab" data-tab="disputas" onclick="admin.navigate('disputas')">Disputas</button>
+    </nav>
+
+    <!-- Conteúdo -->
+    <main class="content with-tabs" id="admin-content">
+      <!-- Conteúdo dinâmico injetado via JS -->
+    </main>
+
+  </div>
+
+  <!-- Drawer Overlay -->
+  <div id="drawer-overlay" class="drawer-overlay"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/candidato.js"></script>
+  <script src="assets/js/instrutor.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/app.js"></script>
+  
+  <!-- Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('✅ Service Worker registrado'))
+        .catch(err => console.error('❌ Erro ao registrar SW:', err));
+    }
+  </script>
+
 </body>
 </html>

@@ -1,12 +1,14 @@
-const CACHE_NAME = 'cnh-mais-demo-pwa-v2-20260331';
+const CACHE_NAME = 'cnh-mais-demo-pwa-v3-20260330';
 const STATIC_ASSETS = [
   './',
   './index.html',
-  './assets/styles.css',
-  './assets/app.js',
-  './app.webmanifest',
-  './assets/icon-192.svg',
-  './assets/icon-512.svg'
+  './assets/css/styles.css',
+  './assets/js/app.js',
+  './assets/js/data.js',
+  './assets/js/candidato.js',
+  './assets/js/instrutor.js',
+  './assets/js/admin.js',
+  './app.webmanifest'
 ];
 
 self.addEventListener('install', (event) => {

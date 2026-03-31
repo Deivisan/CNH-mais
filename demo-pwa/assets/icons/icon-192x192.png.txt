@@ -1,0 +1,3 @@
+Placeholder: Criar ícone 192x192 com logo CNH+
+Cor de fundo: #1E3A5F (azul escuro)
+Texto: CNH+ em branco

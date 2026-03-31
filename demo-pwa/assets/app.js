@@ -1,29 +1,82 @@
-const panelButtons = Array.from(document.querySelectorAll('.menu-btn'));
+const screens = Array.from(document.querySelectorAll('.screen'));
+const menuButtons = Array.from(document.querySelectorAll('.menu-btn'));
 const panels = Array.from(document.querySelectorAll('.panel'));
-const quickGoButtons = Array.from(document.querySelectorAll('[data-go]'));
+const viewButtons = Array.from(document.querySelectorAll('[data-go-view]'));
+const panelJumpButtons = Array.from(document.querySelectorAll('[data-go-panel]'));
 const forms = Array.from(document.querySelectorAll('.emulated-form'));
 const actionButtons = Array.from(document.querySelectorAll('[data-action]'));
-const chooseInstrutorButtons = Array.from(document.querySelectorAll('.choose-instrutor'));
-const chatButtons = Array.from(document.querySelectorAll('.send-chat'));
-const mapPointButtons = Array.from(document.querySelectorAll('.map-point'));
 const toast = document.getElementById('toast');
 
-const AI_STORAGE_KEY = 'cnhplus_demo_pwa_ai_config';
-const MAP_DEFAULT_BBOX = '-38.9963%2C-12.2864%2C-38.9363%2C-12.2464';
+const roleLabel = document.getElementById('active-role-label');
+const rtRole = document.getElementById('rt-role');
+const rtDestination = document.getElementById('rt-destination');
+const rtAI = document.getElementById('rt-ai');
+const runtimeEvents = document.getElementById('runtime-events');
 
-const roleToPanel = {
-  candidato: 'panel-candidato-home',
-  instrutor: 'panel-instrutor-home',
+const pillAI = document.getElementById('pill-ai');
+const pillMap = document.getElementById('pill-map');
+const systemClock = document.getElementById('system-clock');
+
+const formLogin = document.getElementById('form-login-system');
+const formRegister = document.getElementById('form-register-system');
+const btnLogout = document.getElementById('btn-logout');
+
+const candChatSend = document.getElementById('cand-chat-send');
+const candChatInput = document.getElementById('cand-chat-input');
+const candChatThread = document.getElementById('cand-chat-thread');
+
+const mapCanvasFull = document.getElementById('map-canvas-full');
+const mapSearch = document.getElementById('map-search');
+const mapRouteText = document.getElementById('map-route-text');
+const btnMapStart = document.getElementById('btn-map-start');
+const btnMapArrived = document.getElementById('btn-map-arrived');
+
+const btnSaveAI = document.getElementById('save-ai-config');
+const btnClearAI = document.getElementById('clear-ai-config');
+const btnTestAI = document.getElementById('test-ai-config');
+
+const aiEndpointEl = document.getElementById('ai-endpoint');
+const aiModelEl = document.getElementById('ai-model');
+const aiKeyEl = document.getElementById('ai-api-key');
+const aiTempEl = document.getElementById('ai-temperature');
+
+const onbExp = document.getElementById('onb-exp');
+const onbAnx = document.getElementById('onb-anx');
+const onbCar = document.getElementById('onb-car');
+const onbObj = document.getElementById('onb-obj');
+const btnRecompute = document.getElementById('btn-recompute');
+
+const kpiProgress = document.getElementById('kpi-progress');
+const kpiInstrutor = document.getElementById('kpi-instrutor');
+const kpiNext = document.getElementById('kpi-next');
+
+const projDia = document.getElementById('proj-dia');
+const projSemana = document.getElementById('proj-semana');
+const projMes = document.getElementById('proj-mes');
+
+const AI_STORAGE_KEY = 'cnhplus_demo_pwa_ai_config';
+
+const state = {
+  role: 'candidato',
+  activeScreen: 'view-auth',
+  activePanel: 'panel-cand-home',
+  destination: null,
+  aiMode: 'fallback local'
+};
+
+const roleDefaultPanel = {
+  candidato: 'panel-cand-home',
+  instrutor: 'panel-inst-home',
   admin: 'panel-admin-home'
 };
 
 const bairroToPoint = {
   centro: { lat: -12.2664, lon: -38.9663, label: 'centro' },
   'fraga maia': { lat: -12.2525, lon: -38.9553, label: 'fraga maia' },
-  baliza: { lat: -12.2292, lon: -38.9751, label: 'baliza' },
+  tomba: { lat: -12.2924, lon: -38.9575, label: 'tomba' },
   kalilandia: { lat: -12.2572, lon: -38.9498, label: 'kalilândia' },
   'kalilândia': { lat: -12.2572, lon: -38.9498, label: 'kalilândia' },
-  tomba: { lat: -12.2924, lon: -38.9575, label: 'tomba' },
+  baliza: { lat: -12.2292, lon: -38.9751, label: 'baliza' },
   'feira de santana': { lat: -12.2664, lon: -38.9663, label: 'feira de santana' }
 };
 
@@ -31,35 +84,80 @@ function showToast(message) {
   if (!toast) return;
   toast.textContent = message;
   toast.classList.add('show');
-  window.clearTimeout(showToast._timer);
-  showToast._timer = window.setTimeout(() => toast.classList.remove('show'), 2400);
+  clearTimeout(showToast._timer);
+  showToast._timer = setTimeout(() => toast.classList.remove('show'), 2200);
 }
 
-function activatePanel(panelId) {
-  if (!panelId) return;
+function addRuntimeEvent(message) {
+  if (!runtimeEvents) return;
+  const li = document.createElement('li');
+  li.textContent = `${new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} • ${message}`;
+  runtimeEvents.prepend(li);
+}
 
-  panels.forEach((panel) => {
-    panel.classList.toggle('active', panel.id === panelId);
+function syncRuntimeUI() {
+  if (roleLabel) roleLabel.textContent = `perfil: ${state.role}`;
+  if (rtRole) rtRole.textContent = state.role;
+  if (rtDestination) rtDestination.textContent = state.destination || '--';
+  if (rtAI) rtAI.textContent = state.aiMode;
+  if (pillAI) pillAI.textContent = `ia: ${state.aiMode}`;
+  if (pillMap) pillMap.textContent = `mapa: ${state.destination || 'pronto'}`;
+}
+
+function setScreen(screenId) {
+  state.activeScreen = screenId;
+  screens.forEach((screen) => {
+    screen.classList.toggle('active', screen.id === screenId);
   });
+}
 
-  panelButtons.forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.panel === panelId);
-  });
+function isPanelAllowedForRole(panel, role) {
+  const panelRole = panel.dataset.role || 'all';
+  return panelRole === 'all' || panelRole === role;
+}
 
+function setPanel(panelId) {
+  const panel = document.getElementById(panelId);
+  if (!panel) return;
+
+  if (!isPanelAllowedForRole(panel, state.role)) {
+    showToast('painel não disponível para este perfil');
+    return;
+  }
+
+  state.activePanel = panelId;
+  panels.forEach((p) => p.classList.toggle('active', p.id === panelId));
+  menuButtons.forEach((btn) => btn.classList.toggle('active', btn.dataset.panel === panelId));
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-function buildMapEmbedUrl(lat, lon) {
+function updateRoleGroups() {
+  const groups = Array.from(document.querySelectorAll('[data-role-group]'));
+  groups.forEach((g) => {
+    g.classList.toggle('hidden', g.dataset.roleGroup !== state.role);
+  });
+}
+
+function setRole(role) {
+  state.role = role;
+  updateRoleGroups();
+  setPanel(roleDefaultPanel[role] || 'panel-cand-home');
+  syncRuntimeUI();
+  addRuntimeEvent(`perfil alterado para ${role}`);
+}
+
+function buildMapUrl(lat, lon) {
   const bbox = `${lon - 0.03}%2C${lat - 0.02}%2C${lon + 0.03}%2C${lat + 0.02}`;
   return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${lat}%2C${lon}`;
 }
 
-function updateMapByCoordinates(targetMapId, lat, lon, label = 'ponto') {
-  const iframe = document.getElementById(targetMapId);
-  if (!iframe) return false;
-  iframe.src = buildMapEmbedUrl(lat, lon);
-  showToast(`mapa atualizado: ${label} 🗺️`);
-  return true;
+function updateMap(point) {
+  if (!point || !mapCanvasFull) return;
+  mapCanvasFull.src = buildMapUrl(point.lat, point.lon);
+  state.destination = point.label;
+  if (mapRouteText) mapRouteText.textContent = `rota ajustada para ${point.label}`;
+  syncRuntimeUI();
+  addRuntimeEvent(`mapa reposicionado para ${point.label}`);
 }
 
 function findPointByText(text) {
@@ -67,24 +165,23 @@ function findPointByText(text) {
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '');
-
   for (const [bairro, point] of Object.entries(bairroToPoint)) {
-    const bairroNormalized = bairro
+    const key = bairro
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '');
-    if (normalized.includes(bairroNormalized)) return point;
+    if (normalized.includes(key)) return point;
   }
-
   return null;
 }
 
-function appendChatBubble(thread, text, type = 'bot') {
+function appendChat(text, side = 'bot') {
+  if (!candChatThread) return;
   const bubble = document.createElement('div');
-  bubble.className = `bubble ${type}`;
+  bubble.className = `bubble ${side}`;
   bubble.textContent = text;
-  thread.appendChild(bubble);
-  thread.scrollTop = thread.scrollHeight;
+  candChatThread.appendChild(bubble);
+  candChatThread.scrollTop = candChatThread.scrollHeight;
 }
 
 function getAIConfig() {
@@ -108,21 +205,14 @@ function clearAIConfig() {
 function loadAIConfigToForm() {
   const cfg = getAIConfig();
   if (!cfg) return;
-
-  const endpointEl = document.getElementById('ai-endpoint');
-  const modelEl = document.getElementById('ai-model');
-  const tempEl = document.getElementById('ai-temperature');
-
-  if (endpointEl && cfg.endpoint) endpointEl.value = cfg.endpoint;
-  if (modelEl && cfg.model) modelEl.value = cfg.model;
-  if (tempEl && typeof cfg.temperature === 'number') tempEl.value = String(cfg.temperature);
+  if (aiEndpointEl && cfg.endpoint) aiEndpointEl.value = cfg.endpoint;
+  if (aiModelEl && cfg.model) aiModelEl.value = cfg.model;
+  if (aiTempEl && typeof cfg.temperature === 'number') aiTempEl.value = String(cfg.temperature);
 }
 
-async function requestAIResponse(userText) {
+async function requestAI(message) {
   const cfg = getAIConfig();
-  if (!cfg?.endpoint || !cfg?.model || !cfg?.apiKey) {
-    return null;
-  }
+  if (!cfg?.endpoint || !cfg?.model || !cfg?.apiKey) return null;
 
   const body = {
     model: cfg.model,
@@ -131,13 +221,13 @@ async function requestAIResponse(userText) {
       {
         role: 'system',
         content:
-          'Você é assistente de rota da CNH+ demo PWA. Responda curto em pt-BR. Se o usuário pedir bairro/local, responda JSON válido no formato {"action":"move_map","destination":"nome","message":"texto"}. Se não for rota, use {"action":"chat","message":"texto"}. Se o usuário disser "cheguei", finalize com humor leve: "ah ops, eu sou só uma IA, programada por Deivison."'
+          'Você é um assistente de navegação da CNH+ Demo PWA. Responda sempre em JSON válido com chaves: action, destination (opcional), message. action pode ser move_map ou chat. Se usuário disser cheguei, responda com humor leve e inclua no fim: "ah ops, eu sou só uma IA, programada por Deivison."'
       },
-      { role: 'user', content: userText }
+      { role: 'user', content: message }
     ]
   };
 
-  const response = await fetch(cfg.endpoint, {
+  const res = await fetch(cfg.endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -146,236 +236,268 @@ async function requestAIResponse(userText) {
     body: JSON.stringify(body)
   });
 
-  if (!response.ok) {
-    throw new Error(`erro HTTP ${response.status}`);
-  }
-
-  const data = await response.json();
-  const content = data?.choices?.[0]?.message?.content;
-  if (!content) return null;
-  return String(content).trim();
+  if (!res.ok) throw new Error(`http ${res.status}`);
+  const data = await res.json();
+  return data?.choices?.[0]?.message?.content || null;
 }
 
-function parseAIAction(raw) {
+function parseAIResult(raw) {
   if (!raw) return null;
-
-  const sanitized = raw.replace(/^```json\s*/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
+  const clean = String(raw).replace(/^```json\s*/i, '').replace(/^```/i, '').replace(/```$/i, '').trim();
   try {
-    const parsed = JSON.parse(sanitized);
-    if (parsed && typeof parsed === 'object') return parsed;
+    return JSON.parse(clean);
   } catch {
-    // fallback para texto normal
+    return { action: 'chat', message: clean };
   }
-
-  return { action: 'chat', message: raw };
 }
 
-function localRouteLogic(userText) {
-  const text = userText.toLowerCase();
-
-  if (text.includes('cheguei')) {
-    return {
-      action: 'chat',
-      message: 'cheguei no ponto combinado ✅ ah ops, eu sou só uma ia, programada por Deivison. 😄'
-    };
+function fallbackAI(userText) {
+  const low = userText.toLowerCase();
+  if (low.includes('cheguei')) {
+    return { action: 'chat', message: 'cheguei no ponto ✅ ah ops, eu sou só uma IA, programada por Deivison. 😄' };
   }
-
-  const point = findPointByText(userText);
-  if (point) {
-    return {
-      action: 'move_map',
-      destination: point.label,
-      message: `rota ajustada para ${point.label}. já estou te guiando por esse trajeto.`
-    };
-  }
-
-  return {
-    action: 'chat',
-    message: 'entendi! posso te ajudar com rota para centro, fraga maia, tomba, kalilândia ou baliza.'
-  };
+  const p = findPointByText(userText);
+  if (p) return { action: 'move_map', destination: p.label, message: `indo para ${p.label}` };
+  return { action: 'chat', message: 'me diga um bairro de feira de santana para ajustar a rota.' };
 }
 
-async function handleCandidateChatWithAI(chatContainer, userText) {
-  const thread = chatContainer.querySelector('.chat-thread');
-  if (!thread) return;
+async function handleCandidateMessage(text) {
+  appendChat(text, 'me');
 
-  let aiAction = null;
-
+  let action = null;
   try {
-    const raw = await requestAIResponse(userText);
+    const raw = await requestAI(text);
     if (raw) {
-      aiAction = parseAIAction(raw);
+      action = parseAIResult(raw);
+      state.aiMode = 'nvidia nim ativo';
+    } else {
+      action = fallbackAI(text);
+      state.aiMode = 'fallback local';
     }
   } catch {
-    aiAction = null;
+    action = fallbackAI(text);
+    state.aiMode = 'fallback local';
   }
 
-  if (!aiAction) {
-    aiAction = localRouteLogic(userText);
-  }
+  syncRuntimeUI();
 
-  const actionType = (aiAction.action || '').toLowerCase();
-  const message = aiAction.message || 'ok';
-
-  if (actionType === 'move_map') {
-    const destination = aiAction.destination || userText;
-    const point = findPointByText(destination) || findPointByText(userText);
-    if (point) {
-      updateMapByCoordinates('map-candidato', point.lat, point.lon, point.label);
-      activatePanel('panel-candidato-mapas');
-      appendChatBubble(thread, `${message} 🧭`, 'bot');
+  if ((action?.action || '').toLowerCase() === 'move_map') {
+    const p = findPointByText(action.destination || text);
+    if (p) {
+      updateMap(p);
+      setPanel('panel-mapas-full');
+      appendChat(`${action.message || `rota ajustada para ${p.label}`}.`, 'bot');
       return;
     }
   }
 
-  appendChatBubble(thread, message, 'bot');
+  appendChat(action?.message || 'ok', 'bot');
 }
 
-function bindPanelsAndButtons() {
-  panelButtons.forEach((button) => {
-    button.addEventListener('click', () => activatePanel(button.dataset.panel));
+function recomputeSimulation() {
+  const exp = onbExp?.value || 'nunca';
+  const anx = onbAnx?.value || 'alta';
+  const car = onbCar?.value || 'não';
+  const obj = onbObj?.value || 'aprender com calma';
+
+  let base = 72;
+  if (exp === 'frequente') base += 8;
+  if (anx === 'baixa') base += 7;
+  if (car === 'sim') base += 5;
+  if (obj === 'passar rápido') base += 4;
+  if (base > 95) base = 95;
+
+  if (kpiProgress) kpiProgress.textContent = `${base}%`;
+  if (kpiNext) kpiNext.textContent = base > 80 ? 'hoje 16:00' : 'amanhã 08:00';
+
+  if (projDia) projDia.textContent = `R$ ${Math.round(420 + base * 0.8)}`;
+  if (projSemana) projSemana.textContent = `R$ ${Math.round(2500 + base * 6)}`;
+  if (projMes) projMes.textContent = `R$ ${Math.round(9800 + base * 22)}`;
+
+  addRuntimeEvent(`recomendação recalculada com base em perfil (${base}%)`);
+  showToast('plano e projeções atualizados (emulado)');
+}
+
+function bindBasicEvents() {
+  viewButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setScreen(btn.dataset.goView);
+      if (btn.dataset.goView === 'view-app') setPanel(state.activePanel);
+    });
   });
 
-  quickGoButtons.forEach((button) => {
-    button.addEventListener('click', () => activatePanel(button.dataset.go));
+  panelJumpButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setScreen('view-app');
+      setPanel(btn.dataset.goPanel);
+    });
+  });
+
+  menuButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      setPanel(btn.dataset.panel);
+    });
   });
 
   forms.forEach((form) => {
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      showToast(`${form.dataset.success || 'salvo'} ✅`);
+      addRuntimeEvent(form.dataset.success || 'formulário salvo');
+    });
+  });
 
-      const successMessage = form.dataset.success || 'ação simulada com sucesso';
-      const nextPanel = form.dataset.next;
+  actionButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      showToast(`${btn.dataset.action} (emulado)`);
+      addRuntimeEvent(`${btn.dataset.action} acionado`);
+    });
+  });
 
-      if (form.closest('#panel-login')) {
-        const roleSelect = form.querySelector('[data-login-role]');
-        const role = roleSelect?.value || 'candidato';
-        const rolePanel = roleToPanel[role] || 'panel-candidato-home';
-        showToast(`login ${role} emulado com sucesso ✅`);
-        activatePanel(rolePanel);
+  document.addEventListener('click', (e) => {
+    const choose = e.target.closest('.choose-instrutor');
+    const mapDest = e.target.closest('[data-map-dest]');
+    if (choose) {
+      const name = choose.dataset.name;
+      if (kpiInstrutor) kpiInstrutor.textContent = name;
+      showToast(`instrutor ativo: ${name}`);
+      addRuntimeEvent(`match selecionado: ${name}`);
+    }
+    if (mapDest) {
+      const p = bairroToPoint[mapDest.dataset.mapDest];
+      if (p) {
+        updateMap(p);
+        showToast(`destino: ${p.label}`);
+      }
+    }
+  });
+}
+
+function bindAuthEvents() {
+  formLogin?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const role = document.getElementById('auth-role')?.value || 'candidato';
+    setRole(role);
+    setScreen('view-app');
+    showToast(`sessão ${role} iniciada (emulado)`);
+    addRuntimeEvent(`login ${role}`);
+  });
+
+  formRegister?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    showToast('cadastro criado (emulado)');
+    addRuntimeEvent('cadastro emulado realizado');
+  });
+
+  document.getElementById('btn-login-google')?.addEventListener('click', () => {
+    setRole('candidato');
+    setScreen('view-app');
+    showToast('login google emulado');
+    addRuntimeEvent('login google emulado');
+  });
+
+  btnLogout?.addEventListener('click', () => {
+    setScreen('view-auth');
+    showToast('sessão encerrada');
+    addRuntimeEvent('logout');
+  });
+}
+
+function bindChatAndMapEvents() {
+  candChatSend?.addEventListener('click', async () => {
+    const text = candChatInput?.value?.trim();
+    if (!text) return;
+    candChatInput.value = '';
+    await handleCandidateMessage(text);
+  });
+
+  mapSearch?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const p = findPointByText(mapSearch.value || '');
+      if (!p) {
+        showToast('destino não reconhecido');
         return;
       }
-
-      showToast(`${successMessage} ✅`);
-
-      if (nextPanel) {
-        activatePanel(nextPanel);
-      }
-    });
+      updateMap(p);
+    }
   });
 
-  actionButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const action = button.dataset.action || 'ação';
-      showToast(`${action} (emulado)`);
-    });
+  btnMapStart?.addEventListener('click', () => {
+    if (!state.destination) {
+      showToast('defina um destino primeiro');
+      return;
+    }
+    if (mapRouteText) mapRouteText.textContent = `navegação iniciada para ${state.destination}`;
+    addRuntimeEvent(`navegação iniciada para ${state.destination}`);
+    showToast('navegação iniciada');
   });
 
-  chooseInstrutorButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const instrutor = button.dataset.name || 'instrutor';
-      const assignedEl = document.getElementById('assigned-instrutor');
-      if (assignedEl) assignedEl.textContent = instrutor;
-      showToast(`match confirmado com ${instrutor} 🚗`);
-      activatePanel('panel-candidato-home');
-    });
+  btnMapArrived?.addEventListener('click', () => {
+    appendChat('cheguei no destino ✅ ah ops, eu sou só uma ia, programada por Deivison. 😄', 'bot');
+    addRuntimeEvent('destino concluído');
+    showToast('rota finalizada');
   });
 }
 
-function bindMapButtons() {
-  mapPointButtons.forEach((button) => {
-    button.addEventListener('click', () => {
-      const target = button.dataset.mapTarget;
-      const lat = Number(button.dataset.lat);
-      const lon = Number(button.dataset.lon);
-      const label = button.dataset.label || 'ponto';
-      if (!target || Number.isNaN(lat) || Number.isNaN(lon)) return;
+function bindAIConfigEvents() {
+  btnSaveAI?.addEventListener('click', () => {
+    const cfg = {
+      endpoint: aiEndpointEl?.value?.trim(),
+      model: aiModelEl?.value?.trim(),
+      apiKey: aiKeyEl?.value?.trim(),
+      temperature: Number(aiTempEl?.value || 0.2)
+    };
+    if (!cfg.endpoint || !cfg.model || !cfg.apiKey) {
+      showToast('preencha endpoint, modelo e chave');
+      return;
+    }
+    setAIConfig(cfg);
+    state.aiMode = 'configurada (aguardando uso)';
+    syncRuntimeUI();
+    addRuntimeEvent('configuração de ia salva localmente');
+    showToast('configuração de ia salva localmente');
+  });
 
-      updateMapByCoordinates(target, lat, lon, label);
+  btnClearAI?.addEventListener('click', () => {
+    clearAIConfig();
+    if (aiKeyEl) aiKeyEl.value = '';
+    state.aiMode = 'fallback local';
+    syncRuntimeUI();
+    addRuntimeEvent('configuração de ia limpa');
+    showToast('configuração local removida');
+  });
 
-      const siblings = button.parentElement?.querySelectorAll('.map-point') || [];
-      siblings.forEach((item) => item.classList.remove('active'));
-      button.classList.add('active');
-    });
+  btnTestAI?.addEventListener('click', () => {
+    setPanel('panel-cand-chat');
+    setRole('candidato');
+    setScreen('view-app');
+    showToast('agora teste: "me leve para fraga maia"');
   });
 }
 
-function bindChat() {
-  chatButtons.forEach((button) => {
-    button.addEventListener('click', async () => {
-      const chatContainer = button.closest('.chat');
-      const input = chatContainer?.querySelector('input');
-      const thread = chatContainer?.querySelector('.chat-thread');
-      if (!input || !thread || !chatContainer) return;
-
-      const text = input.value.trim();
-      if (!text) return;
-
-      appendChatBubble(thread, text, 'me');
-      input.value = '';
-
-      if (chatContainer.dataset.chat === 'candidato') {
-        await handleCandidateChatWithAI(chatContainer, text);
-      } else {
-        window.setTimeout(() => {
-          appendChatBubble(thread, 'resposta automática da demo: mensagem recebida e registrada ✅', 'bot');
-        }, 450);
-      }
-    });
-  });
+function startClock() {
+  const tick = () => {
+    if (systemClock) {
+      systemClock.textContent = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    }
+  };
+  tick();
+  setInterval(tick, 10000);
 }
 
-function bindAIConfigPanel() {
-  const saveBtn = document.getElementById('save-ai-config');
-  const clearBtn = document.getElementById('clear-ai-config');
-  const testBtn = document.getElementById('test-ai-config');
-
-  const endpointEl = document.getElementById('ai-endpoint');
-  const modelEl = document.getElementById('ai-model');
-  const keyEl = document.getElementById('ai-api-key');
-  const tempEl = document.getElementById('ai-temperature');
-
-  if (saveBtn) {
-    saveBtn.addEventListener('click', () => {
-      const config = {
-        endpoint: endpointEl?.value?.trim(),
-        model: modelEl?.value?.trim(),
-        apiKey: keyEl?.value?.trim(),
-        temperature: Number(tempEl?.value || 0.2)
-      };
-
-      if (!config.endpoint || !config.model || !config.apiKey) {
-        showToast('preencha endpoint, modelo e api key para salvar.');
-        return;
-      }
-
-      setAIConfig(config);
-      showToast('configuração de ia salva localmente ✅');
-    });
-  }
-
-  if (clearBtn) {
-    clearBtn.addEventListener('click', () => {
-      clearAIConfig();
-      if (keyEl) keyEl.value = '';
-      showToast('configuração local removida.');
-    });
-  }
-
-  if (testBtn) {
-    testBtn.addEventListener('click', () => {
-      activatePanel('panel-candidato-chat');
-      showToast('digite no chat: "me leve para fraga maia" 🧠');
-    });
-  }
-}
-
-function bindKeyboardShortcuts() {
+function bindShortcuts() {
   window.addEventListener('keydown', (event) => {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
       event.preventDefault();
-      activatePanel('panel-login');
-      showToast('atalho: abriu login rápido 🔐');
+      setScreen('view-auth');
+      showToast('atalho: autenticação');
+    }
+    if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'm') {
+      event.preventDefault();
+      setScreen('view-app');
+      setPanel('panel-mapas-full');
+      showToast('atalho: mapa full');
     }
   });
 }
@@ -383,26 +505,25 @@ function bindKeyboardShortcuts() {
 function initServiceWorker() {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-      navigator.serviceWorker.register('./sw.js').catch(() => {
-        // ignora erro de sw em ambiente de preview
-      });
+      navigator.serviceWorker.register('./sw.js').catch(() => {});
     });
   }
 }
 
 function init() {
-  bindPanelsAndButtons();
-  bindMapButtons();
-  bindChat();
-  bindAIConfigPanel();
-  bindKeyboardShortcuts();
-  loadAIConfigToForm();
+  bindBasicEvents();
+  bindAuthEvents();
+  bindChatAndMapEvents();
+  bindAIConfigEvents();
+  bindShortcuts();
   initServiceWorker();
+  startClock();
+  loadAIConfigToForm();
+  setRole('candidato');
+  syncRuntimeUI();
 
-  const candidatoMap = document.getElementById('map-candidato');
-  if (candidatoMap && !candidatoMap.src) {
-    candidatoMap.src = `https://www.openstreetmap.org/export/embed.html?bbox=${MAP_DEFAULT_BBOX}&layer=mapnik&marker=-12.2664%2C-38.9663`;
-  }
+  btnRecompute?.addEventListener('click', recomputeSimulation);
+  addRuntimeEvent('sistema pronto para emulação contínua');
 }
 
 init();

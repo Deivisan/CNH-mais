@@ -8,14 +8,14 @@ protótipo navegável da cnh+ para validação de produto com fluxo completo **e
 - entregar um ambiente "appficado" para navegar todas as funcionalidades
 - demonstrar os 3 perfis (candidato, instrutor, admin) sem backend real
 
-## o que já está emulado
+## o que já está emulado (modo sistema)
 
-- login e cadastro dos 3 perfis
-- telas principais de candidato/instrutor/admin
-- chat simulado com resposta automática
-- chat com modo assistente ia opcional (nvidia nim / openai-compatible)
-- mapas com openstreetmap embed e troca de pontos
-- ações de match, agenda, financeiro e suporte (com feedback visual)
+- autenticação com seleção de perfil e troca de contexto no app
+- shell contínuo de sistema (sidebar + runtime + eventos)
+- jornadas operacionais para candidato, instrutor e admin
+- chat com interpretação semântica de rota (ia opcional + fallback local)
+- aba dedicada **mapa full** com controles de navegação
+- indicadores e projeções atualizadas por ações do usuário (emulação de tempo real)
 
 ## assistente ia (opcional)
 
@@ -23,7 +23,14 @@ protótipo navegável da cnh+ para validação de produto com fluxo completo **e
 - endpoint padrão: `https://integrate.api.nvidia.com/v1/chat/completions`
 - modelo padrão: `minimaxai/minimax-m2.5`
 - a chave é salva **somente no localStorage do navegador** (não versionada)
-- fallback local continua funcionando mesmo sem ia remota (rota por bairros conhecidos)
+- fallback local continua funcionando sem ia remota (bairro → mapa)
+
+## arquitetura de interação
+
+- `view-auth`: entrada no sistema
+- `view-app`: operação contínua estilo app android
+- `panel-mapas-full`: aba inteira de mapa dentro do sistema
+- `panel-runtime`: monitor de estado/eventos da sessão emulada
 
 ## limitações do github pages (estático)
 

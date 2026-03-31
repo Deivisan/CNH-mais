@@ -1,0 +1,942 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNH+ Demo PWA - fluxo completo emulado</title>
+  <meta name="description" content="Demo web appificada da CNH+ com fluxo completo emulado para candidato, instrutor e admin." />
+  <meta name="theme-color" content="#1e3a5f" />
+  <link rel="manifest" href="app.webmanifest" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+  <div class="demo-tag">🧪 protótipo navegável (emulado) | github pages + pwa estático</div>
+
+  <header class="app-topbar">
+    <div class="app-topbar-inner">
+      <a class="brand" href="../">
+        <span class="brand-logo">🚗</span>
+        <span>CNH+ demo pwa</span>
+      </a>
+      <div class="top-links">
+        <a class="chip-link" href="../">← voltar landing</a>
+        <button class="chip-link" data-go="panel-login">login rápido</button>
+        <button class="chip-link" data-go="panel-candidato-home">fluxo candidato</button>
+        <button class="chip-link" data-go="panel-instrutor-home">fluxo instrutor</button>
+        <button class="chip-link" data-go="panel-admin-home">fluxo admin</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="hero">
+      <h1>visualização completa do produto (web appificada)</h1>
+      <p>
+        este ambiente simula login/cadastro dos 3 perfis, telas completas, chat emulado, mapa de rotas,
+        agenda e financeiro. objetivo: apresentar o fluxo total do produto antes da fase de backend/apk final.
+      </p>
+      <div class="hero-actions">
+        <button class="btn secondary" data-go="panel-boas-vindas">🏠 visão geral</button>
+        <button class="btn secondary" data-go="panel-cadastro-candidato">🎓 cadastro candidato</button>
+        <button class="btn secondary" data-go="panel-cadastro-instrutor">🚗 cadastro instrutor</button>
+        <button class="btn secondary" data-go="panel-cadastro-admin">👑 cadastro admin</button>
+        <button class="btn secondary" data-go="panel-roadmap">🗺️ roadmap 20 dias</button>
+      </div>
+    </section>
+
+    <section class="layout">
+      <aside class="sidebar">
+        <h3>navegação completa</h3>
+
+        <h3>autenticação</h3>
+        <ul class="menu-list">
+          <li><button class="menu-btn active" data-panel="panel-boas-vindas">✨ boas-vindas</button></li>
+          <li><button class="menu-btn" data-panel="panel-roadmap">🗺️ roadmap 20 dias</button></li>
+          <li><button class="menu-btn" data-panel="panel-login">🔐 login</button></li>
+          <li><button class="menu-btn" data-panel="panel-cadastro-candidato">📝 cadastro candidato</button></li>
+          <li><button class="menu-btn" data-panel="panel-cadastro-instrutor">📝 cadastro instrutor</button></li>
+          <li><button class="menu-btn" data-panel="panel-cadastro-admin">📝 cadastro admin</button></li>
+        </ul>
+
+        <h3 style="margin-top:0.85rem;">candidato (9 telas)</h3>
+        <ul class="menu-list">
+          <li><button class="menu-btn" data-panel="panel-candidato-onboarding">🧭 onboarding completo</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-home">🏠 home</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-aulas">📅 minhas aulas</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-match">🤖 match instrutor</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-pagamentos">💳 pagamentos</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-perfil">👤 perfil</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-ia">🧠 assistente ia</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-chat">💬 chat</button></li>
+          <li><button class="menu-btn" data-panel="panel-candidato-mapas">🗺️ mapas</button></li>
+        </ul>
+
+        <h3 style="margin-top:0.85rem;">instrutor (15 telas)</h3>
+        <ul class="menu-list">
+          <li><button class="menu-btn" data-panel="panel-instrutor-home">🏠 home</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-perfil-publico">🪪 perfil público (visão candidato)</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-agenda">🗓️ agenda</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-aulas">🚦 aulas</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-financeiro">💰 financeiro</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-perfil">👤 perfil</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-media">🎬 mídia</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-desempenho">📈 desempenho</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-bancario">🏦 dados bancários</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-disputas">⚖️ aulas & disputas</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-carro">🚘 carro/aluguel</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-comunidade">👥 educação & comunidade</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-chat">💬 chat</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-suporte">🆘 suporte</button></li>
+          <li><button class="menu-btn" data-panel="panel-instrutor-mapas">🗺️ mapas</button></li>
+        </ul>
+
+        <h3 style="margin-top:0.85rem;">admin (8 telas)</h3>
+        <ul class="menu-list">
+          <li><button class="menu-btn" data-panel="panel-admin-home">📊 dashboard</button></li>
+          <li><button class="menu-btn" data-panel="panel-admin-gestao-instrutor">🧩 tela 4: gerenciamento instrutor</button></li>
+          <li><button class="menu-btn" data-panel="panel-admin-instrutores">👨‍🏫 instrutores</button></li>
+          <li><button class="menu-btn" data-panel="panel-admin-alunos">🎓 alunos</button></li>
+          <li><button class="menu-btn" data-panel="panel-admin-aulas">📍 aulas</button></li>
+          <li><button class="menu-btn" data-panel="panel-admin-financeiro">💹 financeiro</button></li>
+          <li><button class="menu-btn" data-panel="panel-admin-config">⚙️ configurações</button></li>
+          <li><button class="menu-btn" data-panel="panel-admin-suporte">🆘 suporte/chat</button></li>
+        </ul>
+      </aside>
+
+      <article class="content-card">
+        <section class="panel active" id="panel-boas-vindas">
+          <h2>fluxo total do produto (emulação funcional)</h2>
+          <p class="muted" style="margin-bottom:0.8rem;">este ambiente foi pensado para apresentação comercial e validação de ux, sem backend real.</p>
+          <div class="grid cols-3">
+            <div class="card">
+              <h4>🎯 objetivo da demo</h4>
+              <p>mostrar o app "quase real" no navegador, com navegação completa e interações clicáveis.</p>
+            </div>
+            <div class="card">
+              <h4>🧪 estado atual</h4>
+              <p><span class="badge warn">aguardando aprovação visual</span> da landing principal para ajustes finais.</p>
+            </div>
+            <div class="card">
+              <h4>📦 entrega de produto</h4>
+              <p>páginas com fluxo completo de uso para candidato, instrutor e admin, incluindo chat e mapas.</p>
+            </div>
+          </div>
+
+          <div class="grid cols-2" style="margin-top:0.75rem;">
+            <div class="card">
+              <h4>rotas rápidas</h4>
+              <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.5rem;">
+                <button class="btn flat" data-go="panel-login">login</button>
+                <button class="btn flat" data-go="panel-candidato-match">match</button>
+                <button class="btn flat" data-go="panel-candidato-ia">assistente ia</button>
+                <button class="btn flat" data-go="panel-candidato-chat">chat candidato</button>
+                <button class="btn flat" data-go="panel-candidato-mapas">mapas candidato</button>
+                <button class="btn flat" data-go="panel-instrutor-agenda">agenda instrutor</button>
+                <button class="btn flat" data-go="panel-admin-home">dashboard admin</button>
+                <button class="btn flat" data-go="panel-admin-gestao-instrutor">gestão instrutor (backoffice)</button>
+              </div>
+            </div>
+            <div class="card">
+              <h4>avisos</h4>
+              <ul class="list">
+                <li>⚠️ dados, valores e mensagens são emulados para storytelling do produto.</li>
+                <li>🌐 ideal para github pages (100% estático).</li>
+                <li>📱 visual pensado para parecer aplicativo/pwa.</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-roadmap">
+          <h2>roadmap de execução (20 dias)</h2>
+          <p class="muted" style="margin-bottom:0.8rem;">planejamento incremental para sair de protótipo navegável para entrega sólida e apresentável.</p>
+          <div class="grid cols-2">
+            <div class="card">
+              <h4>dias 1-5 • fundação</h4>
+              <ul class="list">
+                <li>ajuste fino da arquitetura da demo pwa</li>
+                <li>mapa de telas vs especificação (gap analysis)</li>
+                <li>padronização visual e conteúdo</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>dias 6-10 • cobertura funcional</h4>
+              <ul class="list">
+                <li>onboarding completo do candidato</li>
+                <li>perfil público do instrutor (8 seções)</li>
+                <li>painel instrutor com 10 abas</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>dias 11-15 • backoffice e robustez</h4>
+              <ul class="list">
+                <li>tela 4 admin (12 blocos) consolidada</li>
+                <li>emulação de disputa e auditoria</li>
+                <li>validação de copy e consistência de regras</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>dias 16-20 • apresentação e handoff</h4>
+              <ul class="list">
+                <li>polimento ux/ui e acessibilidade básica</li>
+                <li>roteiro de demonstração ponta-a-ponta</li>
+                <li>pacote final pronto para publicar no pages</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-login">
+          <h2>login (3 perfis)</h2>
+          <p class="muted" style="margin-bottom:0.8rem;">emulação de autenticação com redirecionamento para a home de cada perfil.</p>
+          <form class="form emulated-form" data-success="login emulado com sucesso" data-next="panel-candidato-home">
+            <div class="grid cols-2">
+              <div class="field">
+                <label for="login-email">e-mail</label>
+                <input id="login-email" type="email" value="demo@cnhmais.com" required />
+              </div>
+              <div class="field">
+                <label for="login-senha">senha</label>
+                <input id="login-senha" type="password" value="123456" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="login-perfil">perfil</label>
+              <select id="login-perfil" data-login-role>
+                <option value="candidato">candidato</option>
+                <option value="instrutor">instrutor</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+              <button class="btn" type="submit">entrar</button>
+              <button class="btn secondary" type="button" data-action="google">entrar com google (emulado)</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-cadastro-candidato">
+          <h2>cadastro candidato</h2>
+          <form class="form emulated-form" data-success="cadastro de candidato concluído" data-next="panel-candidato-home">
+            <div class="grid cols-2">
+              <div class="field"><label>nome completo</label><input required value="João Almeida" /></div>
+              <div class="field"><label>cpf</label><input required value="000.000.000-00" /></div>
+            </div>
+            <div class="grid cols-2">
+              <div class="field"><label>celular</label><input required value="(75) 99999-0000" /></div>
+              <div class="field"><label>cidade</label><input required value="Feira de Santana" /></div>
+            </div>
+            <div class="grid cols-2">
+              <div class="field">
+                <label>experiência</label>
+                <select><option>nunca dirigi</option><option>poucas vezes</option><option>frequente</option></select>
+              </div>
+              <div class="field">
+                <label>ansiedade ao dirigir</label>
+                <select><option>alta</option><option>média</option><option>baixa</option></select>
+              </div>
+            </div>
+            <button class="btn" type="submit">salvar cadastro</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-cadastro-instrutor">
+          <h2>cadastro instrutor</h2>
+          <form class="form emulated-form" data-success="cadastro de instrutor enviado para aprovação" data-next="panel-instrutor-home">
+            <div class="grid cols-2">
+              <div class="field"><label>nome</label><input required value="Maria Santos" /></div>
+              <div class="field"><label>cpf</label><input required value="111.111.111-11" /></div>
+            </div>
+            <div class="grid cols-2">
+              <div class="field"><label>telefone</label><input required value="(75) 98888-1122" /></div>
+              <div class="field"><label>cidade</label><input required value="Feira de Santana" /></div>
+            </div>
+            <div class="field"><label>especialidades</label><input value="ansiosos, baliza, prova prática" /></div>
+            <div class="field"><label>biografia</label><textarea>Instrutora com 8 anos de experiência e foco em aprovação com segurança.</textarea></div>
+            <button class="btn" type="submit">enviar para aprovação</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-cadastro-admin">
+          <h2>cadastro admin</h2>
+          <form class="form emulated-form" data-success="conta admin criada (ambiente demo)" data-next="panel-admin-home">
+            <div class="grid cols-2">
+              <div class="field"><label>nome</label><input required value="Gestão CNH+" /></div>
+              <div class="field"><label>e-mail corporativo</label><input required type="email" value="admin@cnhmais.com.br" /></div>
+            </div>
+            <div class="grid cols-2">
+              <div class="field"><label>nível de acesso</label><select><option>super admin</option><option>financeiro</option><option>suporte</option></select></div>
+              <div class="field"><label>código interno</label><input required value="CNH-ADM-001" /></div>
+            </div>
+            <button class="btn" type="submit">criar conta admin</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-candidato-onboarding">
+          <h2>candidato • onboarding completo</h2>
+          <p class="muted" style="margin-bottom:0.7rem;">fluxo: login google → cadastro rápido → perfil comportamental → recomendação → pagamento → match.</p>
+          <div class="grid cols-2">
+            <div class="card">
+              <h4>etapa 1 • acesso inicial</h4>
+              <ul class="list">
+                <li>login via google (emulado)</li>
+                <li>aceite de termos e privacidade</li>
+                <li>captura: nome, email, foto opcional</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>etapa 2 • cadastro rápido</h4>
+              <ul class="list">
+                <li>cpf, celular, cidade/bairro</li>
+                <li>renach manual (sem integração detran)</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:0.75rem;">
+            <h4>etapa 3 • questionário de perfil</h4>
+            <div class="grid cols-2" style="margin-top:0.5rem;">
+              <div class="field"><label>já abriu processo?</label><select><option>sim</option><option>não</option></select></div>
+              <div class="field"><label>já passou na teórica?</label><select><option>sim</option><option>não</option></select></div>
+              <div class="field"><label>experiência</label><select><option>nunca</option><option>poucas vezes</option><option>frequente</option></select></div>
+              <div class="field"><label>ansiedade ao dirigir</label><select><option>alta</option><option>média</option><option>baixa</option></select></div>
+              <div class="field"><label>já reprovou no prático?</label><select><option>sim</option><option>não</option></select></div>
+              <div class="field"><label>maior dificuldade</label><select><option>baliza</option><option>controle do carro</option><option>rotatórias</option><option>todas</option></select></div>
+              <div class="field"><label>objetivo</label><select><option>aprender com calma</option><option>passar rápido</option><option>ficar muito bom</option></select></div>
+              <div class="field"><label>tem carro?</label><select><option>sim</option><option>não</option><option>às vezes</option></select></div>
+            </div>
+            <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.7rem;">
+              <button class="btn flat" data-action="calcular recomendação">calcular recomendação</button>
+              <button class="btn flat" data-go="panel-candidato-pagamentos">ir para pagamento</button>
+              <button class="btn flat" data-go="panel-candidato-match">ir para match</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-candidato-home">
+          <h2>candidato • home</h2>
+          <div class="grid cols-3">
+            <div class="card"><h4>progresso</h4><div class="kpi">68%</div><p class="muted">8 de 12 aulas concluídas</p></div>
+            <div class="card"><h4>instrutor atual</h4><div class="kpi" id="assigned-instrutor">maria santos</div><p class="muted">rating 4.8 ⭐</p></div>
+            <div class="card"><h4>próxima aula</h4><div class="kpi">amanhã 08:00</div><p class="muted">av. noide cerqueira</p></div>
+          </div>
+          <div class="card" style="margin-top:0.75rem;">
+            <h4>ações rápidas</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:0.45rem; margin-top:0.5rem;">
+              <button class="btn flat" data-go="panel-candidato-aulas">ver aulas</button>
+              <button class="btn flat" data-go="panel-candidato-match">trocar instrutor (match)</button>
+              <button class="btn flat" data-go="panel-candidato-chat">abrir chat</button>
+              <button class="btn flat" data-go="panel-candidato-mapas">abrir mapa</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-candidato-aulas">
+          <h2>candidato • minhas aulas</h2>
+          <ul class="list">
+            <li>
+              <strong>31/03 • 08:00 • prática urbana</strong>
+              <p class="muted">instrutora maria santos • av. fraga maia</p>
+              <div style="display:flex; gap:0.45rem; margin-top:0.5rem;">
+                <button class="btn flat" data-action="confirmar">confirmar aula</button>
+                <button class="btn secondary" data-action="reagendar">reagendar</button>
+              </div>
+            </li>
+            <li>
+              <strong>02/04 • 09:00 • baliza</strong>
+              <p class="muted">instrutora maria santos • estacionamento central</p>
+            </li>
+          </ul>
+        </section>
+
+        <section class="panel" id="panel-candidato-match">
+          <h2>candidato • match inteligente</h2>
+          <p class="muted" style="margin-bottom:0.7rem;">ranking emulado com base em especialidade, nota, pontualidade e distância.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>instrutor</th><th>especialidade</th><th>nota</th><th>distância</th><th>score</th><th>ação</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>maria santos</td><td>ansiedade / baliza</td><td>4.8</td><td>2.1 km</td><td>92</td><td><button class="btn flat choose-instrutor" data-name="maria santos">selecionar</button></td></tr>
+                <tr><td>carlos silva</td><td>iniciantes</td><td>4.9</td><td>6.3 km</td><td>88</td><td><button class="btn flat choose-instrutor" data-name="carlos silva">selecionar</button></td></tr>
+                <tr><td>pedro oliveira</td><td>carro próprio</td><td>4.7</td><td>4.5 km</td><td>84</td><td><button class="btn flat choose-instrutor" data-name="pedro oliveira">selecionar</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-candidato-pagamentos">
+          <h2>candidato • pagamentos</h2>
+          <div class="grid cols-3">
+            <div class="card"><h4>pacote básico</h4><p>8 aulas • R$ 960</p><button class="btn flat" data-action="comprar básico">comprar</button></div>
+            <div class="card"><h4>pacote recomendado</h4><p>12 aulas • R$ 1.380</p><button class="btn flat" data-action="comprar recomendado">comprar</button></div>
+            <div class="card"><h4>pacote intensivo</h4><p>20 aulas • R$ 2.180</p><button class="btn flat" data-action="comprar intensivo">comprar</button></div>
+          </div>
+          <div class="table-wrap" style="margin-top:0.75rem;">
+            <table>
+              <thead><tr><th>data</th><th>descrição</th><th>valor</th><th>status</th></tr></thead>
+              <tbody>
+                <tr><td>29/03</td><td>pacote recomendado</td><td>R$ 1.380,00</td><td><span class="badge success">aprovado</span></td></tr>
+                <tr><td>27/03</td><td>aula avulsa</td><td>R$ 120,00</td><td><span class="badge warn">retido até confirmação</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-candidato-perfil">
+          <h2>candidato • perfil</h2>
+          <form class="form emulated-form" data-success="perfil do candidato atualizado">
+            <div class="grid cols-2">
+              <div class="field"><label>nome</label><input value="João Almeida" /></div>
+              <div class="field"><label>e-mail</label><input value="joao@email.com" /></div>
+            </div>
+            <div class="grid cols-2">
+              <div class="field"><label>objetivo</label><select><option>aprender com calma</option><option>passar rápido</option><option>ficar muito bom</option></select></div>
+              <div class="field"><label>tem carro</label><select><option>às vezes</option><option>sim</option><option>não</option></select></div>
+            </div>
+            <button class="btn" type="submit">salvar</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-candidato-ia">
+          <h2>candidato • assistente ia (opcional)</h2>
+          <p class="muted" style="margin-bottom:0.7rem;">configuração local no navegador (não salva no repositório). usado para interpretar mensagens de rota e acionar o mapa automaticamente.</p>
+          <form class="form" id="ai-config-form">
+            <div class="grid cols-2">
+              <div class="field">
+                <label for="ai-endpoint">endpoint (openai compatível)</label>
+                <input id="ai-endpoint" value="https://integrate.api.nvidia.com/v1/chat/completions" />
+              </div>
+              <div class="field">
+                <label for="ai-model">modelo</label>
+                <input id="ai-model" value="minimaxai/minimax-m2.5" />
+              </div>
+              <div class="field">
+                <label for="ai-api-key">api key (uso local)</label>
+                <input id="ai-api-key" type="password" placeholder="cole sua chave aqui (não versionar)" />
+              </div>
+              <div class="field">
+                <label for="ai-temperature">temperatura</label>
+                <input id="ai-temperature" type="number" min="0" max="1" step="0.1" value="0.2" />
+              </div>
+            </div>
+            <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+              <button class="btn" type="button" id="save-ai-config">salvar configuração local</button>
+              <button class="btn secondary" type="button" id="clear-ai-config">limpar configuração local</button>
+              <button class="btn flat" type="button" id="test-ai-config">testar assistente no chat</button>
+            </div>
+          </form>
+
+          <div class="card" style="margin-top:0.75rem;">
+            <h4>exemplos de comando no chat</h4>
+            <ul class="list">
+              <li>"me leve para fraga maia"</li>
+              <li>"quero ir para tomba"</li>
+              <li>"rota até kalilândia"</li>
+              <li>"cheguei"</li>
+            </ul>
+            <p class="muted">quando possível, o assistente ajusta o mapa automaticamente e responde no chat com contexto de rota.</p>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-candidato-chat">
+          <h2>candidato • chat com instrutor</h2>
+          <div class="chat" data-chat="candidato">
+            <div class="chat-thread">
+              <div class="bubble bot">olá, joão! confirmamos sua aula de amanhã às 08:00 🚗</div>
+              <div class="bubble me">consigo antecipar para 07:30?</div>
+              <div class="bubble bot">consigo sim. posso te buscar no ponto combinado às 07:25.</div>
+            </div>
+            <div class="chat-hint">dica: experimente comandos como <code>me leve para fraga maia</code> para a ia tentar ajustar o mapa automaticamente.</div>
+            <div class="chat-input">
+              <input type="text" placeholder="digite sua mensagem..." />
+              <button class="btn send-chat" type="button">enviar</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-candidato-mapas">
+          <h2>candidato • mapas e rota da aula</h2>
+          <div class="map-box" data-map-box>
+            <div class="map-toolbar">
+              <button class="map-point active" data-map-target="map-candidato" data-lat="-12.2664" data-lon="-38.9663" data-label="ponto de encontro - centro">centro</button>
+              <button class="map-point" data-map-target="map-candidato" data-lat="-12.2292" data-lon="-38.9751" data-label="baliza - estacionamento">baliza</button>
+              <button class="map-point" data-map-target="map-candidato" data-lat="-12.2525" data-lon="-38.9553" data-label="treino urbano - fraga maia">fraga maia</button>
+            </div>
+            <iframe id="map-candidato" class="map-frame" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=-38.9963%2C-12.2864%2C-38.9363%2C-12.2464&layer=mapnik&marker=-12.2664%2C-38.9663"></iframe>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-home">
+          <h2>instrutor • home</h2>
+          <div class="grid cols-3">
+            <div class="card"><h4>aulas hoje</h4><div class="kpi">5</div><p class="muted">1 em andamento</p></div>
+            <div class="card"><h4>pontualidade</h4><div class="kpi">96%</div><p class="muted">últimos 30 dias</p></div>
+            <div class="card"><h4>saldo disponível</h4><div class="kpi">R$ 1.920</div><p class="muted">repasse semanal</p></div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-perfil-publico">
+          <h2>instrutor • perfil público (visão do candidato)</h2>
+          <div class="card">
+            <h4>seção 1 • identidade e confiança</h4>
+            <p><strong>maria santos</strong> • <span class="badge success">instrutor verificado</span> • 📍 feira de santana/ba</p>
+            <p>⭐ 4,8 (120 avaliações)</p>
+            <div style="display:flex; gap:0.45rem; flex-wrap:wrap; margin-top:0.5rem;">
+              <button class="btn flat" data-action="agendar aula">agendar aula</button>
+              <button class="btn flat" data-go="panel-instrutor-agenda">ver horários disponíveis</button>
+              <button class="btn flat" data-go="panel-candidato-chat">enviar mensagem</button>
+            </div>
+          </div>
+
+          <div class="grid cols-2" style="margin-top:0.75rem;">
+            <div class="card">
+              <h4>seção 2 • indicadores objetivos</h4>
+              <ul class="list">
+                <li>1.250h no app</li>
+                <li>340 alunos atendidos</li>
+                <li>pontualidade: 96%</li>
+                <li>cancelamentos: baixo</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>seção 3 • sobre o instrutor</h4>
+              <p>“instrutora há 8 anos. foco em alunos iniciantes e pessoas com ansiedade, com didática calma e técnica.”</p>
+            </div>
+            <div class="card">
+              <h4>seção 4 • estilo e especialidades</h4>
+              <p>estilo: calmo e paciente • motivador</p>
+              <p>especialidades: iniciantes • baliza • ansiosos • reforço pré-prova</p>
+            </div>
+            <div class="card">
+              <h4>seção 5 • logística da aula</h4>
+              <p>veículo: manual / automático</p>
+              <p>regiões: fraga maia, centro, avenida noide</p>
+              <p>dias: seg a sáb • turnos: manhã e tarde</p>
+            </div>
+          </div>
+
+          <div class="grid cols-2" style="margin-top:0.75rem;">
+            <div class="card">
+              <h4>seção 6 • avaliações</h4>
+              <p>nota média 4,8 • total 120 avaliações</p>
+              <ul class="list">
+                <li>“didática excelente na baliza.”</li>
+                <li>“muito pontual e paciente.”</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>seção 7 • regras e políticas</h4>
+              <ul class="list">
+                <li>cancelamento conforme política da plataforma</li>
+                <li>prazo mínimo para remarcação</li>
+                <li>suporte oficial pelo app</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:0.75rem;">
+            <h4>seção 8 • currículo profissional (histórico)</h4>
+            <ul class="list">
+              <li>autoescola alfa — cuiabá/mt (2018–2021)</li>
+              <li>autoescola central — várzea grande/mt (2021–2023)</li>
+            </ul>
+            <p class="muted">histórico curricular; sem vínculo operacional com autoescola.</p>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-agenda">
+          <h2>instrutor • agenda</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>dia</th><th>turno</th><th>status</th><th>ação</th></tr></thead>
+              <tbody>
+                <tr><td>segunda</td><td>manhã</td><td><span class="badge success">disponível</span></td><td><button class="btn flat" data-action="bloquear segunda manhã">bloquear</button></td></tr>
+                <tr><td>terça</td><td>tarde</td><td><span class="badge success">disponível</span></td><td><button class="btn flat" data-action="bloquear terça tarde">bloquear</button></td></tr>
+                <tr><td>quarta</td><td>noite</td><td><span class="badge warn">lotado</span></td><td><button class="btn flat" data-action="abrir vaga extra">abrir vaga</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-aulas">
+          <h2>instrutor • aulas</h2>
+          <ul class="list">
+            <li><strong>07:30 • joão almeida • prática urbana</strong><p class="muted">status: agendada</p></li>
+            <li><strong>09:00 • camila rocha • baliza</strong><p class="muted">status: concluída</p></li>
+            <li><strong>10:30 • renato lima • prova prática</strong><p class="muted">status: aguardando confirmação do aluno</p></li>
+          </ul>
+        </section>
+
+        <section class="panel" id="panel-instrutor-financeiro">
+          <h2>instrutor • financeiro</h2>
+          <div class="grid cols-2">
+            <div class="card"><h4>saldo disponível</h4><div class="kpi">R$ 1.920,00</div></div>
+            <div class="card"><h4>saldo pendente</h4><div class="kpi">R$ 460,00</div></div>
+          </div>
+          <div class="table-wrap" style="margin-top:0.75rem;">
+            <table>
+              <thead><tr><th>data</th><th>aluno</th><th>valor</th><th>status</th></tr></thead>
+              <tbody>
+                <tr><td>30/03</td><td>joão almeida</td><td>R$ 120</td><td><span class="badge warn">retido</span></td></tr>
+                <tr><td>29/03</td><td>camila rocha</td><td>R$ 120</td><td><span class="badge success">liberado</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-perfil">
+          <h2>instrutor • perfil</h2>
+          <form class="form emulated-form" data-success="perfil do instrutor atualizado">
+            <div class="grid cols-2">
+              <div class="field"><label>nome</label><input value="Maria Santos" /></div>
+              <div class="field"><label>cidade</label><input value="Feira de Santana" /></div>
+            </div>
+            <div class="field"><label>especialidades</label><input value="ansiosos, baliza, prova prática" /></div>
+            <div class="field"><label>biografia</label><textarea>Instrutora com foco em aprovação e direção segura.</textarea></div>
+            <button class="btn" type="submit">salvar perfil</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-instrutor-media">
+          <h2>instrutor • mídia (vídeos)</h2>
+          <div class="card">
+            <p class="muted">limite: 3 a 5 vídeos curtos (30–60s), com substituição ao enviar novo.</p>
+            <div class="grid cols-3" style="margin-top:0.5rem;">
+              <div class="card"><h4>vídeo 1</h4><p>baliza sem estresse</p></div>
+              <div class="card"><h4>vídeo 2</h4><p>controle de embreagem</p></div>
+              <div class="card"><h4>vídeo 3</h4><p>simulado prova prática</p></div>
+            </div>
+            <button class="btn flat" style="margin-top:0.6rem;" data-action="enviar vídeo">enviar vídeo (emulado)</button>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-desempenho">
+          <h2>instrutor • resultados/desempenho</h2>
+          <div class="grid cols-3">
+            <div class="card"><h4>taxa de conclusão</h4><div class="kpi">94%</div></div>
+            <div class="card"><h4>taxa de cancelamento</h4><div class="kpi">3%</div></div>
+            <div class="card"><h4>avaliação média</h4><div class="kpi">4,8</div></div>
+          </div>
+          <p class="muted" style="margin-top:0.6rem;">métricas calculadas automaticamente; não editáveis pelo instrutor.</p>
+        </section>
+
+        <section class="panel" id="panel-instrutor-bancario">
+          <h2>instrutor • dados bancários</h2>
+          <form class="form emulated-form" data-success="dados bancários enviados para validação">
+            <div class="grid cols-2">
+              <div class="field"><label>tipo</label><select><option>pix</option><option>conta corrente</option></select></div>
+              <div class="field"><label>titular</label><input value="Maria Santos" /></div>
+              <div class="field"><label>chave pix</label><input value="maria@pix.com" /></div>
+              <div class="field"><label>banco</label><input value="banco do brasil" /></div>
+            </div>
+            <p class="muted">alterações bancárias passam por validação (24-48h).</p>
+            <button class="btn" type="submit">salvar e enviar</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-instrutor-disputas">
+          <h2>instrutor • aulas & disputas</h2>
+          <ul class="list">
+            <li>
+              <strong>disputa #2031 • aula 29/03 10:30</strong>
+              <p class="muted">motivo: divergência de confirmação de aula</p>
+              <div style="display:flex; gap:0.45rem; margin-top:0.4rem;">
+                <button class="btn flat" data-action="enviar versão instrutor">enviar versão</button>
+                <button class="btn flat" data-action="anexar evidência">anexar evidência</button>
+              </div>
+            </li>
+          </ul>
+        </section>
+
+        <section class="panel" id="panel-instrutor-carro">
+          <h2>instrutor • carro/aluguel</h2>
+          <form class="form emulated-form" data-success="configurações de veículo atualizadas">
+            <div class="grid cols-2">
+              <div class="field"><label>modelo de trabalho</label><select><option>carro próprio</option><option>carro do candidato</option><option>ambos</option><option>moto</option></select></div>
+              <div class="field"><label>carro automático disponível?</label><select><option>sim</option><option>não</option></select></div>
+            </div>
+            <div class="field">
+              <label>termo de responsabilidade (uso de carro próprio)</label>
+              <select id="termo-carro"><option>aceito</option><option>não aceito</option></select>
+            </div>
+            <button class="btn" type="submit">salvar</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-instrutor-comunidade">
+          <h2>instrutor • educação & comunidade</h2>
+          <div class="card">
+            <h4>troca de práticas entre instrutores</h4>
+            <ul class="list">
+              <li>dica: roteiro de 10 minutos para reduzir ansiedade em iniciantes.</li>
+              <li>dica: checklist pré-prova para baliza.</li>
+            </ul>
+            <button class="btn flat" data-action="publicar dica">publicar dica (emulado)</button>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-chat">
+          <h2>instrutor • chat com aluno</h2>
+          <div class="chat" data-chat="instrutor">
+            <div class="chat-thread">
+              <div class="bubble me">bom dia, joão! aula confirmada para 07:30 🙌</div>
+              <div class="bubble bot">perfeito professora, estarei no ponto de encontro!</div>
+            </div>
+            <div class="chat-input">
+              <input type="text" placeholder="responder aluno..." />
+              <button class="btn send-chat" type="button">enviar</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-suporte">
+          <h2>instrutor • suporte</h2>
+          <div class="grid cols-2">
+            <div class="card">
+              <h4>abrir chamado</h4>
+              <button class="btn flat" data-action="abrir chamado suporte">novo chamado</button>
+            </div>
+            <div class="card">
+              <h4>faq e termos</h4>
+              <ul class="list">
+                <li>regras de repasse financeiro</li>
+                <li>política de conduta</li>
+                <li>processo de disputa</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-instrutor-mapas">
+          <h2>instrutor • mapas e rotas do dia</h2>
+          <div class="map-box" data-map-box>
+            <div class="map-toolbar">
+              <button class="map-point active" data-map-target="map-instrutor" data-lat="-12.2664" data-lon="-38.9663" data-label="aula 1 - centro">aula 1</button>
+              <button class="map-point" data-map-target="map-instrutor" data-lat="-12.2525" data-lon="-38.9553" data-label="aula 2 - fraga maia">aula 2</button>
+              <button class="map-point" data-map-target="map-instrutor" data-lat="-12.2292" data-lon="-38.9751" data-label="aula 3 - baliza">aula 3</button>
+            </div>
+            <iframe id="map-instrutor" class="map-frame" loading="lazy" src="https://www.openstreetmap.org/export/embed.html?bbox=-38.9963%2C-12.2864%2C-38.9363%2C-12.2464&layer=mapnik&marker=-12.2664%2C-38.9663"></iframe>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-admin-home">
+          <h2>admin • dashboard</h2>
+          <div class="grid cols-3">
+            <div class="card"><h4>instrutores ativos</h4><div class="kpi">512</div><p class="muted">+8% no mês</p></div>
+            <div class="card"><h4>alunos ativos</h4><div class="kpi">10.284</div><p class="muted">+5% no mês</p></div>
+            <div class="card"><h4>gmv mensal</h4><div class="kpi">R$ 428k</div><p class="muted">ticket médio R$ 1.340</p></div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-admin-gestao-instrutor">
+          <h2>admin • tela 4: gerenciamento do instrutor (12 blocos)</h2>
+          <p class="muted" style="margin-bottom:0.7rem;">visão central para auditoria, decisão operacional, disputa e proteção jurídica.</p>
+
+          <div class="grid cols-2">
+            <div class="card">
+              <h4>bloco 1 • identificação</h4>
+              <ul class="list">
+                <li>id interno: INS-000234</li>
+                <li>nome: maria santos</li>
+                <li>cpf: ***.***.***-11</li>
+                <li>status: ativo</li>
+                <li>última atividade: hoje 09:12</li>
+              </ul>
+            </div>
+            <div class="card">
+              <h4>bloco 2 • status operacional</h4>
+              <ul class="list">
+                <li>perfil público: visível</li>
+                <li>agenda: liberada</li>
+                <li>financeiro: normal</li>
+                <li>carro próprio: permitido</li>
+                <li>termo aceito: 28/03 17:22</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h4>bloco 3 • documentos</h4>
+              <ul class="list">
+                <li>rg/cnh: aprovado</li>
+                <li>selfie validação: aprovado</li>
+                <li>comprovação instrutor: pendente</li>
+              </ul>
+              <button class="btn flat" data-action="solicitar correção documento">solicitar correção</button>
+            </div>
+
+            <div class="card">
+              <h4>bloco 4 • perfil editável (visão admin)</h4>
+              <p>bio, estilo, especialidades, regiões, atendimento (carro instrutor/aluno), currículo de autoescolas.</p>
+              <p class="muted">admin visualiza completo; não edita direto.</p>
+            </div>
+
+            <div class="card">
+              <h4>bloco 5 • agenda</h4>
+              <ul class="list">
+                <li>horários abertos: 42</li>
+                <li>bloqueados: 16</li>
+                <li>ocupação: 81%</li>
+              </ul>
+              <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+                <button class="btn flat" data-action="bloquear agenda instrutor">bloquear agenda</button>
+                <button class="btn flat" data-action="liberar agenda instrutor">liberar agenda</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <h4>bloco 6 • aulas</h4>
+              <p>lista com id, data/hora, tipo, status, valor e confirmação do aluno.</p>
+              <button class="btn flat" data-go="panel-admin-aulas">abrir lista completa</button>
+            </div>
+
+            <div class="card">
+              <h4>bloco 7 • financeiro interno</h4>
+              <ul class="list">
+                <li>faturado histórico: R$ 98.200</li>
+                <li>pago: R$ 89.700</li>
+                <li>pendente: R$ 4.800</li>
+                <li>estornado: R$ 1.200</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h4>bloco 8 • avaliações & conduta</h4>
+              <ul class="list">
+                <li>nota média: 4,8</li>
+                <li>flags: atraso recorrente (1)</li>
+                <li>risco: baixo</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h4>bloco 9 • disputas</h4>
+              <p>histórico com motivo, versões, evidências, decisão e responsável.</p>
+              <button class="btn flat" data-action="abrir disputa painel">abrir detalhe</button>
+            </div>
+
+            <div class="card">
+              <h4>bloco 10 • comunicação & suporte</h4>
+              <ul class="list">
+                <li>chamados abertos: 1</li>
+                <li>chamados encerrados: 27</li>
+                <li>advertências formais: 0</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h4>bloco 11 • log de ações</h4>
+              <p>registro imutável de quem fez, o quê fez e quando.</p>
+              <ul class="list">
+                <li>29/03 14:10 • admin-a bloqueou agenda parcial</li>
+                <li>29/03 16:00 • admin-b liberou repasse financeiro</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h4>bloco 12 • ações administrativas</h4>
+              <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+                <button class="btn flat" data-action="suspender instrutor">suspender</button>
+                <button class="btn flat" data-action="travar repasse">travar repasse</button>
+                <button class="btn flat" data-action="registrar advertência">advertência</button>
+                <button class="btn flat" data-action="encerrar conta">encerrar conta</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-admin-instrutores">
+          <h2>admin • gestão de instrutores</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>nome</th><th>cidade</th><th>nota</th><th>status</th><th>ação</th></tr></thead>
+              <tbody>
+                <tr><td>maria santos</td><td>feira de santana</td><td>4.8</td><td><span class="badge success">ativo</span></td><td><button class="btn flat" data-action="ver perfil maria">ver</button></td></tr>
+                <tr><td>carlos silva</td><td>cuiabá</td><td>4.9</td><td><span class="badge success">ativo</span></td><td><button class="btn flat" data-action="ver perfil carlos">ver</button></td></tr>
+                <tr><td>novo cadastro</td><td>salvador</td><td>-</td><td><span class="badge warn">pendente</span></td><td><button class="btn flat" data-action="aprovar instrutor pendente">aprovar</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-admin-alunos">
+          <h2>admin • gestão de alunos</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>aluno</th><th>cidade</th><th>aulas restantes</th><th>instrutor</th><th>status</th></tr></thead>
+              <tbody>
+                <tr><td>joão almeida</td><td>feira de santana</td><td>4</td><td>maria santos</td><td><span class="badge success">ativo</span></td></tr>
+                <tr><td>camila rocha</td><td>salvador</td><td>2</td><td>carlos silva</td><td><span class="badge warn">suporte aberto</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-admin-aulas">
+          <h2>admin • monitoramento de aulas</h2>
+          <ul class="list">
+            <li><strong>31/03 07:30 • joão x maria</strong><p class="muted">status: agendada • rastreio gps: ativo</p></li>
+            <li><strong>30/03 09:00 • camila x carlos</strong><p class="muted">status: concluída • confirmação: ok</p></li>
+            <li><strong>29/03 10:30 • renato x pedro</strong><p class="muted">status: em disputa</p><button class="btn flat" data-action="abrir disputa renato">analisar disputa</button></li>
+          </ul>
+        </section>
+
+        <section class="panel" id="panel-admin-financeiro">
+          <h2>admin • financeiro</h2>
+          <div class="grid cols-3">
+            <div class="card"><h4>receita bruta</h4><div class="kpi">R$ 428.000</div></div>
+            <div class="card"><h4>repasse instrutores</h4><div class="kpi">R$ 302.000</div></div>
+            <div class="card"><h4>taxa plataforma</h4><div class="kpi">R$ 126.000</div></div>
+          </div>
+          <div class="table-wrap" style="margin-top:0.75rem;">
+            <table>
+              <thead><tr><th>tipo</th><th>valor</th><th>status</th></tr></thead>
+              <tbody>
+                <tr><td>pagamentos retidos</td><td>R$ 18.400</td><td><span class="badge warn">aguardando confirmação</span></td></tr>
+                <tr><td>repasse d+1</td><td>R$ 7.200</td><td><span class="badge success">agendado</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel" id="panel-admin-config">
+          <h2>admin • configurações</h2>
+          <form class="form emulated-form" data-success="configurações salvas com sucesso">
+            <div class="grid cols-2">
+              <div class="field"><label>taxa da plataforma (%)</label><input value="12" /></div>
+              <div class="field"><label>repasse padrão</label><select><option>semanal</option><option>diário</option><option>mensal</option></select></div>
+            </div>
+            <div class="grid cols-2">
+              <div class="field"><label>canal principal de suporte</label><select><option>whatsapp</option><option>chat interno</option><option>e-mail</option></select></div>
+              <div class="field"><label>modo manutenção</label><select><option>desativado</option><option>ativado</option></select></div>
+            </div>
+            <button class="btn" type="submit">salvar config</button>
+          </form>
+        </section>
+
+        <section class="panel" id="panel-admin-suporte">
+          <h2>admin • suporte e chat</h2>
+          <div class="chat" data-chat="admin">
+            <div class="chat-thread">
+              <div class="bubble bot">ticket #1287: aluno reportou atraso do instrutor.</div>
+              <div class="bubble me">mensagem enviada para ambas as partes. aguardando retorno.</div>
+            </div>
+            <div class="chat-input">
+              <input type="text" placeholder="responder ticket..." />
+              <button class="btn send-chat" type="button">enviar</button>
+            </div>
+          </div>
+        </section>
+      </article>
+    </section>
+  </main>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="assets/app.js" defer></script>
+</body>
+</html>

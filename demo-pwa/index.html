@@ -28,6 +28,7 @@
   <link rel="stylesheet" href="assets/css/themes.css">
   <link rel="stylesheet" href="assets/css/onboarding.css">
   <link rel="stylesheet" href="assets/css/extra-screens.css">
+  <link rel="stylesheet" href="assets/css/animations.css">
 </head>
 <body>
   
@@ -214,6 +215,27 @@
           <span class="material-symbols-rounded">support_agent</span>
           <span>Suporte</span>
         </button>
+        <div class="drawer-divider" style="margin: 8px 0; height: 1px; background: var(--divider);"></div>
+        <button class="drawer-item" data-screen="chat" onclick="instrutor.navigate('chat')">
+          <span class="material-symbols-rounded">chat</span>
+          <span>Chat com Alunos</span>
+        </button>
+        <button class="drawer-item" data-screen="mapa" onclick="instrutor.navigate('mapa')">
+          <span class="material-symbols-rounded">map</span>
+          <span>Rotas das Aulas</span>
+        </button>
+        <button class="drawer-item" data-screen="estatisticas" onclick="instrutor.navigate('estatisticas')">
+          <span class="material-symbols-rounded">analytics</span>
+          <span>Estatísticas</span>
+        </button>
+        <button class="drawer-item" data-screen="configuracoes" onclick="instrutor.navigate('configuracoes')">
+          <span class="material-symbols-rounded">settings</span>
+          <span>Configurações</span>
+        </button>
+        <button class="drawer-item" data-screen="conquistas" onclick="instrutor.navigate('conquistas')">
+          <span class="material-symbols-rounded">emoji_events</span>
+          <span>Conquistas</span>
+        </button>
         <div class="drawer-divider"></div>
         <button class="drawer-item" onclick="app.logout()">
           <span class="material-symbols-rounded">logout</span>
@@ -252,6 +274,9 @@
       <button class="tab" data-tab="candidatos" onclick="admin.navigate('candidatos')">Candidatos</button>
       <button class="tab" data-tab="financeiro" onclick="admin.navigate('financeiro')">Financeiro</button>
       <button class="tab" data-tab="disputas" onclick="admin.navigate('disputas')">Disputas</button>
+      <button class="tab" data-tab="analytics" onclick="admin.navigate('analytics')">Analytics</button>
+      <button class="tab" data-tab="configuracoes" onclick="admin.navigate('configuracoes')">Config</button>
+      <button class="tab" data-tab="logs" onclick="admin.navigate('logs')">Logs</button>
     </nav>
 
     <!-- Conteúdo -->
@@ -278,7 +303,10 @@
   <script src="assets/js/candidato.js"></script>
   <script src="assets/js/candidato-extra.js"></script>
   <script src="assets/js/instrutor.js"></script>
+  <script src="assets/js/instrutor-extra.js"></script>
   <script src="assets/js/admin.js"></script>
+  <script src="assets/js/admin-extra.js"></script>
+  <script src="assets/js/global-features.js"></script>
   
   <!-- App principal (último) -->
   <script src="assets/js/app.js"></script>

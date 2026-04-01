@@ -1,0 +1,677 @@
+/* ============================================
+   ANIMATIONS.CSS - Micro-interações Avançadas
+   ============================================ */
+
+/* ==================== ANIMAÇÕES DE ENTRADA ==================== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* ==================== MICRO-INTERAÇÕES ==================== */
+
+/* Botões com ripple effect */
+.btn, .icon-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.btn::before, .icon-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn:active::before, .icon-btn:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+/* Hover suave */
+.btn:hover, .icon-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Cards com hover */
+.card {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.card:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* List items clicáveis */
+.list-item[onclick], .list-item[style*="cursor: pointer"] {
+  transition: background 0.2s ease;
+  cursor: pointer;
+}
+
+.list-item[onclick]:active, .list-item[style*="cursor: pointer"]:active {
+  background: rgba(0, 0, 0, 0.05);
+  transform: scale(0.99);
+}
+
+/* ==================== LOADING STATES ==================== */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Skeleton loader */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--divider) 0%,
+    rgba(0, 0, 0, 0.08) 50%,
+    var(--divider) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 12px;
+  margin-bottom: 8px;
+}
+
+.skeleton-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+/* Spinner de carregamento */
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--divider);
+  border-top-color: var(--secondary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* ==================== BADGES ANIMADOS ==================== */
+
+.badge {
+  transition: all 0.2s ease;
+}
+
+.badge:hover {
+  transform: scale(1.05);
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.badge.pulse {
+  animation: badgePulse 2s infinite;
+}
+
+/* ==================== PROGRESS BARS ==================== */
+
+.progress-fill {
+  transition: width 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+@keyframes progressIndeterminate {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.progress-indeterminate {
+  position: relative;
+  overflow: hidden;
+  background: var(--divider);
+}
+
+.progress-indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -50%;
+  height: 100%;
+  width: 50%;
+  background: var(--secondary);
+  animation: progressIndeterminate 1.5s infinite ease-in-out;
+}
+
+/* ==================== TOASTS & SNACKBARS ==================== */
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+}
+
+.toast {
+  animation: toastSlideIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.toast.hiding {
+  animation: toastSlideOut 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ==================== MODAIS & OVERLAYS ==================== */
+
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.overlay {
+  animation: overlayFadeIn 0.3s ease;
+}
+
+.modal-content {
+  animation: modalSlideUp 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ==================== BOTTOM SHEET ==================== */
+
+@keyframes bottomSheetSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.bottom-sheet-content {
+  animation: bottomSheetSlideUp 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ==================== FAB (Floating Action Button) ==================== */
+
+.fab {
+  position: fixed;
+  bottom: 80px;
+  right: 16px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--secondary);
+  color: white;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 900;
+}
+
+.fab:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+  transform: scale(1.1);
+}
+
+.fab:active {
+  transform: scale(1.05);
+}
+
+@keyframes fabRotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.fab.loading {
+  animation: fabRotate 1s linear infinite;
+}
+
+/* ==================== TABS ANIMADOS ==================== */
+
+.tab {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--secondary);
+  transform: translateX(-50%);
+  transition: width 0.3s ease;
+}
+
+.tab.active::after {
+  width: 100%;
+}
+
+/* ==================== SWIPE INDICATORS ==================== */
+
+@keyframes swipeHint {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(10px);
+  }
+}
+
+.swipe-hint {
+  animation: swipeHint 1.5s infinite ease-in-out;
+}
+
+/* ==================== EMPTY STATES ==================== */
+
+@keyframes floatUp {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.empty-state span.material-symbols-rounded {
+  animation: floatUp 3s infinite ease-in-out;
+}
+
+/* ==================== COUNTERS & BADGES ==================== */
+
+@keyframes counterIncrement {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.counter-badge {
+  animation: counterIncrement 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+/* ==================== CONFETTI (Para conquistas) ==================== */
+
+@keyframes confettiFall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+  }
+}
+
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--secondary);
+  opacity: 0.8;
+  animation: confettiFall 3s linear;
+  z-index: 9999;
+}
+
+/* ==================== PARALLAX SCROLL ==================== */
+
+@keyframes parallaxScroll {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50px);
+  }
+}
+
+.parallax-bg {
+  animation: parallaxScroll 20s linear infinite;
+}
+
+/* ==================== TYPING INDICATOR (Chat) ==================== */
+
+@keyframes typingDot {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-10px);
+  }
+}
+
+.typing-indicator {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+}
+
+.typing-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-secondary);
+  animation: typingDot 1.4s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* ==================== STATUS DOT (Online/Offline) ==================== */
+
+@keyframes statusPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.7);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(46, 125, 50, 0);
+  }
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--success);
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border: 2px solid white;
+  animation: statusPulse 2s infinite;
+}
+
+.status-dot.offline {
+  background: var(--text-secondary);
+  animation: none;
+}
+
+/* ==================== SMOOTH TRANSITIONS ==================== */
+
+* {
+  transition-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* ==================== ACCESSIBILITY ==================== */
+
+/* Respeitar preferências de animação reduzida */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ==================== UTILITIES ==================== */
+
+.fade-in {
+  animation: fadeIn 0.4s ease;
+}
+
+.slide-in-up {
+  animation: slideInUp 0.4s ease;
+}
+
+.slide-in-down {
+  animation: slideInDown 0.4s ease;
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.4s ease;
+}
+
+.slide-in-right {
+  animation: slideInRight 0.4s ease;
+}
+
+.scale-in {
+  animation: scaleIn 0.3s ease;
+}
+
+.bounce-in {
+  animation: bounceIn 0.6s ease;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* ==================== STAGGER ANIMATIONS ==================== */
+
+/* Animar elementos com delay crescente */
+.stagger-item {
+  animation: fadeIn 0.4s ease;
+  animation-fill-mode: both;
+}
+
+.stagger-item:nth-child(1) { animation-delay: 0.05s; }
+.stagger-item:nth-child(2) { animation-delay: 0.1s; }
+.stagger-item:nth-child(3) { animation-delay: 0.15s; }
+.stagger-item:nth-child(4) { animation-delay: 0.2s; }
+.stagger-item:nth-child(5) { animation-delay: 0.25s; }
+.stagger-item:nth-child(6) { animation-delay: 0.3s; }
+.stagger-item:nth-child(7) { animation-delay: 0.35s; }
+.stagger-item:nth-child(8) { animation-delay: 0.4s; }
+
+/* ==================== HAPTIC FEEDBACK (Visual) ==================== */
+
+@keyframes hapticFeedback {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-2px);
+  }
+  75% {
+    transform: translateX(2px);
+  }
+}
+
+.haptic {
+  animation: hapticFeedback 0.2s ease;
+}
+
+/* ==================== SUCCESS CHECKMARK ==================== */
+
+@keyframes checkmarkStroke {
+  0% {
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes checkmarkCircle {
+  0% {
+    stroke-dashoffset: 166;
+    transform: scale(0.9);
+  }
+  100% {
+    stroke-dashoffset: 0;
+    transform: scale(1);
+  }
+}
+
+.checkmark-circle {
+  stroke-dasharray: 166;
+  animation: checkmarkCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1);
+}
+
+.checkmark-check {
+  stroke-dasharray: 48;
+  animation: checkmarkStroke 0.3s 0.3s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}

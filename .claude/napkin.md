@@ -104,6 +104,21 @@
 
 ---
 
-**Last updated:** 2026-04-01 — Post Wave 3 validation, pre Wave 4 start
+**Last updated:** 2026-04-01 — Post Wave 4, Build BLOCKED on Kotlin version
 **Author:** DevSan
-**Version:** 0.5.0-napkin
+**Version:** 0.5.1-napkin
+
+## 🔴 CRITICAL: Wave 4 Blocking Issue
+
+**Kotlin Version Mismatch:**
+- Project: Kotlin 1.9.24
+- serialization 1.7.3 requires: Kotlin 2.0.0-RC1+
+- **Solution**: Upgrade Kotlin to 2.0+ OR downgrade serialization to 1.6.x
+- See `.claude/WAVE4-ERRORS.md` for detailed fixes
+
+## Wave 4 Status
+- Infrastructure: ✅ 100% (4 tables, 4 repos, 4 DTOs, AppState updated)
+- Components: ⚠️ 50% (BannerCarrossel, AvatarCircle, FooterBanners done; 3 removed due to imports)
+- Build: ❌ BLOCKED (Kotlin version)
+- Integration: ⏳ PENDING (0/10 screens)
+- Next: Fix Kotlin → Re-integrate components → Build → Release APK v0.5.1

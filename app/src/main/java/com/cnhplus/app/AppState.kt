@@ -105,22 +105,21 @@ class AppState(
                     val token = response.access_token ?: ""
                     val userId = response.user?.id ?: ""
                     if (token.isNotBlank() && userId.isNotBlank()) {
-                        // Create profile
-                        val profile = ProfileDto(id = userId, email = email, role = "candidato")
-                        profileRepo.createProfile(profile).fold(
-                            onSuccess = {
-                                saveSession(token, userId)
-                                _currentUser.value = it
-                                _currentRole.value = "candidato"
-                                _sessionState.value = SessionState.Authenticated
-                                _isLoading.value = false
-                                onComplete(Result.success(Unit))
-                            },
-                            onFailure = { e ->
-                                _isLoading.value = false
-                                onComplete(Result.failure(e))
-                            }
-                        )
+                        // Profile is auto-created by handle_new_user trigger
+                        // Just verify it exists before proceeding
+                        delay(1000) // Give trigger time to complete
+                        var profile = profileRepo.getProfile(userId).getOrNull()
+                        if (profile == null) {
+                            // Fallback: create profile if trigger failed
+                            profile = ProfileDto(id = userId, email = email, role = "candidato")
+                            profileRepo.createProfile(profile)
+                        }
+                        saveSession(token, userId)
+                        _currentUser.value = profile
+                        _currentRole.value = "candidato"
+                        _sessionState.value = SessionState.Authenticated
+                        _isLoading.value = false
+                        onComplete(Result.success(Unit))
                     } else {
                         _isLoading.value = false
                         onComplete(Result.failure(Exception("Registro falhou")))

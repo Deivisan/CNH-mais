@@ -22,7 +22,7 @@ import com.cnhplus.ui.theme.LocalAppState
 import com.cnhplus.ui.theme.Secondary
 
 const val SUPABASE_URL = "https://ibyngfqddoefatqtojfj.supabase.co"
-const val SUPABASE_ANON_KEY = "sb_publishable_REPLACE_WITH_REAL_ANON_KEY_BEFORE_BUILD"
+const val SUPABASE_ANON_KEY = "sb_publishable_SvWV-VYW4WbqLVoPL_VTTg_SZGF3e2P"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

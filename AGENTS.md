@@ -352,11 +352,15 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 | Trigger | `handle_new_user` — auto-cria profiles em `profiles` no signup |
 | Email confirm | **DESATIVADA** para dev (Providers → Email) |
 | SHA-1 debug | `77:91:24:95:44:76:40:F7:98:13:E0:3A:25:23:52:15:7E:42:9B:5B` |
+| MCP | ✅ Configurado em opencode.jsonc — project_ref=ibyngfqddoefatqtojfj |
 
 ### Conta de Teste
 | Email | Senha | Role |
 |-------|-------|------|
 | `deivilsantana@outlook.com` | `33484@Cnh.` | candidato |
+
+### API Key (banco-api.md — repo Banco-Api)
+`sbp_v0_87ec6d65d35c877881e75f96a396fdd5b412c574` — Access Token para Supabase MCP
 
 ---
 
@@ -367,7 +371,8 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 2. **Verificar APK**: `unzip -p app-debug.apk classes.dex | strings | grep -i "ibyngfq"` — deve retornar a key real, NUNCA "placeholder" ou "REPLACE"
 3. **Compile ANTES de build APK**: `./gradlew compileDebugKotlin` primeiro (~1min). Só `assembleDebug` quando BUILD SUCCESSFUL.
 4. **Fail fast**: Corrigir erro específico sem reescrever arquivo inteiro.
-5. **Escopo cirúrgico**: Congelar `demo-pwa/` e `index.html`. Foco 100% em `app/src/`.
+5. **Escopo cirúrgico**: Foco 100% em `app/src/`. Landing/demo ficam em branch `web`.
+6. **SHA256 ANTES de release**: comparar hash APK novo vs anterior. Hash igual = NÃO release.
 
 ### Waves Sequenciais (CADA wave DEVE compilar antes de avançar)
 1. **Wave 1**: infra/models/datastore
@@ -380,6 +385,14 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 7. **`LocalAppState.current` é ÚNICA fonte de verdade**: Zero `LocalAppSession`, zero ViewModels.
 8. **Compose brace matching**: `Row(...) { content }` — NUNCA `Row(...)` sem `{`.
 9. **Commits atômicos**: 1 batch de fixes = 1 commit descritivo.
+10. **2 branches máximo**: `master` (APK) + `web` (Landing/Demo). Sem auxiliares.
+
+### Checklist Release (OBRIGATÓRIO)
+- [ ] `git diff --stat origin/master` tem mudanças reais em `.kt` ou recursos?
+- [ ] SHA256 APK novo ≠ SHA256 APK anterior (verificação anti-duplicação)
+- [ ] `unzip -p app-debug.apk classes.dex | strings | grep -c "ibyngfq"` → key presente?
+- [ ] Asset NA RELEASE renomeado pra `cnhmais.apk` (genérico, sem versão)
+- [ ] Landing: link aponta pra `latest/download/cnhmais.apk` (já configurado)
 
 ### Stack Confirmada
 - **Kotlin** 1.9.24 + **Compose** 1.6.0
@@ -534,6 +547,8 @@ Primeira vez:
 
 ---
 
-**Última atualização:** 01/04/2026
+**Última atualização:** 01/04/2026 — v0.07a + Branch restructuring + Anti-dup rules
 **Autor:** Deivison Santana (@deivisan)
-**Versão:** 0.07 - Perfis completos + Storage + RLS + Permissões + PerfilInstrutor
+**Versão:** 0.07a — Perfis completos + Storage + RLS + Branches master/web limpas
+**Asset naming:** `cnhmais.apk` (genérico, sem versão) → landing usa `latest/download/cnhmais.apk`
+**Supabase MCP:** ✅ Ativo em opencode.jsonc — project_ref=ibyngfqddoefatqtojfj

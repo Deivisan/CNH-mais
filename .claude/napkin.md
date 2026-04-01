@@ -62,6 +62,39 @@
 2. **Atomic commits**: 1 batch de fixes = 1 commit descritivo.
 3. **Congelado**: `demo-pwa/` e `index.html` — zero alterações até auth + nav estarem sólidos.
 4. **Escopo cirúrgico**: Focar em auth + state management antes de telas/features.
+5. **[2026-04-01] Branch separadas**: `master` = APK Android, `web` = Landing + Demo App. NUNCA mexer em `web/` quando estiver em `master`.
+
+### 🔒 Regras de Build — NUNCA mais duplicar APK (CRÍTICO)
+**Problema:** v0.05, v0.06, v0.07 e v0.07a foram o MESMO código compilado 4x. Sem verificação de hash, não houve detecção.
+
+**Antes de cada BUILD novo, executar TUDO:**
+
+```bash
+# 1. Gerar hash do APK existente mais recente
+LAST_APK=$(ls -t releases/cnhmais-*.apk 2>/dev/null | head -1)
+if [ -n "$LAST_APK" ]; then
+  echo "SHA256 atual: $(sha256sum "$LAST_APK" | awk '{print $1}')"
+fi
+
+# 2. Compilar novo e comparar
+./gradlew compileDebugKotlin && ./gradlew --no-build-cache --rerun-tasks assembleDebug
+
+# 3. Gerar hash do novo APK e comparar
+NEW_APK="app/build/outputs/apk/debug/app-debug.apk"
+if [ -f "$NEW_APK" ]; then
+  echo "SHA256 novo:   $(sha256sum "$NEW_APK" | awk '{print $1}')"
+fi
+```
+
+**Se SHA256 do novo == SHA256 do anterior:** CANCELAR release. Mesmo código. Não gerar nova tag.
+**Se SHA256 diferente:** código mudou. Pode gerar nova tag, release, e subir.
+
+**Checklist obrigatório ANTES de release:**
+- [ ] `git diff --stat origin/master` → tem mudanças reais em `.kt` ou recursos?
+- [ ] `grep -c "ibyngfq" app/build/outputs/apk/debug/app-debug.apk 2>/dev/null || unzip -p app-debug.apk classes.dex | strings | grep -c "ibyngfq"` → Supabase key presente?
+- [ ] SHA256 do APK novo ≠ SHA256 do APK anterior
+- [ ] Nome do asset NA RELEASE: `cnhmais.apk` (genérico, sem versão — landing usa `latest/download/cnhmais.apk`)
+- [ ] Landing page no master: link aponta pra `latest/download/cnhmais.apk`
 
 ---
 
@@ -81,6 +114,7 @@
 2. **Email confirmation ativada** → signup sem token → "registro falhou" → desativar no dashboard
 3. **Profile create duplicado** → trigger + app criavam mesmo profile → remover create após signup
 4. **Supabase API key NO build.gradle.kt debug** → campo `buildConfigField` com placeholder → ignorado, MainActivity.kt sobrescreve
+5. **v0.05 e v0.07a = MESMO APK compilado 2x** → sem verificação de hash, não detectou duplicação
 
 ---
 
@@ -105,7 +139,8 @@
 
 ---
 
-**Last updated:** 2026-04-01 — v0.07 com PerfilCompleto + Storage + RLS
+**Last updated:** 2026-04-01 — v0.07 com PerfilCompleto + Storage + RLS + Branch restructuring (master/web) + Anti-dup rules
 **Author:** DevSan (@deivisan)
 **SHA1 debug:** `77:91:24:95:44:76:40:F7:98:13:E0:3A:25:23:52:15:7E:42:9B:5B`
 **Debug tip:** `strings classes.dex | grep -i "ibyngfq"` confirma key no APK
+**Release asset naming:** Asset SEMPRE `cnhmais.apk` (genérico), landing usa `latest/download/cnhmais.apk`

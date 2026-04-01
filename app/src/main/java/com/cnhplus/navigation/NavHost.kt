@@ -1,5 +1,6 @@
 package com.cnhplus.navigation
 
+import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -30,6 +31,7 @@ import com.cnhplus.screens.instrutor.*
 
 @Composable
 fun CNHNavHost(
+    context: Context,
     navController: NavHostController,
     startDestination: String = Screen.Login.route
 ) {
@@ -40,6 +42,7 @@ fun CNHNavHost(
         // ===== AUTH =====
         composable(Screen.Login.route) {
             LoginScreen(
+                context = context,
                 onLoginSuccess = { role -> navigateByRole(navController, role) },
                 onNavigateToRegister = { navController.navigate(Screen.Register.route) }
             )
@@ -93,11 +96,7 @@ fun CNHNavHost(
 
         composable(Screen.CandidatoAulas.route) {
             CandidatoScaffold(navController, Screen.CandidatoAulas.route) {
-                CandidatoAulasScreen(
-                    onAulaClick = { aulaId ->
-                        navController.navigate(Screen.AulaDetalhes.createRoute(aulaId))
-                    }
-                )
+                CandidatoAulasScreen()
             }
         }
 
@@ -119,12 +118,6 @@ fun CNHNavHost(
             }
         }
 
-        composable(Screen.AulaDetalhes.route) { backStackEntry ->
-            val aulaId = backStackEntry.arguments?.getString("aulaId") ?: ""
-                aulaId = aulaId,
-                onBack = { navController.popBackStack() }
-            )
-        }
 
         // ===== INSTRUTOR MAIN (with bottom nav) =====
         composable(Screen.InstrutorHome.route) {

@@ -1,125 +1,30 @@
 package com.cnhplus.screens.instrutor
 
-import androidx.compose.foundation.background
 import com.cnhplus.ui.theme.Primary
 import com.cnhplus.ui.theme.Secondary
 import com.cnhplus.ui.theme.Accent
 import com.cnhplus.ui.theme.TextSecondary
 import com.cnhplus.ui.theme.Success
 import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.layout.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.lazy.LazyColumn
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.lazy.items
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.shape.RoundedCornerShape
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.material.icons.Icons
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.material.icons.filled.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.material3.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.runtime.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.Alignment
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.Modifier
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.graphics.Color
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.text.font.FontWeight
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.unit.dp
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import com.cnhplus.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import com.cnhplus.data.AulaDto
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import com.cnhplus.ui.theme.LocalAppState
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
+import com.cnhplus.ui.theme.Error
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.cnhplus.*
+import com.cnhplus.data.AulaDto
+import com.cnhplus.ui.theme.LocalAppState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InstrutorAgendaScreen() {
@@ -138,9 +43,19 @@ fun InstrutorAgendaScreen() {
     if (isLoading) { Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = Secondary) }; return }
     
     Scaffold(topBar = { TopAppBar(title = { Text("Minha Agenda") }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Primary, titleContentColor = Color.White)) }) { padding ->
-        LazyColumn(Modifier.fillMaxSize().padding(padding).background(Surface)) {
-            if (aulas.isEmpty()) { item { Box(Modifier.fillMaxWidth().padding(32.dp), Alignment.Center) { Text("Nenhuma aula agendada", color = TextSecondary) } } }
-            else { items(aulas) { aula -> AgendaAulaCard(aula) } }
+        LazyColumn(Modifier.fillMaxSize().padding(padding).background(MaterialTheme.colorScheme.background)) {
+            if (aulas.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().padding(32.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text("Nenhuma aula agendada", color = TextSecondary)
+                    }
+                }
+            } else {
+                items(aulas) { aula -> AgendaAulaCard(aula) }
+            }
             item { Spacer(Modifier.height(16.dp)) }
         }
     }
@@ -148,27 +63,83 @@ fun InstrutorAgendaScreen() {
 
 @Composable
 fun AgendaAulaCard(aula: AulaDto) {
-    Card(Modifier.fillMaxWidth().padding(16.dp, 8.dp), RoundedCornerShape(12.dp), CardDefaults.cardColors(Color.White)) {
-        Column(Modifier.fillMaxWidth().padding(16.dp)) {
-            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
-                Column(Modifier.weight(1f)) {
-                    Text(aula.data_hora ?: "Data não definida", MaterialTheme.typography.titleMedium, FontWeight.Bold)
-                    Text("${aula.duracao ?: 50} min", MaterialTheme.typography.bodySmall, TextSecondary)
+    Card(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = aula.data_hora ?: "Data não definida",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${aula.duracao ?: 50} min",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondary
+                    )
                 }
-                Surface(Accent.copy(0.2f), RoundedCornerShape(6.dp)) { Text("Agendada", MaterialTheme.typography.labelSmall, Secondary, Modifier.padding(6.dp)) }
+                Surface(
+                    color = Accent.copy(0.2f),
+                    shape = RoundedCornerShape(6.dp)
+                ) {
+                    Text(
+                        text = "Agendada",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = Secondary,
+                        modifier = Modifier.padding(6.dp)
+                    )
+                }
             }
             Spacer(Modifier.height(12.dp))
-            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween) {
-                Row(Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocationOn, null, Secondary, Modifier.size(16.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LocationOn,
+                        contentDescription = null,
+                        tint = Secondary,
+                        modifier = Modifier.size(16.dp)
+                    )
                     Spacer(Modifier.width(4.dp))
-                    Text(aula.local_encontro ?: "Local a definir", MaterialTheme.typography.bodySmall, TextSecondary)
+                    Text(
+                        text = aula.local_encontro ?: "Local a definir",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondary
+                    )
                 }
             }
             Spacer(Modifier.height(12.dp))
-            Row(Modifier.fillMaxWidth(), Arrangement.spacedBy(8.dp)) {
-                Button(onClick = {}, Modifier.weight(1f).height(36.dp), ButtonDefaults.buttonColors(Secondary), RoundedCornerShape(8.dp)) { Text("Confirmar") }
-                OutlinedButton(onClick = {}, Modifier.weight(1f).height(36.dp), shape = RoundedCornerShape(8.dp)) { Text("Cancelar") }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { },
+                    modifier = Modifier.weight(1f).height(36.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Secondary)
+                ) {
+                    Text("Confirmar")
+                }
+                OutlinedButton(
+                    onClick = { },
+                    modifier = Modifier.weight(1f).height(36.dp)
+                ) {
+                    Text("Cancelar")
+                }
             }
         }
     }

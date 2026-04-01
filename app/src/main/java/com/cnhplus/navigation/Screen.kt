@@ -20,8 +20,6 @@ sealed class Screen(val route: String) {
     object CandidatoAulas : Screen("candidato_aulas")
     object CandidatoMatch : Screen("candidato_match")
     object CandidatoPagamento : Screen("candidato_pagamento")
-        fun createRoute(aulaId: String) = "aula_detalhes/$aulaId"
-    }
     
     // Instrutor Main
     object InstrutorHome : Screen("instrutor_home")

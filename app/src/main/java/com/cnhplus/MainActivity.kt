@@ -65,6 +65,7 @@ class MainActivity : ComponentActivity() {
                             }
                         } else {
                             CNHNavHost(
+                                context = this@MainActivity,
                                 navController = navController,
                                 startDestination = startDestination
                             )

@@ -1,5 +1,15 @@
 package com.cnhplus.screens.candidato
 
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.PrimaryLight
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.TextPrimary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
+import com.cnhplus.ui.theme.Error
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,10 +24,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import com.cnhplus.*
 import com.cnhplus.data.PacoteCandidato
 import com.cnhplus.ui.theme.LocalAppState
-
 /**
  * Tela de recomendação de aulas - mostra quantas aulas o sistema recomenda
  * e permite ao candidato aceitar ou ajustar.
@@ -118,25 +129,18 @@ fun RecomendacaoAulasScreen(
                             ),
                             shape = RoundedCornerShape(12.dp)
                         ) {
-                            Row(
-                                modifier = Modifier.padding(16.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Column {
-                                    Text(
-                                        text = label,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        fontWeight = FontWeight.Bold,
-                                        color = if (isSelected) Color.White else TextPrimary
-                                    )
+                        Row(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                                     Text(
                                         text = "$count aulas de 50 min",
                                         style = MaterialTheme.typography.bodySmall,
                                         color = if (isSelected) Color.White.copy(alpha = 0.8f) else TextSecondary
                                     )
-                                }
                                 if (isSelected) {
                                     Text(
                                         text = "✓",
@@ -170,7 +174,7 @@ fun RecomendacaoAulasScreen(
                         )
                         userId?.let { uid ->
                             state.candidatoRepo.updateCandidato(uid, mapOf(
-                                "pacote" to kotlinx.serialization.json.Json.encodeToString(pacote)
+                                "pacote" to Json.encodeToString(pacote)
                             )).fold(
                                 onSuccess = {
                                     loading = false

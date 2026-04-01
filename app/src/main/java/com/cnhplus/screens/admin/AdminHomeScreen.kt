@@ -1,24 +1,25 @@
 package com.cnhplus.screens.admin
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.cnhplus.*
-import com.cnhplus.data.EmulatedData
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.TextPrimary
+import com.cnhplus.ui.theme.SurfaceColor
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,8 +31,6 @@ fun AdminHomeScreen(
     onNavigateToConfig: () -> Unit,
     onBack: () -> Unit
 ) {
-    val stats = EmulatedData.estatisticasAdmin
-    
     Scaffold(
         topBar = {
             TopAppBar(
@@ -53,68 +52,19 @@ fun AdminHomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Surface)
+                .background(SurfaceColor)
+                .padding(16.dp)
         ) {
             item {
-                // Stats Cards
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Instrutores",
-                        value = "${stats["totalInstrutores"]}+",
-                        icon = Icons.Default.DirectionsCar,
-                        color = Secondary
-                    )
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Alunos",
-                        value = "${stats["totalAlunos"]}+",
-                        icon = Icons.Default.School,
-                        color = Success
-                    )
-                }
-            }
-            
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
-                ) {
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Nota Média",
-                        value = "${stats["notaMedia"]}",
-                        icon = Icons.Default.Star,
-                        color = Warning
-                    )
-                    StatCard(
-                        modifier = Modifier.weight(1f),
-                        title = "Aulas",
-                        value = "${stats["aulasRealizadas"]}",
-                        icon = Icons.Default.AccessTime,
-                        color = Accent
-                    )
-                }
-            }
-            
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Menu Principal",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+                    color = TextPrimary,
+                    modifier = Modifier.padding(vertical = 16.dp)
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
-            
+
             item {
                 AdminMenuCard(
                     icon = Icons.Default.People,
@@ -123,7 +73,7 @@ fun AdminHomeScreen(
                     onClick = onNavigateToInstrutores
                 )
             }
-            
+
             item {
                 AdminMenuCard(
                     icon = Icons.Default.School,
@@ -132,7 +82,7 @@ fun AdminHomeScreen(
                     onClick = onNavigateToAlunos
                 )
             }
-            
+
             item {
                 AdminMenuCard(
                     icon = Icons.Default.CalendarMonth,
@@ -141,7 +91,7 @@ fun AdminHomeScreen(
                     onClick = onNavigateToAulas
                 )
             }
-            
+
             item {
                 AdminMenuCard(
                     icon = Icons.Default.AttachMoney,
@@ -150,7 +100,7 @@ fun AdminHomeScreen(
                     onClick = onNavigateToFinanceiro
                 )
             }
-            
+
             item {
                 AdminMenuCard(
                     icon = Icons.Default.Settings,
@@ -159,71 +109,32 @@ fun AdminHomeScreen(
                     onClick = onNavigateToConfig
                 )
             }
-            
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
-        }
-    }
-}
 
-@Composable
-fun StatCard(
-    modifier: Modifier = Modifier,
-    title: String,
-    value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    color: Color
-) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(color.copy(alpha = 0.1f), CircleShape),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = color,
-                    modifier = Modifier.size(24.dp)
+            item {
+                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    text = "⚠️ Módulo Admin depriorizado — stubs funcionais, sem dados emulados",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary,
+                    modifier = Modifier.padding(top = 16.dp)
                 )
             }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.headlineSmall,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary
-            )
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary
-            )
         }
     }
 }
 
 @Composable
-fun AdminMenuCard(
+private fun AdminMenuCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     subtitle: String,
     onClick: () -> Unit
 ) {
     Card(
-        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 6.dp),
+            .padding(vertical = 6.dp)
+            .clickable(onClick = onClick),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
@@ -261,7 +172,7 @@ fun AdminMenuCard(
                 )
             }
             Icon(
-                imageVector = Icons.Default.ChevronRight,
+                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                 contentDescription = null,
                 tint = TextSecondary
             )

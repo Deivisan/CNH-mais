@@ -1,5 +1,15 @@
 package com.cnhplus.screens.candidato
 
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.PrimaryLight
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.TextPrimary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
+import com.cnhplus.ui.theme.Error
+
 import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -20,7 +30,6 @@ import androidx.compose.ui.unit.dp
 import com.cnhplus.*
 import com.cnhplus.data.CandidatoDto
 import com.cnhplus.ui.theme.LocalAppState
-
 /**
  * Onboarding - Cadastro rápido do candidato: CPF, celular, cidade, bairro, RENACH
  */

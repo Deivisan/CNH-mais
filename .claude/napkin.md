@@ -1,4 +1,4 @@
-# Napkin Runbook — CNH+ Android App v0.5.0
+# Napkin Runbook — CNH+ Android App v0.0.5
 
 ## Curation Rules
 - Re-prioritize on every read (highest-value first)
@@ -8,117 +8,102 @@
 
 ---
 
-## 🎯 Execution & Validation (HIGHEST PRIORITY)
+## 🔴 CRITICAL NEVER-AGAIN RULES
 
-1. **[2026-04-01] NO build until SUPABASE_ANON_KEY replaced**
-   Do instead: Keep placeholder `s0_placeholder_XXXXXXXX...` until real key obtained from Supabase console. First build WILL fail on key validation at runtime if placeholder remains.
+1. **[2026-04-01] Public inline functions CANNOT access private members**
+   Do instead: Use `@PublishedApi internal` on any field accessed by public inline methods. Pattern: `@PublishedApi internal val baseUrl: String`. Do NOT make the whole class `internal` — it breaks public API exposure across constructors. Do NOT use private inline helpers — they still fail.
 
-2. **[2026-04-01] LocalAppState.current mandatory in ALL composables**
-   Do instead: Every screen must access `val app = LocalAppState.current` from CompositionLocal. Never use ViewModels, never access AppState via constructor. Pattern: `val app = LocalAppState.current; LaunchedEffect(Unit) { app.candidatoRepo.fetch(...) }`
+2. **[2026-04-01] `inline` + reified generics require all code in-method if accessing class fields**
+   Do instead: Inline ALL HTTP logic directly in the method body. No delegation to private helpers. If you need sharing, use non-inline private functions that DON'T use reified types.
 
-3. **[2026-04-01] LaunchedEffect for ALL data fetch, no init blocks**
-   Do instead: Move all network calls from `init {}` to `LaunchedEffect(Unit) { ... }`. This ensures recomposition safety and proper state management. Exception: UI state (loading, error) can be mutable state.
+3. **[2026-04-01] Compose brace matching: Row/Card MUST have `) {` not just `)`**
+   Do instead: Always write `Row(...) { /* content */ }` — never `Row(...)` then content on next line without the `{`. The compiler will cascade errors.
 
-4. **[2026-04-01] Zero EmulatedData in Candidato/Instrutor screens**
-   Do instead: Remove ALL `copy(with: EmulatedData.candidato, ...)` from production screens. Admin screens (5 files) exempt—kept for demo purposes. Use real Supabase data via repos only.
+4. **[2026-04-01] NO `LocalAppSession` — it does not exist**
+   Do instead: Always use `val app = LocalAppState.current`. There is ONE CompositionLocal: `LocalAppState`. Check `app.sessionState`, `app.currentRole`, `app.selectRole()`.
 
-5. **[2026-04-01] Match algorithm follows SPEC.md exactly**
-   Do instead: Score = (especialidade_match * 30) + (nota_media * 20) + (pontualidade * 20) + (1 - cancelamentos_normalizado * 10) + (horas_experiencia_normalizado * 10) + (distancia_normalizado * 10). Max ~100pts. Implemented in CandidatoMatchScreen, validated post-Wave 3.
+5. **[2026-04-01] No duplicate `val` declarations in same scope**
+   Do instead: Check for duplicate variable names before adding new ones. `val app = LocalAppState.current` must appear ONCE per composable.
 
-6. **[2026-04-01] CompositionLocalProvider wraps NavHost in MainActivity**
-   Do instead: AppState initialized before NavHost. CompositionLocalProvider(LocalAppState provides app) { NavHost(...) }. This ensures all child composables access same AppState instance. Verified in MainActivity line 47-50.
+---
 
-7. **[2026-04-01] All 10 repositories initialized in AppState.init()**
-   Do instead: ProfileRepository, CandidatoRepository, InstrutorRepository, AulaRepository, PagamentoRepository, AvaliacaoRepository, DisputaRepository, MensagemRepository, DadosBancariosRepository, RepasseRepository must be created in `init {}` block. Lazy initialization breaks LocalAppState pattern.
+## 🎯 Execution & Validation (GSD Workflow)
 
-8. **[2026-04-01] NavHost bottom tab scaffolds per role (Candidato ≠ Instrutor)**
-   Do instead: 2 separate NavHost blocks—one for Candidato (5 tabs), one for Instrutor (5 tabs). Each has its own bottom navigation. Switching roles requires route change to `Screen.SelectRole` first.
+1. **[2026-04-01] GSD: Waves sequential, each MUST compile before next starts**
+   Do instead: Execute in waves: Wave 1 = infra/models, Wave 2 = repos/network, Wave 3 = screens/UI, Wave 4 = verify/ship. After EACH wave: `./gradlew compileDebugKotlin`. Zero errors → proceed. Errors → fix in same wave.
 
-9. **[2026-04-01] Colors must be exported from Theme.kt**
-   Do instead: All colors (Primary, Secondary, Accent, TextSecondary, etc.) exported as composable functions in `theme/Theme.kt`. Never hardcode hex values in screens. Import from Theme: `color = Primary`, `color = Secondary`, etc.
+2. **[2026-04-01] NO build APK until compile passes clean**
+   Do instead: `./gradlew compileDebugKotlin` first (fast, ~1min). Only when BUILD SUCCESSFUL → `./gradlew assembleDebug`. Building APK with compile errors wastes 2+ minutes.
 
-10. **[2026-04-01] GSD workflow: Waves sequential, each MUST validate before next starts**
-    Do instead: Complete one wave fully (code + validation), document results in NAPKIN, then proceed. Wave 4 = Features, Wave 5 = Build, Wave 6 = APK, Wave 7 = Commit. No jumping. Validation includes: 0 lint errors, target screens pass 5+ checks, no EmulatedData refs.
+3. **[2026-04-01] `./gradlew compileDebugKotlin` is the single source of truth**
+   Do instead: Run this after every batch of edits. It catches 99% of issues before APK build. Do NOT trust IDE highlighting — run the actual compiler.
+
+4. **[2026-04-01] GSD atomic commits per fix batch**
+   Do instead: Group related fixes (e.g., "Fix SupabaseClient inline visibility") → git add → commit with descriptive message → compile → proceed. Each commit should be independently testable.
+
+5. **[2026-04-01] LocalAppState.current mandatory in ALL composables**
+   Do instead: Every screen must access `val app = LocalAppState.current` from CompositionLocal. Never use ViewModels, never access AppState via constructor. Pattern: `val app = LocalAppState.current; LaunchedEffect(Unit) { ... }`
+
+6. **[2026-04-01] LaunchedEffect for ALL data fetch, no init blocks**
+   Do instead: Move all network calls from `init {}` to `LaunchedEffect(Unit) { ... }`. This ensures recomposition safety and proper state management.
+
+7. **[2026-04-01] Match algorithm follows SPEC.md exactly**
+   Do instead: Score = (especialidade_match * 30) + (nota_media * 20) + (pontualidade * 20) + (1 - cancelamentos_normalizado * 10) + (horas_experiencia_normalizado * 10) + (distancia_normalizado * 10). Max ~100pts.
+
+8. **[2026-04-01] Color scheme: Azul #1E3A5F → Celeste #87CEEB degradê**
+   Do instead: Primary (#1E3A5F) for headers/bold. Secondary (#4A90D9) for buttons/accents. Accent (#87CEEB) for lighter elements. Never use hardcoded hex—use Theme.kt exports.
+
+9. **[2026-04-01] SUPABASE_ANON_KEY in MainActivity is PLACEHOLDER**
+   Do instead: Before ANY runtime test, replace `s0_placeholder_XXXXXXXX...` with real value from Supabase dashboard → project → Settings → API keys. This is BLOCKING runtime auth.
+
+10. **[2026-04-01] Admin screens deprioritized — keep as stubs**
+    Do instead: 5 admin files kept as functional stubs with minimal UI. Not blocking MVP. Replace when Wave 8 starts.
 
 ---
 
 ## 🏗️ Architecture & Code Patterns
 
-1. **[2026-04-01] SupabaseClient.kt raw OkHttp (no Retrofit)**
-   Do instead: All HTTP calls use `SupabaseClient.postRequest()`, `getRequest()`, `patchRequest()` methods. No Retrofit. JSON parsing via `Json.decodeFromString<T>()`. Response status check BEFORE decoding.
+1. **[2026-04-01] SupabaseClient: inline reified with @PublishedApi internal fields**
+   Do instead: `class SupabaseClient(@PublishedApi internal val baseUrl, @PublishedApi internal val anonKey)`. All inline methods (get, getById, insert, etc.) use these fields directly. HTTP logic inlined — no private helpers for inline methods.
 
-2. **[2026-04-01] Models.kt extensions: getPerfil(), getPacote(), getVeiculo(), withPerfil()**
-   Do instead: These are helper functions on DTOs. Use `candidato.getPerfil()` to extract nested object, `candidato.withPerfil(newPerfil)` to update. Avoids null-safety boilerplate. All defined in Models.kt lines 200+.
+2. **[2026-04-01] SupabaseClient raw OkHttp (no Retrofit)**
+   Do instead: All HTTP via inline methods: `client.get<T>(table)`, `client.getById<T>(table, id)`, `client.insert(table, item)`, `client.update(table, column, value, fields)`. No Retrofit.
 
-3. **[2026-04-01] Repositories return sealed Result<T> or nullable flow**
-   Do instead: All repo methods return `suspend fun fetch(...): Result<T>` or `Flow<T?>`. Error handling is caller's responsibility. Never throw exceptions in repos.
+3. **[2026-04-01] Repositories return Result<T>**
+   Do instead: All repo methods return `Result<T>`. Error handling is caller's responsibility. Never throw exceptions in repos. Pattern: `when (val result = app.repo.fetch()) { ... }`.
 
-4. **[2026-04-01] DataStore persistence for user ID + role**
-   Do instead: AppState uses `DataStore<UserPreferences>` (proto). User ID persisted after login. This survives app restart. Check `userIdFlow` in AppState for current user.
+4. **[2026-04-01] All repositories use the SAME SupabaseClient instance**
+   Do instead: AppState creates ONE SupabaseClient and passes it to all repos. Don't create multiple clients.
 
----
-
-## 🎨 UI/UX & Visual Requirements
-
-1. **[2026-04-01] Color scheme: Azul #1E3A5F → Celeste #87CEEB degradê**
-   Do instead: Primary (#1E3A5F) for headers/bold. Secondary (#4A90D9) for buttons/accents. Accent (#87CEEB) for lighter elements. Never use hardcoded hex—use Theme.kt exports (Primary, Secondary, Accent, TextSecondary, etc.).
-
-2. **[2026-04-01] Client feedback Wave 4: 6 features in priority order**
-   Do instead: (1) BannerCarrossel (slider, todas pages), (2) Avatar redondo (foto user), (3) Footer banners (gasolina + seguro), (4) Geolocalização picker, (5) Info resumida aluno, (6) Gravação aulas. Started post-validation 01/04. See FEEDBACK-CLIENTE-2026-04-01.md for full spec.
+5. **[2026-04-01] Models.kt helper functions: getPerfil(), getPacote(), getVeiculo()**
+   Do instead: Use `candidato.getPerfil()` to extract nested objects, `candidato.withPerfil()` to update. Avoids null-safety boilerplate.
 
 ---
 
-## 📱 Screen Template & Common Patterns
+## 📱 Screen Patterns
 
-1. **[2026-04-01] Standard screen structure: Scaffold + LaunchedEffect + mutable states**
-   Do instead: 
-   ```kotlin
-   @Composable
-   fun MyScreen(onNavigate: (String) -> Unit) {
-       val app = LocalAppState.current
-       var state by remember { mutableStateOf<State>(State.Loading) }
-       
-       LaunchedEffect(Unit) {
-           when (val result = app.someRepo.fetch()) {
-               is Result.Success -> state = State.Data(result.data)
-               is Result.Error -> state = State.Error(result.message)
-           }
-       }
-       
-       Scaffold(...) { ... }
-   }
-   ```
+1. **[2026-04-01] Standard screen: Scaffold + LaunchedEffect + mutable states**
+   Do instead: `val app = LocalAppState.current` → `var loading by remember { mutableStateOf(false) }` → `LaunchedEffect(Unit) { ... }` → `Scaffold(...) { ... }`.
+
+2. **[2026-04-01] NavHost: 2 separate blocks per role (Candidato ≠ Instrutor)**
+   Do instead: 2 separate NavHost blocks — Candidato (5 tabs), Instrutor (5 tabs). Each has bottom navigation. Role switch → route to `Screen.SelectRole`.
+
+3. **[2026-04-01] CompositionLocalProvider wraps NavHost in MainActivity**
+   Do instead: `CompositionLocalProvider(LocalAppState provides app) { NavHost(...) }`. This ensures all child composables access same AppState.
+
+4. **[2026-04-01] SurfaceColor alias needed (Material3 clash with Surface)**
+   Do instead: Import `SurfaceColor` from `ui/theme/Colors.kt` instead of `Surface` color which conflicts with Material3 Surface composable.
 
 ---
 
-## 🚨 Known Gotchas & Blockers
+## 🚨 Known Gotchas
 
-1. **[2026-04-01] SUPABASE_ANON_KEY in MainActivity is PLACEHOLDER**
-   Do instead: Before ANY build, replace `s0_placeholder_XXXXXXXX...` with real value from Supabase project settings → API → Anon Key. Obtain from https://supabase.com/dashboard → project ibyngfqddoefatqtojfj → Settings → API keys. This is BLOCKING build.
-
-2. **[2026-04-01] Admin screens still use EmulatedData (intentional, deprioritized)**
-   Do instead: 5 admin files (AdminHomeScreen, AdminInstrutoresScreen, AdminCandidatosScreen, AdminAulasScreen, AdminDisputasScreen) kept as-is with mocks. Replace when Wave 8 starts. Not blocking MVP.
-
-3. **[2026-04-01] Video recording requires Camera + storage permissions**
-   Do instead: Add to AndroidManifest.xml: `<uses-permission android:name="android.permission.CAMERA" />` + `<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />`. Runtime permission check in app (targetSdk 35 requires). Use `rememberLauncherForActivityResult` for permission flow.
+1. Video recording requires Camera + storage permissions → Add to AndroidManifest.xml + runtime check.
+2. Zero EmulatedData in production screens → Admin screens exempt (intentional, deprioritized).
+3. `kotlinx.serialization.encodeToString` needs `Json.encodeToString(obj)` when called outside inline context.
 
 ---
 
-**Last updated:** 2026-04-01 — Post Wave 4, Build BLOCKED on Kotlin version
-**Author:** DevSan
-**Version:** 0.5.1-napkin
-
-## 🔴 CRITICAL: Wave 4 Blocking Issue
-
-**Kotlin Version Mismatch:**
-- Project: Kotlin 1.9.24
-- serialization 1.7.3 requires: Kotlin 2.0.0-RC1+
-- **Solution**: Upgrade Kotlin to 2.0+ OR downgrade serialization to 1.6.x
-- See `.claude/WAVE4-ERRORS.md` for detailed fixes
-
-## Wave 4 Status
-- Infrastructure: ✅ 100% (4 tables, 4 repos, 4 DTOs, AppState updated)
-- Components: ⚠️ 50% (BannerCarrossel, AvatarCircle, FooterBanners done; 3 removed due to imports)
-- Build: ❌ BLOCKED (Kotlin version)
-- Integration: ⏳ PENDING (0/10 screens)
-- Next: Fix Kotlin → Re-integrate components → Build → Release APK v0.5.1
+**Last updated:** 2026-04-01 — Release v0.0.5, ALL compilation errors fixed
+**Author:** DevSan (@deivisan)
+**Version:** 0.0.5

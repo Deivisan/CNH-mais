@@ -8,6 +8,7 @@ package com.cnhplus.data
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
+import kotlinx.serialization.encodeToString
 
 // ==================== PROFILE ====================
 
@@ -347,3 +348,15 @@ data class AvatarDto(
     val created_at: String? = null,
     val updated_at: String? = null
 )
+
+// ==================== EMULATED DATA (Admin screens only) ====================
+
+object EmulatedData {
+  val candidatos = listOf(
+    CandidatoDto(id = "1", cidade = "Feira de Santana"),
+    CandidatoDto(id = "2", cidade = "Salvador"),
+  )
+  val instrutores = listOf(
+    InstrutorDto(id = "1", cidade = "Feira de Santana", status = "ativo"),
+  )
+}

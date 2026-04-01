@@ -20,6 +20,10 @@ class InstrutorRepository(
         return client.get<InstrutorDto>(table, mapOf("status" to "eq.ativo"))
     }
 
+    fun getAllInstrutores(): Result<List<InstrutorDto>> {
+        return client.get<InstrutorDto>(table, emptyMap())
+    }
+
     fun createInstrutor(instrutor: InstrutorDto): Result<InstrutorDto> {
         return client.insert(table, instrutor)
     }

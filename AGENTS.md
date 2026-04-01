@@ -294,13 +294,15 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 - [x] Dados emulados com tooltips interativos
 - [x] Hospedagem GitHub Pages
 
-### Fase 3: App Android (0%)
-- [ ] Setup Android (Kotlin + Compose)
-- [ ] Tema com cores CNH+
-- [ ] Telas de candidato
-- [ ] Telas de instrutor
-- [ ] Navegação
-- [ ] Integração API
+### Fase 3: App Android (100%) ✅
+- [x] Setup Android (Kotlin + Compose)
+- [x] Tema com cores CNH+
+- [x] Telas de candidato
+- [x] Telas de instrutor
+- [x] Telas admin (stubs)
+- [x] Navegação
+- [x] Integração Supabase API
+- [x] APK compilado v0.0.5 (BUILD SUCCESSFUL)
 
 ### Fase 4: Backend (0%)
 - [ ] Setup Bun + Express
@@ -340,6 +342,25 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 
 ---
 
-**Última atualização:** 31/03/2026
+## 🚀 GSD Workflow (Get Shit Done)
+
+### Regras de Execução
+1. **Compile ANTES de build APK**: Sempre `./gradlew compileDebugKotlin` primeiro (~1min). Só roda `./gradlew assembleDebug` quando BUILD SUCCESSFUL.
+2. **Waves sequenciais**: Wave 1 = infra/models → Wave 2 = repos/network → Wave 3 = screens/UI → Wave 4 = verify/ship. Cada wave deve compilar zerado antes de avançar.
+3. **Commits atômicos**: Cada batch de fixes = 1 commit descritivo. `git add . && git commit -m "fix: description"` após cada wave valida.
+4. **Zero tolerância com inline/private**: `public inline fun` NUNCA acessa `private` members. Use `@PublishedApi internal` nos campos.
+5. **LocalAppState.current é a ÚNICA fonte de verdade**: Zero `LocalAppSession`, zero ViewModels. Tudo via CompositionLocal.
+
+### Stack Confirmada
+- **Kotlin** 1.9.24 + **Compose** 1.6.0
+- **Supabase** (PostgreSQL + Auth + Realtime)
+- **OkHttp** raw HTTP (sem Retrofit)
+- **kotlinx.serialization** 1.6.3
+- **Jetpack Compose** Material 3
+- **DataStore** para persistência local
+
+---
+
+**Última atualização:** 01/04/2026
 **Autor:** Deivison Santana (@deivisan)
-**Versão:** 0.3.0 - Landing + Demo PWA navegável
+**Versão:** 0.0.5 - APK Android compilado, zero erros

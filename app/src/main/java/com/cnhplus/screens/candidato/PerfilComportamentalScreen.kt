@@ -1,5 +1,13 @@
 package com.cnhplus.screens.candidato
 
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
+import com.cnhplus.ui.theme.Error
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +25,10 @@ import androidx.compose.ui.unit.dp
 import com.cnhplus.*
 import com.cnhplus.data.*
 import com.cnhplus.ui.theme.LocalAppState
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import com.cnhplus.ui.theme.PrimaryLight
+import com.cnhplus.ui.theme.TextPrimary
 
 /**
  * Perfil Comportamental - 10 perguntas para alimentar o algoritmo de match.
@@ -172,8 +184,8 @@ fun PerfilComportamentalScreen(
                                         .withPacote(pacote)
                                     
                                     state.candidatoRepo.updateCandidato(uid, mapOf(
-                                        "perfil" to jsonEncode(perfil),
-                                        "pacote" to jsonEncode(pacote)
+                                        "perfil" to jsonEncodePerfil(perfil),
+                                        "pacote" to jsonEncodePacote(pacote)
                                     )).fold(
                                         onSuccess = {
                                             loading = false
@@ -205,18 +217,15 @@ fun PerfilComportamentalScreen(
     }
 }
 
-// Helper - simple JSON encode for Map
-private fun jsonEncode(obj: Any): String {
-    val json = kotlinx.serialization.json.Json { encodeDefaults = true }
-    return try {
-        when (obj) {
-            is PerfilCandidato -> json.encodeToString(obj)
-            is PacoteCandidato -> json.encodeToString(obj)
-            else -> "{}"
-        }
-    } catch (e: Exception) {
-        "{}"
-    }
+// Helper - simple JSON encode using Json.encodeToString with serializer
+private fun jsonEncodePerfil(perfil: PerfilCandidato): String {
+    val json = Json { encodeDefaults = true }
+    return json.encodeToString(perfil)
+}
+
+private fun jsonEncodePacote(pacote: PacoteCandidato): String {
+    val json = Json { encodeDefaults = true }
+    return json.encodeToString(pacote)
 }
 
 @Composable

@@ -1,144 +1,51 @@
 package com.cnhplus.screens.auth
 
-import android.content.Context
 import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.PrimaryLight
 import com.cnhplus.ui.theme.Secondary
 import com.cnhplus.ui.theme.Accent
 import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.TextPrimary
 import com.cnhplus.ui.theme.Success
 import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.background
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.layout.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.shape.RoundedCornerShape
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.text.KeyboardOptions
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.material3.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.runtime.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.Alignment
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.Modifier
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.graphics.Brush
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.graphics.Color
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.text.font.FontWeight
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.text.input.KeyboardType
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.text.style.TextAlign
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.unit.dp
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import com.cnhplus.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
+import com.cnhplus.ui.theme.Error
 
+import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.cnhplus.app.SessionState
+import com.cnhplus.ui.theme.LocalAppState
 @Composable
 fun LoginScreen(
     context: Context,
     onLoginSuccess: (role: String) -> Unit,
     onNavigateToRegister: () -> Unit
 ) {
+    val app = LocalAppState.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
     var loading by remember { mutableStateOf(false) }
 
-    val state = LocalAppSession.current
-
-    LaunchedEffect(state.sessionState) {
-        when (state.sessionState) {
-            is com.cnhplus.app.SessionState.Authenticated -> {
-                state.currentRole?.let { onLoginSuccess(it) }
-            }
-            else -> {}
+    LaunchedEffect(app.sessionState) {
+        val st = app.sessionState.value
+        val role = app.currentRole.value
+        if (st is SessionState.Authenticated && role != null) {
+            onLoginSuccess(role)
         }
     }
 
@@ -234,13 +141,13 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 Button(
-                    onClick = {
+                                onClick = {
                         if (email.isBlank() || password.isBlank()) {
                             error = "Preencha todos os campos"
                             return@Button
                         }
                         loading = true
-                        state.login(email, password) { result ->
+                        app.login(email, password) { result ->
                             loading = false
                             result.fold(
                                 onSuccess = { /* LaunchedEffect handles navigation */ },
@@ -282,13 +189,12 @@ fun RegisterScreen(
     onBack: () -> Unit,
     onRegistered: () -> Unit
 ) {
+    val app = LocalAppState.current
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var error by remember { mutableStateOf<String?>(null) }
-    var loading by remember { mutableStateOf(false) }
-    
-    val state = LocalAppSession.current
+    var isLoading by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -386,9 +292,9 @@ fun RegisterScreen(
                             error = "Senha deve ter pelo menos 6 caracteres"
                             return@Button
                         }
-                        loading = true
-                        state.register(email, password) { result ->
-                            loading = false
+                        isLoading = true
+                        app.register(email, password) { result ->
+                            isLoading = false
                             result.fold(
                                 onSuccess = { onRegistered() },
                                 onFailure = { e -> error = e.message ?: "Erro ao criar conta" }
@@ -399,9 +305,9 @@ fun RegisterScreen(
                         .fillMaxWidth()
                         .height(56.dp),
                     shape = RoundedCornerShape(16.dp),
-                    enabled = !loading
+                    enabled = !isLoading
                 ) {
-                    if (loading) {
+                    if (isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(24.dp),
                             color = Color.White
@@ -428,7 +334,7 @@ fun RegisterScreen(
 fun SelectRoleScreen(
     onRoleSelected: (role: String) -> Unit
 ) {
-    val state = LocalAppSession.current
+    val app = LocalAppState.current
 
     Column(
         modifier = Modifier
@@ -465,7 +371,7 @@ fun SelectRoleScreen(
             icon = "🎓",
             title = "Candidato à CNH",
             description = "Encontrar instrutores e agendar aulas práticas",
-            onClick = { state.selectRole("candidato") { result ->
+            onClick = { app.selectRole("candidato") { result ->
                 result.onSuccess { onRoleSelected("candidato") }
             }}
         )
@@ -476,7 +382,7 @@ fun SelectRoleScreen(
             icon = "🚗",
             title = "Instrutor de Direção",
             description = "Gerenciar alunos, agenda e recebimentos",
-            onClick = { state.selectRole("instrutor") { result ->
+            onClick = { app.selectRole("instrutor") { result ->
                 result.onSuccess { onRoleSelected("instrutor") }
             }}
         )
@@ -487,7 +393,7 @@ fun SelectRoleScreen(
             icon = "⚙️",
             title = "Administrador",
             description = "Gerenciar a plataforma e usuários",
-            onClick = { state.selectRole("admin") { result ->
+            onClick = { app.selectRole("admin") { result ->
                 result.onSuccess { onRoleSelected("admin") }
             }}
         )

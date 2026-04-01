@@ -1,139 +1,36 @@
 package com.cnhplus.screens.candidato
 
-import androidx.compose.foundation.background
 import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.PrimaryLight
 import com.cnhplus.ui.theme.Secondary
 import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.SurfaceColor
 import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.TextPrimary
 import com.cnhplus.ui.theme.Success
 import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.layout.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.lazy.LazyColumn
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.lazy.items
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.foundation.shape.RoundedCornerShape
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.material.icons.Icons
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.material.icons.filled.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.material3.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.runtime.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.Alignment
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.Modifier
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.graphics.Color
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.text.font.FontWeight
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import androidx.compose.ui.unit.dp
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import com.cnhplus.*
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import com.cnhplus.data.AulaDto
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import com.cnhplus.ui.theme.LocalAppState
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import java.text.SimpleDateFormat
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
-import java.util.Locale
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Success
-import com.cnhplus.ui.theme.Warning
+import com.cnhplus.ui.theme.Error
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import com.cnhplus.*
+import com.cnhplus.data.AulaDto
+import com.cnhplus.ui.theme.LocalAppState
+import java.text.SimpleDateFormat
+import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CandidatoAulasScreen(
@@ -194,7 +91,7 @@ fun CandidatoAulasScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Surface)
+                .background(SurfaceColor)
         ) {
             if (aulas.isEmpty()) {
                 item {
@@ -279,7 +176,7 @@ fun CandidatoAulasScreen(
             items(aulas) { aula ->
                 AulaItem(
                     aula = aula,
-                    onClick = { aula.id?.let { onAulaClick(it) } }
+                    onClick = { aula.id?.let { /* detalhes da aula */ } }
                 )
             }
             

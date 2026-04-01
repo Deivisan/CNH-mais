@@ -1,0 +1,446 @@
+package com.cnhplus.screens.auth
+
+import android.content.Context
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import com.cnhplus.*
+
+@Composable
+fun LoginScreen(
+    context: Context,
+    onLoginSuccess: (role: String) -> Unit,
+    onNavigateToRegister: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+    var loading by remember { mutableStateOf(false) }
+
+    val state = LocalAppSession.current
+
+    LaunchedEffect(state.sessionState) {
+        when (state.sessionState) {
+            is com.cnhplus.app.SessionState.Authenticated -> {
+                state.currentRole?.let { onLoginSuccess(it) }
+            }
+            else -> {}
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Primary, PrimaryLight, Secondary)
+                )
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        // Logo
+        Text(
+            text = "🚗 CNH+",
+            style = MaterialTheme.typography.displayMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "Sua CNH começa aqui",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White.copy(alpha = 0.8f)
+        )
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        // Login card
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                Text(
+                    text = "Entrar",
+                    style = MaterialTheme.typography.headlineMedium,
+                    fontWeight = FontWeight.Bold,
+                    color = TextPrimary
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                error?.let { errMsg ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFFEBEE)
+                        )
+                    ) {
+                        Text(
+                            text = errMsg,
+                            color = Color(0xFFC62828),
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it; error = null },
+                    label = { Text("Email") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it; error = null },
+                    label = { Text("Senha") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                Button(
+                    onClick = {
+                        if (email.isBlank() || password.isBlank()) {
+                            error = "Preencha todos os campos"
+                            return@Button
+                        }
+                        loading = true
+                        state.login(email, password) { result ->
+                            loading = false
+                            result.fold(
+                                onSuccess = { /* LaunchedEffect handles navigation */ },
+                                onFailure = { e -> error = e.message ?: "Erro ao fazer login" }
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    enabled = !loading
+                ) {
+                    if (loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text("Entrar", style = MaterialTheme.typography.titleMedium)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                TextButton(
+                    onClick = onNavigateToRegister,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text("Criar uma conta")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun RegisterScreen(
+    onBack: () -> Unit,
+    onRegistered: () -> Unit
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+    var error by remember { mutableStateOf<String?>(null) }
+    var loading by remember { mutableStateOf(false) }
+    
+    val state = LocalAppSession.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Primary, PrimaryLight, Secondary)
+                )
+            ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Spacer(modifier = Modifier.height(80.dp))
+        
+        Text(
+            text = "Criar Conta",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color.White
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            shape = RoundedCornerShape(24.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                error?.let { errMsg ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFFEBEE)
+                        )
+                    ) {
+                        Text(
+                            text = errMsg,
+                            color = Color(0xFFC62828),
+                            modifier = Modifier.padding(12.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                
+                OutlinedTextField(
+                    value = email,
+                    onValueChange = { email = it; error = null },
+                    label = { Text("Email") },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it; error = null },
+                    label = { Text("Senha") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                OutlinedTextField(
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it; error = null },
+                    label = { Text("Confirmar Senha") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Spacer(modifier = Modifier.height(24.dp))
+                
+                Button(
+                    onClick = {
+                        if (email.isBlank() || password.isBlank()) {
+                            error = "Preencha todos os campos"
+                            return@Button
+                        }
+                        if (password != confirmPassword) {
+                            error = "Senhas não coincidem"
+                            return@Button
+                        }
+                        if (password.length < 6) {
+                            error = "Senha deve ter pelo menos 6 caracteres"
+                            return@Button
+                        }
+                        loading = true
+                        state.register(email, password) { result ->
+                            loading = false
+                            result.fold(
+                                onSuccess = { onRegistered() },
+                                onFailure = { e -> error = e.message ?: "Erro ao criar conta" }
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    enabled = !loading
+                ) {
+                    if (loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(24.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text("Criar Conta", style = MaterialTheme.typography.titleMedium)
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                TextButton(
+                    onClick = onBack,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                ) {
+                    Text("Já tenho uma conta")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SelectRoleScreen(
+    onRoleSelected: (role: String) -> Unit
+) {
+    val state = LocalAppSession.current
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Primary, PrimaryLight, Secondary)
+                )
+            )
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Text(
+            text = "Qual seu perfil?",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = Color.White,
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        Text(
+            text = "Escolha como deseja acessar a plataforma",
+            style = MaterialTheme.typography.bodyLarge,
+            color = Color.White.copy(alpha = 0.8f),
+            textAlign = TextAlign.Center
+        )
+        
+        Spacer(modifier = Modifier.height(48.dp))
+        
+        RoleCard(
+            icon = "🎓",
+            title = "Candidato à CNH",
+            description = "Encontrar instrutores e agendar aulas práticas",
+            onClick = { state.selectRole("candidato") { result ->
+                result.onSuccess { onRoleSelected("candidato") }
+            }}
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        RoleCard(
+            icon = "🚗",
+            title = "Instrutor de Direção",
+            description = "Gerenciar alunos, agenda e recebimentos",
+            onClick = { state.selectRole("instrutor") { result ->
+                result.onSuccess { onRoleSelected("instrutor") }
+            }}
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        RoleCard(
+            icon = "⚙️",
+            title = "Administrador",
+            description = "Gerenciar a plataforma e usuários",
+            onClick = { state.selectRole("admin") { result ->
+                result.onSuccess { onRoleSelected("admin") }
+            }}
+        )
+    }
+}
+
+@Composable
+private fun RoleCard(
+    icon: String,
+    title: String,
+    description: String,
+    onClick: () -> Unit
+) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(56.dp)
+                    .background(Accent, RoundedCornerShape(12.dp)),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(icon, style = MaterialTheme.typography.headlineSmall)
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = TextPrimary
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextSecondary
+                )
+            }
+            
+            Text(
+                text = "→",
+                style = MaterialTheme.typography.titleLarge,
+                color = TextSecondary
+            )
+        }
+    }
+}

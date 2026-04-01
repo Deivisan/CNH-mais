@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,13 +13,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
+import com.cnhplus.data.PagamentoDto
+import com.cnhplus.ui.theme.LocalAppState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CandidatoPagamentoScreen(
-    onBack: () -> Unit
-) {
+fun CandidatoPagamentoScreen() {
+    val app = LocalAppState.current
+    
     var selectedPackage by remember { mutableIntStateOf(0) }
+    var isProcessing by remember { mutableStateOf(false) }
+    var successMsg by remember { mutableStateOf<String?>(null) }
+    
     val packages = listOf(
         Triple("Básico", 10, 99.0),
         Triple("Completo", 20, 179.0),
@@ -31,15 +35,9 @@ fun CandidatoPagamentoScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Comprar Aulas") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Primary,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    titleContentColor = Color.White
                 )
             )
         }
@@ -63,6 +61,43 @@ fun CandidatoPagamentoScreen(
             )
             
             Spacer(modifier = Modifier.height(24.dp))
+            
+            if (successMsg != null) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    shape = RoundedCornerShape(12.dp),
+                    colors = CardDefaults.cardColors(containerColor = Success.copy(alpha = 0.2f))
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = Success
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column {
+                            Text(
+                                text = "Compra Realizada!",
+                                style = MaterialTheme.typography.titleSmall,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = successMsg ?: "",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = TextSecondary
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+            }
             
             packages.forEachIndexed { index, (name, qty, price) ->
                 Card(
@@ -95,7 +130,7 @@ fun CandidatoPagamentoScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "$qty aulas",
+                                text = "$qty aulas • R$ ${String.format("%.2f", price / qty)}/aula",
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = TextSecondary
                             )
@@ -113,24 +148,57 @@ fun CandidatoPagamentoScreen(
             Spacer(modifier = Modifier.weight(1f))
             
             Button(
-                onClick = {},
+                onClick = {
+                    isProcessing = true
+                    // Criar pagamento via Supabase (Mercado Pago ref)
+                    val (name, qty, price) = packages[selectedPackage]
+                    val userId = app.currentUser.value?.id ?: return@Button
+                    
+                    val pagamento = PagamentoDto(
+                        candidato_id = userId,
+                        valor = price,
+                        status = "pendente",
+                        tipo = "pacote",
+                        pacotes = qty
+                    )
+                    
+                    app.pagamentoRepo.createPagamento(pagamento).fold(
+                        onSuccess = {
+                            successMsg = "Pacote de $qty aulas adicionado! Aguardando confirmação de pagamento."
+                            isProcessing = false
+                        },
+                        onFailure = {
+                            successMsg = "Erro ao processar pagamento"
+                            isProcessing = false
+                        }
+                    )
+                },
+                enabled = !isProcessing,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Secondary),
                 shape = RoundedCornerShape(12.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Comprar com Segurança",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+                if (isProcessing) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        color = Color.White,
+                        strokeWidth = 2.dp
+                    )
+                } else {
+                    Icon(
+                        imageVector = Icons.Default.Lock,
+                        contentDescription = null,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "Comprar com Segurança",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
             
             Spacer(modifier = Modifier.height(8.dp))

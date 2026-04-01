@@ -2,9 +2,10 @@ package com.cnhplus.screens.instrutor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,225 +15,96 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
+import com.cnhplus.data.RepasseDto
+import com.cnhplus.ui.theme.LocalAppState
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InstrutorFinanceiroScreen(
-    onBack: () -> Unit
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Financeiro") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Primary,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
-            )
-        }
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(Surface)
-        ) {
-            // Balance Card
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Primary)
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = "Saldo Disponível",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = Color.White.copy(alpha = 0.8f)
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "R$ 1.250,00",
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.Bold,
-                        color = Accent
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "Liberado para saque",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.6f)
-                    )
-                }
-            }
-            
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                FinanceCard(
-                    modifier = Modifier.weight(1f),
-                    title = "Pendente",
-                    value = "R$ 480,00",
-                    icon = Icons.Default.Pending,
-                    color = Warning
-                )
-                FinanceCard(
-                    modifier = Modifier.weight(1f),
-                    title = "Este Mês",
-                    value = "R$ 2.400,00",
-                    icon = Icons.Default.CalendarMonth,
-                    color = Success
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Bank Info
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Dados Bancários",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        IconButton(onClick = {}) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Editar",
-                                tint = Secondary
-                            )
+fun InstrutorFinanceiroScreen() {
+    val app = LocalAppState.current
+    var repasses by remember { mutableStateOf<List<RepasseDto>>(emptyList()) }
+    var totalPendente by remember { mutableStateOf(0.0) }
+    var totalPago by remember { mutableStateOf(0.0) }
+    var isLoading by remember { mutableStateOf(true) }
+    
+    LaunchedEffect(Unit) {
+        val userId = app.currentUser.value?.id ?: run { isLoading = false; return@LaunchedEffect }
+        app.repasseRepo.getRepassesByInstrutor(userId).fold(
+            onSuccess = { r ->
+                repasses = r.sortedByDescending { it.created_at }
+                totalPendente = r.filter { it.status == "pendente" }.sumOf { it.valor ?: 0.0 }
+                totalPago = r.filter { it.status == "pago" }.sumOf { it.valor ?: 0.0 }
+                isLoading = false
+            },
+            onFailure = { isLoading = false }
+        )
+    }
+    
+    if (isLoading) { Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = Secondary) }; return }
+    
+    Scaffold(topBar = { TopAppBar(title = { Text("Financeiro") }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Primary, titleContentColor = Color.White)) }) { padding ->
+        LazyColumn(Modifier.fillMaxSize().padding(padding).background(Surface)) {
+            item {
+                Card(Modifier.fillMaxWidth().padding(16.dp), RoundedCornerShape(16.dp), CardDefaults.cardColors(Primary)) {
+                    Column(Modifier.padding(20.dp)) {
+                        Text("Resumo de Ganhos", MaterialTheme.typography.titleMedium, Color.White.copy(0.8f))
+                        Spacer(Modifier.height(16.dp))
+                        Row(Modifier.fillMaxWidth(), Arrangement.SpaceAround) {
+                            Column(Alignment.CenterHorizontally) {
+                                Text("R$ ${"%.2f".format(totalPendente)}", MaterialTheme.typography.headlineSmall, FontWeight.Bold, Accent)
+                                Text("Pendente", MaterialTheme.typography.bodySmall, Color.White.copy(0.7f))
+                            }
+                            Column(Alignment.CenterHorizontally) {
+                                Text("R$ ${"%.2f".format(totalPago)}", MaterialTheme.typography.headlineSmall, FontWeight.Bold, Accent)
+                                Text("Pago", MaterialTheme.typography.bodySmall, Color.White.copy(0.7f))
+                            }
+                        }
+                        Spacer(Modifier.height(16.dp))
+                        Button(onClick = {}, Modifier.fillMaxWidth(), ButtonDefaults.buttonColors(Accent)) {
+                            Icon(Icons.Default.AttachMoney, null, Modifier.size(20.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text("Solicitar Saque (8 dias)")
                         }
                     }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.AccountBalance,
-                            contentDescription = null,
-                            tint = TextSecondary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Banco: Nubank | PIX: ***123",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.Schedule,
-                            contentDescription = null,
-                            tint = TextSecondary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Frequência de repasse: Diário",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = TextSecondary
-                        )
-                    }
                 }
             }
             
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            // Withdraw Button
-            Button(
-                onClick = {},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
-                    .height(56.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Secondary),
-                shape = RoundedCornerShape(12.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.AccountBalanceWallet,
-                    contentDescription = null
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "Solicitar Saque",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
+            item {
+                Spacer(Modifier.height(24.dp))
+                Text("Histórico de Repasses", MaterialTheme.typography.titleMedium, FontWeight.Bold, Modifier.padding(16.dp, 0.dp))
+                Spacer(Modifier.height(12.dp))
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            items(repasses) { repasse ->
+                RepasseCard(repasse)
+            }
             
-            // Info
-            Text(
-                text = "Taxa de serviço: 15% | Saque: D+1 útil",
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+            item { Spacer(Modifier.height(16.dp)) }
         }
     }
 }
 
 @Composable
-fun FinanceCard(
-    modifier: Modifier = Modifier,
-    title: String,
-    value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    color: Color
-) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                tint = color,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = value,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary
-            )
-            Text(
-                text = title,
-                style = MaterialTheme.typography.bodySmall,
-                color = TextSecondary
-            )
+fun RepasseCard(repasse: RepasseDto) {
+    Card(Modifier.fillMaxWidth().padding(16.dp, 8.dp), RoundedCornerShape(12.dp), CardDefaults.cardColors(Color.White)) {
+        Row(Modifier.fillMaxWidth().padding(16.dp), Arrangement.SpaceBetween, Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                Text("R$ ${repasse.valor?.let { "%.2f".format(it) } ?: "0.00"}", MaterialTheme.typography.titleSmall, FontWeight.Bold)
+                Text(repasse.created_at ?: "N/A", MaterialTheme.typography.bodySmall, TextSecondary)
+            }
+            Surface(
+                if (repasse.status == "pago") Success.copy(0.2f) else Warning.copy(0.2f),
+                RoundedCornerShape(6.dp)
+            ) {
+                Text(
+                    text = repasse.status?.replaceFirstChar { it.uppercase() } ?: "N/A",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = if (repasse.status == "pago") Success else Warning,
+                    modifier = Modifier.padding(6.dp)
+                )
+            }
         }
     }
 }

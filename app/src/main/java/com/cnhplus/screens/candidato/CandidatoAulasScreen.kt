@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,29 +15,63 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
-import com.cnhplus.data.EmulatedData
+import com.cnhplus.data.AulaDto
+import com.cnhplus.ui.theme.LocalAppState
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CandidatoAulasScreen(
-    onBack: () -> Unit
 ) {
-    val aulas = EmulatedData.aulas.filter { it.candidatoId == "1" }
-    val instrutor = EmulatedData.instrutores[0]
+    val app = LocalAppState.current
+    
+    var aulas by remember { mutableStateOf<List<AulaDto>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMsg by remember { mutableStateOf<String?>(null) }
+    
+    // Fetch aulas do candidato via Supabase
+    LaunchedEffect(Unit) {
+        try {
+            val userId = app.currentUser.value?.id ?: run {
+                errorMsg = "Usuário não autenticado"
+                isLoading = false
+                return@LaunchedEffect
+            }
+            
+            app.aulaRepo.getAulasByCandidato(userId).fold(
+                onSuccess = { a ->
+                    aulas = a.sortedByDescending { it.data_hora }
+                    isLoading = false
+                },
+                onFailure = { e ->
+                    errorMsg = e.message ?: "Erro ao carregar aulas"
+                    isLoading = false
+                }
+            )
+        } catch (e: Exception) {
+            errorMsg = e.message
+            isLoading = false
+        }
+    }
+    
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Secondary)
+        }
+        return
+    }
     
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Minhas Aulas") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Primary,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
+                    titleContentColor = Color.White
                 )
             )
         }
@@ -49,55 +82,77 @@ fun CandidatoAulasScreen(
                 .padding(padding)
                 .background(Surface)
         ) {
-            item {
-                // Next Class Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Secondary)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(20.dp)
+            if (aulas.isEmpty()) {
+                item {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(32.dp),
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "Próxima Aula",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "30 de Março, 2026",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                        Text(
-                            text = "14:00 - 50 min",
+                            text = "Nenhuma aula agendada",
                             style = MaterialTheme.typography.bodyLarge,
-                            color = Color.White
+                            color = TextSecondary
                         )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Icon(
-                                imageVector = Icons.Default.School,
-                                contentDescription = null,
-                                tint = Accent,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
+                    }
+                }
+                return@LazyColumn
+            }
+            
+            // Próxima aula (agendada)
+            val proximaAula = aulas.firstOrNull { it.status == "agendada" }
+            if (proximaAula != null) {
+                item {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        shape = RoundedCornerShape(16.dp),
+                        colors = CardDefaults.cardColors(containerColor = Secondary)
+                    ) {
+                        Column(
+                            modifier = Modifier.padding(20.dp)
+                        ) {
                             Text(
-                                text = instrutor.nome,
-                                style = MaterialTheme.typography.bodyMedium,
+                                text = "Próxima Aula",
+                                style = MaterialTheme.typography.titleMedium,
+                                color = Color.White.copy(alpha = 0.8f)
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                text = proximaAula.data_hora ?: "Data não definida",
+                                style = MaterialTheme.typography.headlineSmall,
+                                fontWeight = FontWeight.Bold,
                                 color = Color.White
                             )
+                            Text(
+                                text = "${proximaAula.duracao ?: 50} min",
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.School,
+                                    contentDescription = null,
+                                    tint = Accent,
+                                    modifier = Modifier.size(16.dp)
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text(
+                                    text = proximaAula.local_encontro ?: "Local a definir",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }
             }
             
             item {
+                Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "Histórico de Aulas",
                     style = MaterialTheme.typography.titleMedium,
@@ -108,76 +163,100 @@ fun CandidatoAulasScreen(
             }
             
             items(aulas) { aula ->
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .background(
-                                    if (aula.status == "concluida") Success.copy(alpha = 0.1f) 
-                                    else Secondary.copy(alpha = 0.1f),
-                                    RoundedCornerShape(12.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = if (aula.status == "concluida") Icons.Default.CheckCircle else Icons.Default.Schedule,
-                                contentDescription = null,
-                                tint = if (aula.status == "concluida") Success else Secondary,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Aula #${aula.id}",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = "${aula.duracao} minutos",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = TextSecondary
-                            )
-                        }
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text(
-                                text = "R$ ${String.format("%.2f", aula.valor)}",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Primary
-                            )
-                            AssistChip(
-                                onClick = {},
-                                label = { 
-                                    Text(
-                                        aula.status.replaceFirstChar { it.uppercase() },
-                                        style = MaterialTheme.typography.labelSmall
-                                    )
-                                },
-                                colors = AssistChipDefaults.assistChipColors(
-                                    containerColor = if (aula.status == "concluida") Success.copy(alpha = 0.1f) else Secondary.copy(alpha = 0.1f),
-                                    labelColor = if (aula.status == "concluida") Success else Secondary
-                                )
-                            )
-                        }
-                    }
-                }
+                AulaItem(
+                    aula = aula,
+                    onClick = { aula.id?.let { onAulaClick(it) } }
+                )
             }
             
             item {
                 Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun AulaItem(
+    aula: AulaDto,
+    onClick: () -> Unit = {}
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 6.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = aula.data_hora ?: "Data não definida",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = "${aula.duracao ?: 50} min",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = aula.local_encontro ?: "Local a definir",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TextSecondary
+                )
+            }
+            
+            // Status badge
+            when (aula.status) {
+                "agendada" -> {
+                    Surface(
+                        color = Accent.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(6.dp)
+                    ) {
+                        Text(
+                            text = "Agendada",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Secondary,
+                            modifier = Modifier.padding(6.dp)
+                        )
+                    }
+                }
+                "concluida" -> {
+                    Surface(
+                        color = Success.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(6.dp)
+                    ) {
+                        Text(
+                            text = "Concluída",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Success,
+                            modifier = Modifier.padding(6.dp)
+                        )
+                    }
+                }
+                "cancelada" -> {
+                    Surface(
+                        color = Error.copy(alpha = 0.2f),
+                        shape = RoundedCornerShape(6.dp)
+                    ) {
+                        Text(
+                            text = "Cancelada",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Error,
+                            modifier = Modifier.padding(6.dp)
+                        )
+                    }
+                }
+                else -> {}
             }
         }
     }

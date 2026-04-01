@@ -3,10 +3,9 @@ package com.cnhplus.screens.instrutor
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,136 +15,51 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
-import com.cnhplus.data.EmulatedData
+import com.cnhplus.data.AulaDto
+import com.cnhplus.ui.theme.LocalAppState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InstrutorAulasScreen(
-    onBack: () -> Unit
-) {
-    val aulas = EmulatedData.aulas.filter { it.instrutorId == "1" }
+fun InstrutorAulasScreen() {
+    val app = LocalAppState.current
+    var aulas by remember { mutableStateOf<List<AulaDto>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
     
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Aulas") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Primary,
-                    titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White
-                )
-            )
+    LaunchedEffect(Unit) {
+        val userId = app.currentUser.value?.id ?: run { isLoading = false; return@LaunchedEffect }
+        app.aulaRepo.getAulasByInstrutor(userId).fold(
+            onSuccess = { a -> aulas = a.filter { it.status == "concluida" }.sortedByDescending { it.data_hora }; isLoading = false },
+            onFailure = { isLoading = false }
+        )
+    }
+    
+    if (isLoading) { Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = Secondary) }; return }
+    
+    Scaffold(topBar = { TopAppBar(title = { Text("Aulas Realizadas") }, colors = TopAppBarDefaults.topAppBarColors(containerColor = Primary, titleContentColor = Color.White)) }) { padding ->
+        LazyColumn(Modifier.fillMaxSize().padding(padding).background(Surface)) {
+            if (aulas.isEmpty()) { item { Box(Modifier.fillMaxWidth().padding(32.dp), Alignment.Center) { Text("Nenhuma aula concluída", color = TextSecondary) } } }
+            else { items(aulas) { aula -> AulaRealizadaCard(aula) } }
+            item { Spacer(Modifier.height(16.dp)) }
         }
-    ) { padding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .background(Surface)
-        ) {
-            item {
-                // Today's Classes
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Secondary)
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Hoje",
-                            style = MaterialTheme.typography.titleMedium,
-                            color = Color.White.copy(alpha = 0.8f)
-                        )
-                        Text(
-                            text = "3 aulas agendadas",
-                            style = MaterialTheme.typography.headlineSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = Color.White
-                        )
-                    }
+    }
+}
+
+@Composable
+fun AulaRealizadaCard(aula: AulaDto) {
+    Card(Modifier.fillMaxWidth().padding(16.dp, 8.dp), RoundedCornerShape(12.dp), CardDefaults.cardColors(Color.White)) {
+        Column(Modifier.fillMaxWidth().padding(16.dp)) {
+            Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
+                Column(Modifier.weight(1f)) {
+                    Text(aula.data_hora ?: "N/A", MaterialTheme.typography.titleSmall, FontWeight.Bold)
+                    Text("${aula.duracao ?: 50}min", MaterialTheme.typography.bodySmall, TextSecondary)
                 }
+                Surface(Success.copy(0.2f), RoundedCornerShape(6.dp)) { Text("Concluída", MaterialTheme.typography.labelSmall, Success, Modifier.padding(6.dp)) }
             }
-            
-            item {
-                Text(
-                    text = "Aulas Agendadas",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(horizontal = 16.dp)
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-            }
-            
-            items(aulas.size) { index ->
-                val aula = aulas[index]
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 6.dp),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .background(Secondary, CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "JS",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        }
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "João Silva",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            Text(
-                                text = "14:00 - 50 min",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = TextSecondary
-                            )
-                        }
-                        Column(horizontalAlignment = Alignment.End) {
-                            Text(
-                                text = "R$ ${String.format("%.2f", aula.valor)}",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = Success
-                            )
-                            AssistChip(
-                                onClick = {},
-                                label = { Text("Confirmar", style = MaterialTheme.typography.labelSmall) },
-                                colors = AssistChipDefaults.assistChipColors(
-                                    containerColor = Success.copy(alpha = 0.1f),
-                                    labelColor = Success
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-            
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
+            Row(Alignment.CenterVertically) {
+                Icon(Icons.Default.Star, null, Warning, Modifier.size(16.dp))
+                Spacer(Modifier.width(4.dp))
+                Text("${aula.valor ?: 0.0} R$", MaterialTheme.typography.bodySmall, TextSecondary)
             }
         }
     }

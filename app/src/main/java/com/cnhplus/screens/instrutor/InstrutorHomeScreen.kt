@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -16,29 +15,82 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
-import com.cnhplus.data.EmulatedData
+import com.cnhplus.data.InstrutorDto
+import com.cnhplus.ui.theme.LocalAppState
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InstrutorHomeScreen(
-    onNavigateToPerfil: () -> Unit,
-    onNavigateToAgenda: () -> Unit,
-    onNavigateToAulas: () -> Unit,
-    onNavigateToFinanceiro: () -> Unit,
-    onBack: () -> Unit
+    onNavigateToPerfil: () -> Unit = {},
+    onNavigateToAgenda: () -> Unit = {},
+    onNavigateToAulas: () -> Unit = {},
+    onNavigateToFinanceiro: () -> Unit = {}
 ) {
-    val instrutor = EmulatedData.instrutores[0]
-    val aulasHoje = 3
+    val app = LocalAppState.current
+    
+    var instrutor by remember { mutableStateOf<InstrutorDto?>(null) }
+    var aulasHoje by remember { mutableStateOf(0) }
+    var ganhosDia by remember { mutableStateOf(0.0) }
+    var isLoading by remember { mutableStateOf(true) }
+    
+    // Fetch instrutor e dados de dashboard
+    LaunchedEffect(Unit) {
+        try {
+            val userId = app.currentUser.value?.id ?: run {
+                isLoading = false
+                return@LaunchedEffect
+            }
+            
+            app.instrutorRepo.getInstrutor(userId).fold(
+                onSuccess = { inst ->
+                    instrutor = inst
+                    
+                    // Fetch aulas de hoje
+                    app.aulaRepo.getAulasByInstrutor(userId).fold(
+                        onSuccess = { aulas ->
+                            val hoje = java.time.LocalDate.now().toString()
+                            aulasHoje = aulas.count { it.data_hora?.startsWith(hoje) == true }
+                            ganhosDia = aulas
+                                .filter { it.data_hora?.startsWith(hoje) == true && it.status == "concluida" }
+                                .sumOf { it.valor ?: 0.0 }
+                            isLoading = false
+                        },
+                        onFailure = {
+                            isLoading = false
+                        }
+                    )
+                },
+                onFailure = {
+                    isLoading = false
+                }
+            )
+        } catch (e: Exception) {
+            isLoading = false
+        }
+    }
+    
+    if (isLoading) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Secondary)
+        }
+        return
+    }
+    
+    val instrutorName = instrutor?.biografia?.take(20) ?: app.currentUser.value?.email?.split("@")?.get(0) ?: "Instrutor"
     
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Olá, ${instrutor.nome.split(" ").first()}!") },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar")
-                    }
-                },
+                title = { Text("Olá, ${instrutorName.split(" ").firstOrNull()?.replaceFirstChar { it.uppercase() } ?: "Instrutor"}!") },
                 actions = {
                     IconButton(onClick = onNavigateToPerfil) {
                         Icon(Icons.Default.Person, contentDescription = "Perfil")
@@ -47,7 +99,6 @@ fun InstrutorHomeScreen(
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Primary,
                     titleContentColor = Color.White,
-                    navigationIconContentColor = Color.White,
                     actionIconContentColor = Color.White
                 )
             )
@@ -57,10 +108,10 @@ fun InstrutorHomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
-                .background(Surface)
+                .background(MaterialTheme.colorScheme.background)
         ) {
             item {
-                // Stats Card
+                // Stats Card — Dashboard
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -96,13 +147,26 @@ fun InstrutorHomeScreen(
                             }
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Text(
-                                    text = "R$ 360",
+                                    text = "R$ ${String.format("%.2f", ganhosDia)}",
                                     style = MaterialTheme.typography.headlineMedium,
                                     fontWeight = FontWeight.Bold,
-                                    color = Success
+                                    color = Accent
                                 )
                                 Text(
-                                    text = "Estimado",
+                                    text = "Ganhos hoje",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color.White.copy(alpha = 0.7f)
+                                )
+                            }
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = "${instrutor?.nota_media ?: 0.0}",
+                                    style = MaterialTheme.typography.headlineMedium,
+                                    fontWeight = FontWeight.Bold,
+                                    color = Accent
+                                )
+                                Text(
+                                    text = "Avaliação",
                                     style = MaterialTheme.typography.bodySmall,
                                     color = Color.White.copy(alpha = 0.7f)
                                 )
@@ -113,59 +177,9 @@ fun InstrutorHomeScreen(
             }
             
             item {
-                // Next Class Card
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
-                    shape = RoundedCornerShape(16.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.White)
-                ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = "Próxima Aula",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .background(Secondary, CircleShape),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "JS",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.Bold,
-                                    color = Color.White
-                                )
-                            }
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Column {
-                                Text(
-                                    text = "João Silva",
-                                    style = MaterialTheme.typography.titleMedium,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                                Text(
-                                    text = "14:00 - 50 min",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = TextSecondary
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-            
-            item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Menu",
+                    text = "Ações Rápidas",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.padding(horizontal = 16.dp)
@@ -176,8 +190,8 @@ fun InstrutorHomeScreen(
             item {
                 InstrutorMenuCard(
                     icon = Icons.Default.CalendarMonth,
-                    title = "Agenda",
-                    subtitle = "Gerenciar disponibilidade",
+                    title = "Minha Agenda",
+                    subtitle = "Ver e gerenciar aulas agendadas",
                     onClick = onNavigateToAgenda
                 )
             }
@@ -185,8 +199,8 @@ fun InstrutorHomeScreen(
             item {
                 InstrutorMenuCard(
                     icon = Icons.Default.School,
-                    title = "Aulas",
-                    subtitle = "Ver aulas agendadas",
+                    title = "Minhas Aulas",
+                    subtitle = "Aulas realizadas e avaliações",
                     onClick = onNavigateToAulas
                 )
             }
@@ -195,7 +209,7 @@ fun InstrutorHomeScreen(
                 InstrutorMenuCard(
                     icon = Icons.Default.AttachMoney,
                     title = "Financeiro",
-                    subtitle = "Ver ganhos e estatísticas",
+                    subtitle = "Ganhos e repasses",
                     onClick = onNavigateToFinanceiro
                 )
             }
@@ -204,7 +218,7 @@ fun InstrutorHomeScreen(
                 InstrutorMenuCard(
                     icon = Icons.Default.Person,
                     title = "Meu Perfil",
-                    subtitle = "Editar informações",
+                    subtitle = "Editar informações profissionais",
                     onClick = onNavigateToPerfil
                 )
             }
@@ -240,7 +254,7 @@ fun InstrutorMenuCard(
             Box(
                 modifier = Modifier
                     .size(48.dp)
-                    .background(Primary, RoundedCornerShape(12.dp)),
+                    .background(Secondary, RoundedCornerShape(12.dp)),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(

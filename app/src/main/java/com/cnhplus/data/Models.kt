@@ -1,254 +1,349 @@
 package com.cnhplus.data
 
-// ==================== DATA MODELS ====================
+/**
+ * Data models matching the real Supabase database schema.
+ * Uses kotlinx.serialization for JSON conversion.
+ */
 
-data class Candidato(
-    val id: String = "1",
-    val nome: String = "João Silva",
-    val email: String = "joao@email.com",
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.*
+
+// ==================== PROFILE ====================
+
+@Serializable
+data class ProfileDto(
+    val id: String = "",
+    val email: String? = null,
+    val role: String = "candidato", // "candidato" | "instrutor" | "admin"
+    val nome: String? = null,
     val foto: String? = null,
-    val cpf: String = "123.456.789-00",
-    val celular: String = "(71) 99999-0000",
-    val cidade: String = "Feira de Santana",
-    val estado: String = "BA",
-    val renach: String? = "RN123456789",
-    val perfil: PerfilCandidato = PerfilCandidato(),
-    val pacote: PacoteCandidato = PacoteCandidato(),
-    val instrutorId: String? = "1"
+    val telefone: String? = null,
+    val created_at: String? = null,
+    val updated_at: String? = null
 )
 
-data class PerfilCandidato(
-    val abriuProcesso: Boolean = true,
-    val passouTeorica: Boolean = true,
-    val experiencia: String = "nunca",
-    val ansiedade: String = "media",
-    val reprovou: Boolean = false,
-    val maiorDificuldade: List<String> = listOf("baliza"),
-    val objetivo: String = "aprender_calma",
-    val temCarro: String = "nao"
-)
+// ==================== CANDIDATO ====================
 
-data class PacoteCandidato(
-    val aulasCompradas: Int = 20,
-    val aulasRestantes: Int = 15,
-    val aulasRecomendadas: Int = 20
-)
-
-data class Instrutor(
-    val id: String = "1",
-    val nome: String = "Carlos Silva",
-    val email: String = "carlos@email.com",
-    val foto: String? = null,
-    val cpf: String = "987.654.321-00",
-    val telefone: String = "(71) 88888-0000",
-    val cidade: String = "Cuiabá",
-    val estado: String = "MT",
-    val biografia: String = "Especialista em alunos iniciantes e pessoas com ansiedade. 8 anos de experiência.",
-    val estilo: List<String> = listOf("calmo", "motivador"),
-    val especialidades: List<String> = listOf("iniciante", "ansioso"),
-    val regioes: List<String> = listOf("Centro", "Norte", "Sul"),
-    val veiculo: Veiculo = Veiculo(),
-    val horasTrabalhadas: Int = 1250,
-    val alunosAtendidos: Int = 340,
-    val pontualidade: Float = 98f,
-    val cancelamentos: String = "baixo",
-    val notaMedia: Float = 4.9f,
-    val verificado: Boolean = true,
-    val status: String = "ativo"
-)
-
-data class Veiculo(
-    val tipo: String = "carro_proprio",
-    val modelo: String = "Chevrolet Onix",
-    val ano: String = "2023",
-    val temPedal: Boolean = true
-)
-
-data class Aula(
-    val id: String = "1",
-    val candidatoId: String = "1",
-    val instrutorId: String = "1",
-    val dataHora: String = "2026-03-30T14:00:00",
-    val duracao: Int = 50,
-    val tipoVeiculo: String = "carro_instrutor",
-    val status: String = "agendada",
-    val valor: Double = 120.00,
-    val confirmacaoCandidato: Boolean = false
-)
-
-// ==================== EMULATED DATA ====================
-
-object EmulatedData {
+@Serializable
+data class CandidatoDto(
+    val id: String = "",
+    val cpf: String? = null,
+    val celular: String? = null,
+    val cidade: String? = null,
+    val bairro: String? = null,
+    val renach: String? = null,
     
-    val candidatos = listOf(
-        Candidato(
-            id = "1",
-            nome = "João Silva",
-            cidade = "Feira de Santana",
-            estado = "BA",
-            perfil = PerfilCandidato(
-                abriuProcesso = true,
-                passouTeorica = true,
-                experiencia = "nunca",
-                ansiedade = "media",
-                temCarro = "nao"
-            ),
-            pacote = PacoteCandidato(20, 15, 20)
-        ),
-        Candidato(
-            id = "2",
-            nome = "Maria Santos",
-            cidade = "Salvador",
-            estado = "BA",
-            perfil = PerfilCandidato(
-                abriuProcesso = true,
-                passouTeorica = true,
-                experiencia = "poucas_vezes",
-                ansiedade = "alta",
-                temCarro = "sim"
-            ),
-            pacote = PacoteCandidato(15, 12, 15)
-        ),
-        Candidato(
-            id = "3",
-            nome = "Pedro Oliveira",
-            cidade = "Belo Horizonte",
-            estado = "MG",
-            perfil = PerfilCandidato(
-                abriuProcesso = true,
-                passouTeorica = false,
-                experiencia = "nunca",
-                ansiedade = "baixa",
-                temCarro = "as_vezes"
-            ),
-            pacote = PacoteCandidato(25, 25, 25)
-        )
-    )
+    @SerialName("perfil")
+    val perfilJson: String? = null,
     
-    val instrutores = listOf(
-        Instrutor(
-            id = "1",
-            nome = "Carlos Silva",
-            cidade = "Cuiabá",
-            estado = "MT",
-            biografia = "Especialista em alunos iniciantes e pessoas com ansiedade. 8 anos de experiência.",
-            estilo = listOf("calmo", "motivador"),
-            especialidades = listOf("iniciante", "ansioso"),
-            horasTrabalhadas = 1250,
-            alunosAtendidos = 340,
-            pontualidade = 98f,
-            notaMedia = 4.9f,
-            verificado = true,
-            status = "ativo"
-        ),
-        Instrutor(
-            id = "2",
-            nome = "Maria Santos",
-            cidade = "Feira de Santana",
-            estado = "BA",
-            biografia = "Expert em baliza e provas práticas. Metodologia focada na aprovação.",
-            estilo = listOf("objetivo", "rigor"),
-            especialidades = listOf("baliza", "prova_pratica"),
-            horasTrabalhadas = 2100,
-            alunosAtendidos = 520,
-            pontualidade = 95f,
-            notaMedia = 4.8f,
-            verificado = true,
-            status = "ativo"
-        ),
-        Instrutor(
-            id = "3",
-            nome = "Pedro Oliveira",
-            cidade = "Belo Horizonte",
-            estado = "MG",
-            biografia = "Atende alunos com carro próprio. Flexibilidade de horários e regiões.",
-            estilo = listOf("calmo"),
-            especialidades = listOf("carro_proprio"),
-            horasTrabalhadas = 980,
-            alunosAtendidos = 215,
-            pontualidade = 92f,
-            notaMedia = 4.7f,
-            verificado = true,
-            status = "ativo"
-        ),
-        Instrutor(
-            id = "4",
-            nome = "Ana Costa",
-            cidade = "São Paulo",
-            estado = "SP",
-            biografia = "Instrutora especializada em direção defensiva e estradas.",
-            estilo = listOf("motivador"),
-            especialidades = listOf("estrada", "defensiva"),
-            horasTrabalhadas = 3200,
-            alunosAtendidos = 890,
-            pontualidade = 99f,
-            notaMedia = 4.9f,
-            verificado = true,
-            status = "ativo"
-        ),
-        Instrutor(
-            id = "5",
-            nome = "José Santos",
-            cidade = "Rio de Janeiro",
-            estado = "RJ",
-            biografia = "Especialista em alunos que reprovaram. Metodologia paciente.",
-            estilo = listOf("calmo", "paciente"),
-            especialidades = listOf("reprovado", "iniciante"),
-            horasTrabalhadas = 4500,
-            alunosAtendidos = 1200,
-            pontualidade = 97f,
-            notaMedia = 4.8f,
-            verificado = true,
-            status = "ativo"
-        )
-    )
+    @SerialName("pacote")
+    val pacoteJson: String? = null,
     
-    val aulas = listOf(
-        Aula(
-            id = "1",
-            candidatoId = "1",
-            instrutorId = "1",
-            dataHora = "2026-03-30T14:00:00",
-            duracao = 50,
-            tipoVeiculo = "carro_instrutor",
-            status = "agendada",
-            valor = 120.00,
-            confirmacaoCandidato = false
-        ),
-        Aula(
-            id = "2",
-            candidatoId = "1",
-            instrutorId = "1",
-            dataHora = "2026-03-28T10:00:00",
-            duracao = 50,
-            tipoVeiculo = "carro_instrutor",
-            status = "concluida",
-            valor = 120.00,
-            confirmacaoCandidato = true
-        ),
-        Aula(
-            id = "3",
-            candidatoId = "2",
-            instrutorId = "2",
-            dataHora = "2026-03-31T09:00:00",
-            duracao = 50,
-            tipoVeiculo = "carro_aluno",
-            status = "agendada",
-            valor = 100.00,
-            confirmacaoCandidato = true
-        )
-    )
+    val instrutor_id: String? = null,
+    val created_at: String? = null,
+    val updated_at: String? = null
+) {
+    fun getPerfil(): PerfilCandidato {
+        return if (perfilJson != null && perfilJson.isNotEmpty() && perfilJson != "{}") {
+            try {
+                val json = Json { ignoreUnknownKeys = true }
+                json.decodeFromString<PerfilCandidato>(perfilJson)
+            } catch (e: Exception) {
+                PerfilCandidato()
+            }
+        } else {
+            PerfilCandidato()
+        }
+    }
     
-    val estatisticasAdmin = mapOf(
-        "totalInstrutores" to 500,
-        "instrutoresAtivos" to 435,
-        "taxaAprovacao" to 87,
-        "totalAlunos" to 10000,
-        "alunosFormados" to 9200,
-        "taxaPrimeiraTentativa" to 92,
-        "notaMedia" to 4.8f,
-        "totalAvaliacoes" to 2500,
-        "aulasRealizadas" to 45000,
-        "receitaTotal" to 5400000.0
-    )
+    fun getPacote(): PacoteCandidato {
+        return if (pacoteJson != null && pacoteJson.isNotEmpty()) {
+            try {
+                val json = Json { ignoreUnknownKeys = true }
+                json.decodeFromString<PacoteCandidato>(pacoteJson)
+            } catch (e: Exception) {
+                PacoteCandidato()
+            }
+        } else {
+            PacoteCandidato()
+        }
+    }
+    
+    fun withPerfil(perfil: PerfilCandidato): CandidatoDto {
+        val json = Json { encodeDefaults = true }
+        return copy(perfilJson = json.encodeToString(perfil))
+    }
+    
+    fun withPacote(pacote: PacoteCandidato): CandidatoDto {
+        val json = Json { encodeDefaults = true }
+        return copy(pacoteJson = json.encodeToString(pacote))
+    }
 }
+
+@Serializable
+data class PerfilCandidato(
+    val abriuProcesso: Boolean = false,
+    val passouTeorica: Boolean = false,
+    val experiencia: String = "nunca",         // "nunca" | "poucas_vezes" | "frequente"
+    val ansiedade: String = "baixa",           // "baixa" | "media" | "alta"
+    val reprovou: Boolean = false,
+    val maiorDificuldade: List<String> = emptyList(),
+    val objetivo: String = "aprender_calma",   // "aprender_calma" | "passar_rapido" | "ficar_bom"
+    val temCarro: String = "nao",              // "sim" | "nao" | "as_vezes"
+    val disponibilidade: DiasTurnos = DiasTurnos()
+)
+
+@Serializable
+data class DiasTurnos(
+    val dias: List<String> = emptyList(),       // "segunda".."domingo"
+    val turnos: List<String> = emptyList()      // "manha" | "tarde" | "noite"
+)
+
+@Serializable
+data class PacoteCandidato(
+    val aulasCompradas: Int = 0,
+    val aulasRestantes: Int = 0,
+    val aulasRecomendadas: Int = 0
+)
+
+// ==================== INSTRUTOR ====================
+
+@Serializable
+data class InstrutorDto(
+    val id: String = "",
+    val cpf: String? = null,
+    val telefone: String? = null,
+    val cidade: String? = null,
+    val biografia: String? = null,
+    val estilo: List<String> = emptyList(),
+    val especialidades: List<String> = emptyList(),
+    val regioes: List<String> = emptyList(),
+    
+    @SerialName("disponibilidade")
+    val disponibilidadeJson: String? = null,
+    
+    @SerialName("veiculo")
+    val veiculoJson: String? = null,
+    
+    val nota_media: Double? = 0.0,
+    val pontualidade: Double? = 100.0,
+    val cancelamentos: String? = "baixo",
+    val horas_trabalhadas: Int? = 0,
+    val alunos_atendidos: Int? = 0,
+    val status: String? = "pendente", // "pendente" | "aprovado" | "ativo" | "suspenso" | "bloqueado"
+    val verificado: Boolean? = false,
+    val created_at: String? = null,
+    val updated_at: String? = null
+) {
+    fun getDisponibilidade(): DiasTurnos {
+        return if (disponibilidadeJson != null) {
+            try {
+                Json { ignoreUnknownKeys = true }.decodeFromString<DiasTurnos>(disponibilidadeJson)
+            } catch (e: Exception) {
+                DiasTurnos()
+            }
+        } else DiasTurnos()
+    }
+    
+    fun getVeiculo(): Veiculo {
+        return if (veiculoJson != null && veiculoJson != "{}") {
+            try {
+                Json { ignoreUnknownKeys = true }.decodeFromString<Veiculo>(veiculoJson)
+            } catch (e: Exception) {
+                Veiculo()
+            }
+        } else Veiculo()
+    }
+    
+    fun withDisponibilidade(d: DiasTurnos): InstrutorDto {
+        return copy(disponibilidadeJson = Json.encodeToString(d))
+    }
+    
+    fun withVeiculo(v: Veiculo): InstrutorDto {
+        return copy(veiculoJson = Json.encodeToString(v))
+    }
+}
+
+@Serializable
+data class Veiculo(
+    val tipo: String = "carro_proprio", // "carro_proprio" | "carro_alugado" | "carro_aluno" | "moto"
+    val modelo: String? = null,
+    val ano: String? = null,
+    val temPedal: Boolean? = true
+)
+
+// ==================== AULA ====================
+
+@Serializable
+data class AulaDto(
+    val id: String? = null,
+    val candidato_id: String? = null,
+    val instrutor_id: String? = null,
+    val data_hora: String? = null,
+    val duracao: Int? = 50,
+    val tipo_veiculo: String? = "carro_instrutor",
+    val status: String? = "agendada", // "agendada" | "em_andamento" | "concluida" | "cancelada" | "em_disputa"
+    val valor: Double? = 0.0,
+    val tipo: String? = "pratica_urbana",
+    val local_encontro: String? = null,
+    val confirmacao_candidato: Boolean? = false,
+    val confirmacao_instrutor: Boolean? = false,
+    val created_at: String? = null,
+    val updated_at: String? = null
+)
+
+// ==================== PAGAMENTO ====================
+
+@Serializable
+data class PagamentoDto(
+    val id: String? = null,
+    val candidato_id: String? = null,
+    val valor: Double? = 0.0,
+    val status: String? = "pendente", // "pendente" | "aprovado" | "estornado" | "cancelado"
+    val tipo: String? = "pacote",
+    val pacotes: Int? = 0,
+    val mercado_pago_id: String? = null,
+    val created_at: String? = null,
+    val updated_at: String? = null
+)
+
+// ==================== AVALIACAO ====================
+
+@Serializable
+data class AvaliacaoDto(
+    val id: String? = null,
+    val aula_id: String? = null,
+    val candidato_id: String? = null,
+    val instrutor_id: String? = null,
+    val nota: Int? = 5,
+    val comentario: String? = null,
+    val created_at: String? = null
+)
+
+// ==================== DISPUTA ====================
+
+@Serializable
+data class DisputaDto(
+    val id: String? = null,
+    val aula_id: String? = null,
+    val candidato_id: String? = null,
+    val instrutor_id: String? = null,
+    val motivo: String? = null,
+    val descricao: String? = null,
+    val versao_candidato: String? = null,
+    val versao_instrutor: String? = null,
+    val decisao: String? = null,
+    val status: String? = "pendente", // "pendente" | "em_analise" | "resolvida" | "rejeitada"
+    val created_at: String? = null,
+    val updated_at: String? = null
+)
+
+// ==================== MENSAGEM ====================
+
+@Serializable
+data class MensagemDto(
+    val id: String? = null,
+    val aula_id: String? = null,
+    val sender_id: String? = null,
+    val receiver_id: String? = null,
+    val texto: String? = null,
+    val lida: Boolean? = false,
+    val created_at: String? = null
+)
+
+// ==================== DADOS BANCARIOS ====================
+
+@Serializable
+data class DadosBancariosDto(
+    val id: String? = null,
+    val instrutor_id: String? = null,
+    val tipo: String? = "pix",
+    val titular: String? = null,
+    val chave_pix: String? = null,
+    val banco: String? = null,
+    val agencia: String? = null,
+    val conta: String? = null,
+    val validado: Boolean? = false,
+    val created_at: String? = null,
+    val updated_at: String? = null
+)
+
+// ==================== REPASSE ====================
+
+@Serializable
+data class RepasseDto(
+    val id: String? = null,
+    val instrutor_id: String? = null,
+    val aula_id: String? = null,
+    val valor: Double? = 0.0,
+    val taxa_plataforma: Double? = 12.0,
+    val status: String? = "pendente", // "pendente" | "processado" | "pago" | "estornado"
+    val data_pagamento: String? = null,
+    val created_at: String? = null
+)
+
+// ==================== BANNERS ====================
+
+@Serializable
+data class BannerDto(
+    val id: String = "",
+    val titulo: String = "",
+    val descricao: String? = null,
+    val imagem_url: String? = null,
+    val link_destino: String? = null,
+    val ativo: Boolean = true,
+    val ordem: Int = 0,
+    val data_inicio: String? = null,
+    val data_fim: String? = null,
+    val created_at: String? = null,
+    val updated_at: String? = null
+)
+
+// ==================== LOCALIDADES ====================
+
+@Serializable
+data class LocalidadeDto(
+    val id: String = "",
+    val aula_id: String = "",
+    val endereco: String = "",
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val referencia: String? = null,
+    val confirmado_candidato: Boolean = false,
+    val confirmado_instrutor: Boolean = false,
+    val created_at: String? = null,
+    val updated_at: String? = null
+)
+
+// ==================== DENUNCIAS ====================
+
+@Serializable
+data class DenunciaDto(
+    val id: String = "",
+    val aula_id: String = "",
+    val denunciante_id: String = "",
+    val motivo: String = "",
+    val descricao: String? = null,
+    val midia_url: String? = null,
+    val midia_tipo: String? = null, // "foto" | "video" | "audio"
+    val status: String = "aberta", // "aberta" | "em_analise" | "resolvida" | "fechada"
+    val resposta_admin: String? = null,
+    val created_at: String? = null,
+    val resolved_at: String? = null,
+    val updated_at: String? = null
+)
+
+// ==================== AVATARES ====================
+
+@Serializable
+data class AvatarDto(
+    val id: String = "",
+    val user_id: String = "",
+    val foto_url: String = "",
+    val thumbnail_url: String? = null,
+    val storage_path: String? = null,
+    val tipo_upload: String? = null, // "google" | "custom"
+    val created_at: String? = null,
+    val updated_at: String? = null
+)

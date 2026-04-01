@@ -257,6 +257,74 @@ class SupabaseClient(
         }
     }
 
+    // ==================== STORAGE ====================
+
+    /**
+     * Upload file to Supabase Storage bucket.
+     * @param bucket Nome do bucket (ex: "avatars", "documentos")
+     * @param filePath Caminho relativo dentro do bucket (ex: "user123/profile.jpg")
+     * @param fileBytes Bytes do arquivo
+     * @param contentType MIME type (ex: "image/jpeg", "application/pdf")
+     * @return URL pública do arquivo se sucesso
+     */
+    fun uploadFile(
+        bucket: String,
+        filePath: String,
+        fileBytes: ByteArray,
+        contentType: String = "image/jpeg"
+    ): Result<String> {
+        val url = "$baseUrl/storage/v1/object/$bucket/$filePath"
+        val body = fileBytes.toRequestBody(contentType.toMediaType())
+        
+        val request = Request.Builder()
+            .url(url)
+            .header("apikey", anonKey)
+            .header("Authorization", "Bearer $anonKey")
+            .header("Content-Type", contentType)
+            .post(body)
+            .build()
+            
+        return okHttpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                val errorBody = response.body?.string() ?: "Unknown"
+                Result.failure(Exception("Upload failed (${response.code}): $errorBody"))
+            } else {
+                // Supabase retorna URL pública no response
+                val publicUrl = "$baseUrl/storage/v1/object/public/$bucket/$filePath"
+                Result.success(publicUrl)
+            }
+        }
+    }
+
+    /**
+     * Delete file from Supabase Storage.
+     */
+    fun deleteFile(bucket: String, filePath: String): Result<Unit> {
+        val url = "$baseUrl/storage/v1/object/$bucket/$filePath"
+        
+        val request = Request.Builder()
+            .url(url)
+            .header("apikey", anonKey)
+            .header("Authorization", "Bearer $anonKey")
+            .delete()
+            .build()
+            
+        return okHttpClient.newCall(request).execute().use { response ->
+            if (!response.isSuccessful) {
+                Result.failure(Exception("Delete failed (${response.code}): ${response.body?.string() ?: "Unknown"}"))
+            } else {
+                Result.success(Unit)
+            }
+        }
+    }
+
+    /**
+     * Get public URL for a file in storage (sem autenticação).
+     */
+    fun getPublicUrl(bucket: String, filePath: String): String {
+        return "$baseUrl/storage/v1/object/public/$bucket/$filePath"
+    }
+
     // ==================== PRIVATE HELPERS ====================
 
     private fun _doAuth(url: String, email: String, password: String): Result<AuthResponse> {

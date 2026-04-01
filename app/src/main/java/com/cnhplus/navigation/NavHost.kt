@@ -83,6 +83,14 @@ fun CNHNavHost(
         }
 
         // ===== CANDIDATO ONBOARDING FLOW =====
+        composable(Screen.PerfilCompleto.route) {
+            PerfilCompletoScreen(
+                onComplete = { navController.navigate(Screen.OnboardingCandidato.route) {
+                    popUpTo(Screen.PerfilCompleto.route) { inclusive = true }
+                }}
+            )
+        }
+
         composable(Screen.OnboardingCandidato.route) {
             OnboardingCandidatoScreen(
                 onComplete = { navController.navigate(Screen.PerfilComportamental.route) }
@@ -139,6 +147,18 @@ fun CNHNavHost(
             }
         }
 
+
+        // ===== INSTRUTOR ONBOARDING =====
+        composable(Screen.PerfilInstrutor.route) {
+            PerfilInstrutorScreen(
+                onComplete = { navController.navigate(Screen.InstrutorHome.route) {
+                    popUpTo(Screen.PerfilInstrutor.route) { inclusive = true }
+                }},
+                onSkip = { navController.navigate(Screen.InstrutorHome.route) {
+                    popUpTo(Screen.PerfilInstrutor.route) { inclusive = true }
+                }}
+            )
+        }
 
         // ===== INSTRUTOR MAIN (with bottom nav) =====
         composable(Screen.InstrutorHome.route) {
@@ -201,10 +221,10 @@ fun CNHNavHost(
 
 private fun navigateByRole(navController: NavHostController, role: String) {
     when (role) {
-        "candidato" -> navController.navigate(Screen.OnboardingCandidato.route) {
+        "candidato" -> navController.navigate(Screen.PerfilCompleto.route) {
             popUpTo(Screen.Login.route) { inclusive = true }
         }
-        "instrutor" -> navController.navigate(Screen.InstrutorHome.route) {
+        "instrutor" -> navController.navigate(Screen.PerfilInstrutor.route) {
             popUpTo(Screen.Login.route) { inclusive = true }
         }
         "admin" -> navController.navigate(Screen.AdminHome.route) {

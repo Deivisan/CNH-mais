@@ -89,16 +89,23 @@
 - [x] **AppState.kt register() fix** — retry 3x com backoff, fallback create profile
 - [x] **WelcomeScreen.kt** — 3 slides com Compose Foundation Pager nativo
 - [x] **RegisterSuccessScreen** — animação + feedback visual de sucesso
-- [x] **Navigation** — Welcome → Register → Success → SelectRole → Onboarding
-- [ ] **PerfilCompletoScreen** — upload foto + formulário completo (nome, CPF, celular)
-- [ ] **Permissões** — CAMERA + READ_MEDIA_IMAGES no AndroidManifest
-- [ ] **SupabaseClient.uploadFile()** — método para Supabase Storage
-- [ ] **Onboarding** — perfil comportamental após escolher role
-- [ ] **RLS policies** — verificar policies nas tabelas profiles, candidatos, instrutores
+- [x] **Navigation** — Welcome → Register → Success → SelectRole → PerfilCompleto
+- [x] **PerfilCompletoScreen** — upload foto (camera + galeria) + form (nome, CPF, celular, cidade)
+- [x] **Permissões** — CAMERA + READ_MEDIA_IMAGES + FileProvider no AndroidManifest
+- [x] **SupabaseClient.uploadFile()** — upload + delete + getPublicUrl para Storage
+- [x] **ImagePicker.kt** — componente reutilizável (camera + galeria, compressão JPEG)
+- [x] **PermissionsHandler.kt** — hooks declarativos para runtime permissions
+- [x] **RLS policies** — profiles, candidatos, instrutores, avatares, storage
+- [x] **handle_new_user search_path** — fixado com SET search_path = public, pg_temp
+- [x] **Deprecated fixes** — HorizontalDivider, Icons.Filled.Close
+- [ ] **OnboardingCandidatoScreen** — perfil comportamental real após PerfilCompleto
+- [ ] **InstrutorPerfilScreen** — upload de documentos (CRLV, CNH)
+- [ ] **InstrutorProfileComplete** — onboarding para instrutores
+- [ ] **Real API testing** — testar fluxo completo no dispositivo físico
 
 ---
 
-**Last updated:** 2026-04-01 — v0.06 com Welcome + RegisterSuccess + auth fix
+**Last updated:** 2026-04-01 — v0.07 com PerfilCompleto + Storage + RLS
 **Author:** DevSan (@deivisan)
 **SHA1 debug:** `77:91:24:95:44:76:40:F7:98:13:E0:3A:25:23:52:15:7E:42:9B:5B`
 **Debug tip:** `strings classes.dex | grep -i "ibyngfq"` confirma key no APK

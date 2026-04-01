@@ -192,7 +192,7 @@ fun CandidatoHomeScreen(
                             
                             // Info resumida do pacote (feedback cliente — Áudio 6)
                             Spacer(modifier = Modifier.height(16.dp))
-                            Divider()
+                            HorizontalDivider()
                             Spacer(modifier = Modifier.height(12.dp))
                             
                             Text(

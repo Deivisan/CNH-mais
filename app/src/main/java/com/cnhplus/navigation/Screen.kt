@@ -14,6 +14,7 @@ sealed class Screen(val route: String) {
     object SelectRole : Screen("select_role")
     
     // Candidato Onboarding
+    object PerfilCompleto : Screen("perfil_completo")
     object OnboardingCandidato : Screen("onboarding_candidato")
     object PerfilComportamental : Screen("perfil_comportamental")
     object RecomendacaoAulas : Screen("recomendacao_aulas")
@@ -24,6 +25,9 @@ sealed class Screen(val route: String) {
     object CandidatoAulas : Screen("candidato_aulas")
     object CandidatoMatch : Screen("candidato_match")
     object CandidatoPagamento : Screen("candidato_pagamento")
+    
+    // Instrutor Onboarding
+    object PerfilInstrutor : Screen("perfil_instrutor")
     
     // Instrutor Main
     object InstrutorHome : Screen("instrutor_home")

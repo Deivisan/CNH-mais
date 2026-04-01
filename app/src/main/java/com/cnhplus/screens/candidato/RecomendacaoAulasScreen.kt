@@ -104,7 +104,7 @@ fun RecomendacaoAulasScreen(
                 
                 Spacer(modifier = Modifier.height(24.dp))
                 
-                Divider()
+                HorizontalDivider()
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 

@@ -316,7 +316,7 @@ fun CandidatoPerfilScreen() {
                     colors = ButtonDefaults.buttonColors(containerColor = Error)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.Logout,
+                        imageVector = Icons.Filled.Close,
                         contentDescription = null,
                         modifier = Modifier.size(20.dp)
                     )

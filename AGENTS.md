@@ -411,17 +411,21 @@ Wave 1: Auth + State Management (✅ ESTABILIZADO v0.06)
   - ✅ WelcomeScreen com 3 slides + animações
   - ✅ RegisterSuccessScreen com feedback visual
   - ✅ Session persistence via DataStore OK
-  - ⬜ Onboarding após registro (próximo passo)
+  - ⬜ OnboardingCandidatoScreen (perfil comportamental real)
 
-Wave 2: Perfil + Dados do Candidato
-  - ⬜ Fetch profile da Supabase
-  - ⬜ RLS policies verificadas
-  - ⬜ Telas de perfil editáveis + upload foto
-  - ⬜ Permissões CAMERA + READ_MEDIA
+Wave 2: Perfil + Dados do Candidato (✅ COMPLETO v0.07)
+  - ✅ PerfilCompletoScreen com upload foto (camera + galeria)
+  - ✅ RLS policies verificadas e corrigidas
+  - ✅ Supabase Storage buckets criados (avatars, documentos)
+  - ✅ Permissões CAMERA + READ_MEDIA no AndroidManifest
+  - ✅ ImagePicker reutilizável + PermissionsHandler
 
-Wave 3: Instrutor + Agenda
-  - ⬜ Telas de instrutor
-  - ⬜ Sistema de agenda
+Wave 3: Instrutor + Perfil (✅ COMPLETO v0.07)
+  - ✅ PerfilInstrutorScreen com upload foto + form + docs
+  - ✅ Tela de seleção de role envia instrutores para PerfilInstrutor
+  - ✅ RLS policies para instrutores verificadas
+  - ⬜ Upload documentos (CRLV, CNH) — próxima etapa
+  - ⬜ Tela de agenda
 
 Wave 4: Match + Features
   - ⬜ Algoritmo de match
@@ -464,6 +468,72 @@ Wave 4: Match + Features
 
 ---
 
+## 📋 Changelog — v0.07 (2026-04-01)
+
+### ✅ Perfis + Permissões + Storage
+1. **PerfilCompletoScreen.kt** — Tela completa de perfil após registro
+   - ImagePickerButton (camera + galeria)
+   - CPF formatado (000.000.000-00)
+   - Celular formatado ((00) 00000-0000)
+   - Upload foto para Supabase Storage
+   - Salva profile + candidato simultaneamente
+
+2. **PerfilInstrutorScreen.kt** — Onboarding completo para instrutores
+   - ImagePickerButton (camera + galeria)
+   - CPF formatado (000.000.000-00)
+   - Telefone formatado ((00) 00000-0000)
+   - Biografia (max 300 chars com contador)
+   - Upload foto para Supabase Storage
+   - Salva profile + instrutor simultaneamente
+   - Botão "Preencher depois" (skip)
+   - Placeholder para upload de CRLV + CNH (próxima etapa)
+
+3. **PermissionsHandler.kt** — Hooks declarativos para runtime permissions
+   - `rememberPermissionState()` — permissão única
+   - `rememberMultiplePermissionsState()` — múltiplas
+   - `getPhotoPermissions()` — Android 13+ (READ_MEDIA_IMAGES) vs legacy (READ_EXTERNAL_STORAGE)
+
+4. **ImagePicker.kt** — Componente reutilizável
+   - ModalBottomSheet: Câmera OU Galeria
+   - FileProvider para camera captures
+   - Compressão JPEG automática (max 1024KB)
+
+5. **SupabaseClient.kt** — Storage methods
+   - `uploadFile(bucket, path, bytes, contentType)` → URL pública
+   - `deleteFile(bucket, path)` → Result<Unit>
+   - `getPublicUrl(bucket, path)` → String
+
+6. **Supabase SQL Migrations**
+   - Storage buckets: `avatars` (público, 5MB), `documentos` (privado, 10MB)
+   - RLS policies para profiles, candidatos, instrutores, avatares, storage
+   - `handle_new_user` search_path fixado
+   - Indexes de performance
+
+7. **Deprecated Fixes**
+   - `Divider()` → `HorizontalDivider()` em todas telas
+   - `Icons.Default.Logout` → `Icons.Filled.Close`
+
+### 🔄 Navigation Flow Completa
+```
+Primeira vez:
+  Welcome → Register → Success → SelectRole ─┐
+                                             ├→ Candidato: PerfilCompleto → OnboardingCandidato → CandidatoHome
+                                             │
+  Login → SelectRole ────────────────────────┤
+                                             ├→ Instrutor: PerfilInstrutor → InstrutorHome
+                                             │
+                                             └→ Admin: AdminHome
+```
+
+### 📦 APK
+- Tamanho: 19MB
+- Build: `--no-build-cache --rerun-tasks`
+- Supabase Storage habilitado
+- Todas permissões no AndroidManifest
+- Pronto para build (compileDebugKotlin: ✅ BUILD SUCCESSFUL)
+
+---
+
 **Última atualização:** 01/04/2026
 **Autor:** Deivison Santana (@deivisan)
-**Versão:** 0.0.5a - APK com key real verificada, auth funcional no backend
+**Versão:** 0.07 - Perfis completos + Storage + RLS + Permissões + PerfilInstrutor

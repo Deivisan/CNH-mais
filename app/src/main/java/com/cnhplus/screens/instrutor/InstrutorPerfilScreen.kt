@@ -155,7 +155,7 @@ fun InstrutorPerfilScreen() {
                             .height(48.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.error)
                     ) { 
-                        Icon(Icons.Default.Logout, null, Modifier.size(20.dp))
+                        Icon(Icons.Filled.Close, null, Modifier.size(20.dp))
                         Spacer(Modifier.width(8.dp))
                         Text("Sair") 
                     }

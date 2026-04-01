@@ -5,7 +5,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Language](https://img.shields.io/badge/Language-Kotlin-blue)
 ![Status](https://img.shields.io/badge/Status-Pre--Alpha-orange)
-![Version](https://img.shields.io/badge/Version-0.01--Pre--Alpha-blue)
+![Version](https://img.shields.io/badge/Version-0.07--Alpha-blue)
 
 ## 📱 Sobre o Projeto
 
@@ -24,12 +24,12 @@
 
 ## ⬇️ Download APK
 
-**Versão atual:** [v0.01 Pre-Alpha](https://github.com/Deivisan/CNH-mais/releases/tag/v0.01-pre-alpha)
+**Versão atual:** [v0.07 Alpha](https://github.com/Deivisan/CNH-mais/releases/tag/v0.0.7-rev07)
 
 ```
-📦 CNH-mais-debug.apk (16.8 MB)
-📅 Data: 30/03/2026
-🔧 Build: Kotlin + Jetpack Compose
+📦 cnhmais-v0.07.apk (19 MB)
+📅 Data: 01/04/2026
+🔧 Build: Kotlin 1.9.24 + Jetpack Compose 1.6.0
 ```
 
 > ⏸️ **Status atual da landing principal do APK:** aguardando aprovação de visual e designer.
@@ -140,6 +140,25 @@ CNH-mais/
 
 ## 🔄 Changelog
 
+### v0.07 Alpha (01/04/2026) — Perfis Completos + Storage + Permissions
+- ✅ **WelcomeScreen**: Onboarding com 3 slides + animações + HorizontalPager nativo
+- ✅ **RegisterSuccessScreen**: Feedback visual pós-registro + animação
+- ✅ **SelectRoleScreen**: Escolha de perfil (Candidato / Instrutor / Admin)
+- ✅ **PerfilCompletoScreen**: Upload foto (camera/galeria), CPF/celular formatado
+- ✅ **PerfilInstrutorScreen**: Biografia, especialidades, upload documentos
+- ✅ **ImagePicker**: Componente reutilizável (camera + galeria + compressão)
+- ✅ **PermissionsHandler**: Runtime permissions Android 13+ (READ_MEDIA_IMAGES)
+- ✅ **Supabase Storage**: Buckets `avatars` (5MB público) + `documentos` (10MB privado)
+- ✅ **RLS Policies**: Profiles, candidatos, instrutores, storage policies
+- ✅ **Auth Flow**: Retry lógico após signup (fix race condition crash)
+- ✅ **Deprecation fixes**: HorizontalDivider, Icon fixes
+
+### v0.06 Alpha (01/04/2026) — Auth + State Management
+- ✅ Login com Supabase Auth funcional
+- ✅ Register não crasha mais (fix saveSession race condition)
+- ✅ Session persistence via DataStore OK
+- ✅ Navigation flow: Welcome → Register → Success → SelectRole
+
 ### v0.01 Pre-Alpha (30/03/2026)
 - ✅ APK debug compilado (16.8MB)
 - ✅ 16 telas implementadas
@@ -151,15 +170,16 @@ CNH-mais/
 
 ## 📌 Próximos Passos
 
-- [ ] Rebuild APK (fix build issues)
-- [ ] ViewModels com estado real
-- [ ] Backend (Bun + Supabase)
-- [ ] Autenticação
+- [ ] Upload de documentos (CRLV, CNH) no PerfilInstrutor
+- [ ] OnboardingCandidatoScreen (perfil comportamental real)
+- [ ] Tela de agenda para instrutores
+- [ ] Backend API (Bun + Supabase)
+- [ ] Algoritmo de match
+- [ ] Pagamento (Mercado Pago)
 - [ ] FCM Notificações
-- [ ] Mercado Pago integração
 
 ---
 
 ## 👤 Autor
 
-**Deivison Santana** (@deivisan) | **Versão:** 0.01 Pre-Alpha
+**Deivison Santana** (@deivisan) | **Versão:** 0.07 Alpha

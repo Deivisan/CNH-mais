@@ -5,7 +5,7 @@
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Language](https://img.shields.io/badge/Language-Kotlin-blue)
 ![Status](https://img.shields.io/badge/Status-Pre--Alpha-orange)
-![Version](https://img.shields.io/badge/Version-0.07--Alpha-blue)
+![Version](https://img.shields.io/badge/Version-0.07a--Alpha-blue)
 
 ## 📱 Sobre o Projeto
 
@@ -24,7 +24,7 @@
 
 ## ⬇️ Download APK
 
-**Versão atual:** [v0.07 Alpha](https://github.com/Deivisan/CNH-mais/releases/tag/v0.0.7-rev07)
+**Versão atual:** [v0.07a Alpha](https://github.com/Deivisan/CNH-mais/releases/tag/v0.07a)
 
 ```
 📦 cnhmais-v0.07.apk (19 MB)
@@ -140,7 +140,9 @@ CNH-mais/
 
 ## 🔄 Changelog
 
-### v0.07 Alpha (01/04/2026) — Perfis Completos + Storage + Permissions
+### v0.07a Alpha (01/04/2026) — Build Corrigido
+- ✅ **Build limpo**: rm -rf app/build + compile sem cache
+- ✅ Corrigido: APK estava com código antigo (cache stale)
 - ✅ **WelcomeScreen**: Onboarding com 3 slides + animações + HorizontalPager nativo
 - ✅ **RegisterSuccessScreen**: Feedback visual pós-registro + animação
 - ✅ **SelectRoleScreen**: Escolha de perfil (Candidato / Instrutor / Admin)

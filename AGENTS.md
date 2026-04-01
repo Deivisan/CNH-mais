@@ -342,18 +342,48 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 
 ---
 
+## 🔐 Supabase Config (REAL — NÃO trocar)
+
+| Item | Valor |
+|------|-------|
+| Projeto | `ibyngfqddoefatqtojfj` (DeiviTech, sa-east-1) |
+| Anon Key | `sb_publishable_SvWV-VYW4WbqLVoPL_VTTg_SZGF3e2P` |
+| URL | `https://ibyngfqddoefatqtojfj.supabase.co` |
+| Trigger | `handle_new_user` — auto-cria profiles em `profiles` no signup |
+| Email confirm | **DESATIVADA** para dev (Providers → Email) |
+| SHA-1 debug | `77:91:24:95:44:76:40:F7:98:13:E0:3A:25:23:52:15:7E:42:9B:5B` |
+
+### Conta de Teste
+| Email | Senha | Role |
+|-------|-------|------|
+| `deivilsantana@outlook.com` | `33484@Cnh.` | candidato |
+
+---
+
 ## 🚀 GSD Workflow (Get Shit Done)
 
-### Regras de Execução
-1. **Compile ANTES de build APK**: Sempre `./gradlew compileDebugKotlin` primeiro (~1min). Só roda `./gradlew assembleDebug` quando BUILD SUCCESSFUL.
-2. **Waves sequenciais**: Wave 1 = infra/models → Wave 2 = repos/network → Wave 3 = screens/UI → Wave 4 = verify/ship. Cada wave deve compilar zerado antes de avançar.
-3. **Commits atômicos**: Cada batch de fixes = 1 commit descritivo. `git add . && git commit -m "fix: description"` após cada wave valida.
-4. **Zero tolerância com inline/private**: `public inline fun` NUNCA acessa `private` members. Use `@PublishedApi internal` nos campos.
-5. **LocalAppState.current é a ÚNICA fonte de verdade**: Zero `LocalAppSession`, zero ViewModels. Tudo via CompositionLocal.
+### 🔴 Regras de Ouro (NUNCA ignorar)
+1. **Gradle Build Cache é INIMIGO #1**: `clean` NÃO limpa .dex caches. SEMPRE usar `rm -rf app/build && ./gradlew --no-build-cache --rerun-tasks assembleDebug`
+2. **Verificar APK**: `unzip -p app-debug.apk classes.dex | strings | grep -i "ibyngfq"` — deve retornar a key real, NUNCA "placeholder" ou "REPLACE"
+3. **Compile ANTES de build APK**: `./gradlew compileDebugKotlin` primeiro (~1min). Só `assembleDebug` quando BUILD SUCCESSFUL.
+4. **Fail fast**: Corrigir erro específico sem reescrever arquivo inteiro.
+5. **Escopo cirúrgico**: Congelar `demo-pwa/` e `index.html`. Foco 100% em `app/src/`.
+
+### Waves Sequenciais (CADA wave DEVE compilar antes de avançar)
+1. **Wave 1**: infra/models/datastore
+2. **Wave 2**: repos/network (SupabaseClient)
+3. **Wave 3**: screens/UI/auth flow
+4. **Wave 4**: verify/compile → APK → release
+
+### Regras Técnicas
+6. **Zero tolerância com inline/private**: `public inline fun` NUNCA acessa `private` members. Use `@PublishedApi internal`.
+7. **`LocalAppState.current` é ÚNICA fonte de verdade**: Zero `LocalAppSession`, zero ViewModels.
+8. **Compose brace matching**: `Row(...) { content }` — NUNCA `Row(...)` sem `{`.
+9. **Commits atômicos**: 1 batch de fixes = 1 commit descritivo.
 
 ### Stack Confirmada
 - **Kotlin** 1.9.24 + **Compose** 1.6.0
-- **Supabase** (PostgreSQL + Auth + Realtime)
+- **Supabase** (PostgreSQL 17.6 + Auth + Realtime)
 - **OkHttp** raw HTTP (sem Retrofit)
 - **kotlinx.serialization** 1.6.3
 - **Jetpack Compose** Material 3
@@ -361,6 +391,79 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 
 ---
 
+### 🤖 Prompts para Próximos Agentes de IA
+
+**AO INICIAR TRABALHO:**
+```
+1. Ler .claude/napkin.md PRIMEIRO — contém regras NEVER-AGAIN
+2. Ler AGENTS.md seção "Supabase Config" — key e URL reais
+3. Verificar se APK tem key real: strings classes.dex | grep ibyngfq
+4. Testar auth com conta existente: deivilsantana@outlook.com / 33484@Cnh.
+5. PRIMEIRO compilar: ./gradlew compileDebugKotlin
+6. SÓ DEPOIS build APK: ./gradlew --no-build-cache --rerun-tasks assembleDebug
+```
+
+**PRIORIDADE DE TRABALHO:**
+```
+Wave 1: Auth + State Management (✅ ESTABILIZADO v0.06)
+  - ✅ Login com deivilsantana@outlook.com funciona
+  - ✅ Register NÃO crasha mais (fix saveSession race condition)
+  - ✅ WelcomeScreen com 3 slides + animações
+  - ✅ RegisterSuccessScreen com feedback visual
+  - ✅ Session persistence via DataStore OK
+  - ⬜ Onboarding após registro (próximo passo)
+
+Wave 2: Perfil + Dados do Candidato
+  - ⬜ Fetch profile da Supabase
+  - ⬜ RLS policies verificadas
+  - ⬜ Telas de perfil editáveis + upload foto
+  - ⬜ Permissões CAMERA + READ_MEDIA
+
+Wave 3: Instrutor + Agenda
+  - ⬜ Telas de instrutor
+  - ⬜ Sistema de agenda
+
+Wave 4: Match + Features
+  - ⬜ Algoritmo de match
+  - ⬜ Pagamento
+  - ⬜ Chat
+```
+
+---
+
+## 📋 Changelog — v0.06 (2026-04-01)
+
+### ✅ Fixes Críticos
+1. **AppState.register()**: Corrigido crash após signup
+   - Era: `saveSession` antes do profile existir → race condition
+   - Agora: retry 3x com backoff (1s, 2s, 3s), fallback create profile, depois save session
+   - Smart cast workaround: `val finalProfile = profile!!`
+   
+2. **Navigation Flow**: Welcome → Register → Success → SelectRole → Onboarding
+   - Adicionado `Screen.Welcome` e `Screen.RegisterSuccess`
+   - startDestination alterado de `Login` para `Welcome`
+   - Registro agora mostra tela de sucesso animada antes de SelectRole
+
+### 🎨 Novas Telas (100% funcionais)
+1. **WelcomeScreen.kt**
+   - HorizontalPager nativo do Compose (Foundation API)
+   - 3 slides com ícones animados
+   - Indicadores de página (dots)
+   - Botão "Pular" / "Próximo" / "Começar"
+
+2. **RegisterSuccessScreen**
+   - Icon CheckCircle com animação de scale infinita
+   - Gradiente verde (Success → Accent)
+   - Mensagem personalizada com nome do usuário
+   - Botão "Continuar" leva para SelectRole
+
+### 🔧 Stack Updates
+- **Compose Foundation Pager**: Substituído accompanist-pager (deprecated) por API nativa
+- **Animações**: `rememberInfiniteTransition` para feedback visual
+- **Navigation**: Rotas organizadas com popUpTo + inclusive para limpar backstack
+
+---
+
 **Última atualização:** 01/04/2026
 **Autor:** Deivison Santana (@deivisan)
-**Versão:** 0.0.5 - APK Android compilado, zero erros
+**Versão:** 0.0.5a - APK com key real verificada, auth funcional no backend

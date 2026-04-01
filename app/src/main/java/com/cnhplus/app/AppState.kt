@@ -98,39 +98,72 @@ class AppState(
 
     fun register(email: String, password: String, onComplete: (Result<Unit>) -> Unit) {
         _isLoading.value = true
-        CoroutineScope(Dispatchers.IO).launch {
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
             val authResult = _supabase.signUpWithEmail(email, password)
             authResult.fold(
                 onSuccess = { response ->
-                    val token = response.access_token ?: ""
-                    val userId = response.user?.id ?: ""
-                    if (token.isNotBlank() && userId.isNotBlank()) {
-                        // Profile is auto-created by handle_new_user trigger
-                        // Just verify it exists before proceeding
-                        delay(1000) // Give trigger time to complete
-                        var profile = profileRepo.getProfile(userId).getOrNull()
-                        if (profile == null) {
-                            // Fallback: create profile if trigger failed
-                            profile = ProfileDto(id = userId, email = email, role = "candidato")
-                            profileRepo.createProfile(profile)
+                    try {
+                        val token = response.access_token ?: ""
+                        val userId = response.user?.id ?: ""
+
+                        if (token.isBlank() || userId.isBlank()) {
+                            _isLoading.value = false
+                            onComplete(Result.failure(Exception("Registro falhou: token ou ID ausente. Verifique se a confirmação de email está desativada no Supabase.")))
+                            return@fold
                         }
-                        saveSession(token, userId)
-                        _currentUser.value = profile
-                        _currentRole.value = "candidato"
+
+                        // Wait for trigger to create profile, then fallback if needed
+                        var profile: ProfileDto? = null
+                        repeat(3) { attempt ->
+                            delay(1000L * (attempt + 1)) // 1s, 2s, 3s backoff
+                            profile = profileRepo.getProfile(userId).getOrNull()
+                            if (profile != null) return@repeat
+                        }
+
+                        // If trigger didn't create profile, create manually
+                        if (profile == null) {
+                            profile = ProfileDto(id = userId, email = email, role = "candidato")
+                            profileRepo.createProfile(profile!!)
+                        }
+
+                        // Save session with role from profile
+                        val finalProfile = profile!! // smart cast workaround
+                        dataStore.edit { prefs ->
+                            prefs[SessionKeys.ACCESS_TOKEN] = token
+                            prefs[SessionKeys.USER_ID] = userId
+                            prefs[SessionKeys.USER_ROLE] = finalProfile.role
+                        }
+
+                        _currentUser.value = finalProfile
+                        _currentRole.value = finalProfile.role
                         _sessionState.value = SessionState.Authenticated
                         _isLoading.value = false
                         onComplete(Result.success(Unit))
-                    } else {
+                    } catch (e: Exception) {
                         _isLoading.value = false
-                        onComplete(Result.failure(Exception("Registro falhou")))
+                        onComplete(Result.failure(Exception("Erro ao criar conta: ${e.message}")))
                     }
                 },
                 onFailure = { error ->
                     _isLoading.value = false
-                    onComplete(Result.failure(error))
+                    onErrorResult(error, onComplete)
                 }
             )
         }
+    }
+
+    /** Extract user-friendly error messages from Supabase auth errors */
+    private fun onErrorResult(error: Throwable, onComplete: (Result<Unit>) -> Unit) {
+        val msg = error.message ?: "Erro desconhecido"
+        val friendly = when {
+            msg.contains("User already registered") -> "Este email já está cadastrado. Faça login."
+            msg.contains("Invalid email") -> "Email inválido. Verifique o formato."
+            msg.contains("Password should be at least") -> "Senha muito curta. Use pelo menos 6 caracteres."
+            msg.contains("Unable to validate email") || msg.contains("Email") -> "Erro com email. Verifique se o endereço existe."
+            msg.contains("401") -> "Chave da API inválida. Entre em contato com suporte."
+            else -> "Erro ao criar conta: ${msg.take(100)}"
+        }
+        onComplete(Result.failure(Exception(friendly)))
     }
 
     fun selectRole(role: String, onComplete: (Result<Unit>) -> Unit) {

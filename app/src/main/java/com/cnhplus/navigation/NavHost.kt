@@ -25,20 +25,31 @@ import androidx.navigation.compose.composable
 import com.cnhplus.screens.admin.*
 import com.cnhplus.screens.auth.LoginScreen
 import com.cnhplus.screens.auth.RegisterScreen
+import com.cnhplus.screens.auth.RegisterSuccessScreen
 import com.cnhplus.screens.auth.SelectRoleScreen
 import com.cnhplus.screens.candidato.*
 import com.cnhplus.screens.instrutor.*
+import com.cnhplus.screens.WelcomeScreen
 
 @Composable
 fun CNHNavHost(
     context: Context,
     navController: NavHostController,
-    startDestination: String = Screen.Login.route
+    startDestination: String = Screen.Welcome.route
 ) {
     NavHost(
         navController = navController,
         startDestination = startDestination
     ) {
+        // ===== WELCOME =====
+        composable(Screen.Welcome.route) {
+            WelcomeScreen(
+                onComplete = { navController.navigate(Screen.Login.route) {
+                    popUpTo(Screen.Welcome.route) { inclusive = true }
+                }}
+            )
+        }
+
         // ===== AUTH =====
         composable(Screen.Login.route) {
             LoginScreen(
@@ -51,7 +62,17 @@ fun CNHNavHost(
         composable(Screen.Register.route) {
             RegisterScreen(
                 onBack = { navController.popBackStack() },
-                onRegistered = { navController.navigate(Screen.SelectRole.route) }
+                onRegistered = { navController.navigate(Screen.RegisterSuccess.route) {
+                    popUpTo(Screen.Register.route) { inclusive = true }
+                }}
+            )
+        }
+
+        composable(Screen.RegisterSuccess.route) {
+            RegisterSuccessScreen(
+                onContinue = { navController.navigate(Screen.SelectRole.route) {
+                    popUpTo(Screen.RegisterSuccess.route) { inclusive = true }
+                }}
             )
         }
 

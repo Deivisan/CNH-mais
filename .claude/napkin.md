@@ -1,4 +1,4 @@
-# Napkin Runbook — CNH+ Android App v0.0.5
+# Napkin Runbook — CNH+ Android App 🔴 CRITICAL
 
 ## Curation Rules
 - Re-prioritize on every read (highest-value first)
@@ -8,102 +8,97 @@
 
 ---
 
-## 🔴 CRITICAL NEVER-AGAIN RULES
+## 🔴 NUNCA MAIS ERRAR ISSO (PRIORIDADE MÁXIMA)
 
-1. **[2026-04-01] Public inline functions CANNOT access private members**
-   Do instead: Use `@PublishedApi internal` on any field accessed by public inline methods. Pattern: `@PublishedApi internal val baseUrl: String`. Do NOT make the whole class `internal` — it breaks public API exposure across constructors. Do NOT use private inline helpers — they still fail.
+1. **[2026-04-01] Gradle Build Cache = INIMIGO #1 — APK placeholder persiste!**
+   `clean` NAO limpa .dex caches. O placeholder PERMANECE no APK mesmo após source fix.
+   **Do instead:** `rm -rf app/build && ./gradlew --no-build-cache --rerun-tasks assembleDebug`
+   **Verificar APK:** `unzip -p app-debug.apk classes.dex | strings | grep -i "ibyngfq\|sb_publishable"` — SE encontrar "REPLACE" ou "placeholder", rebuild forçado.
 
-2. **[2026-04-01] `inline` + reified generics require all code in-method if accessing class fields**
-   Do instead: Inline ALL HTTP logic directly in the method body. No delegation to private helpers. If you need sharing, use non-inline private functions that DON'T use reified types.
+2. **[2026-04-01] Public inline functions CANNOT access private members**
+   **Do instead:** `@PublishedApi internal val baseUrl: String`. NUNCA delegar inline para private helpers. Inline TODO o código HTTP dentro da função.
 
-3. **[2026-04-01] Compose brace matching: Row/Card MUST have `) {` not just `)`**
-   Do instead: Always write `Row(...) { /* content */ }` — never `Row(...)` then content on next line without the `{`. The compiler will cascade errors.
+3. **[2026-04-01] Compose brace matching: Row/Card precisam de `) {`**
+   `Row(...) { content }` — NUNCA `Row(...)` seguido de conteúdo sem `{`. Erro cascata.
 
-4. **[2026-04-01] NO `LocalAppSession` — it does not exist**
-   Do instead: Always use `val app = LocalAppState.current`. There is ONE CompositionLocal: `LocalAppState`. Check `app.sessionState`, `app.currentRole`, `app.selectRole()`.
+4. **[2026-04-01] `LocalAppState.current` é ÚNICA fonte de verdade**
+   Zero `LocalAppSession`. Zero ViewModels. `val app = LocalAppState.current` em TODOS composables.
 
-5. **[2026-04-01] No duplicate `val` declarations in same scope**
-   Do instead: Check for duplicate variable names before adding new ones. `val app = LocalAppState.current` must appear ONCE per composable.
-
----
-
-## 🎯 Execution & Validation (GSD Workflow)
-
-1. **[2026-04-01] GSD: Waves sequential, each MUST compile before next starts**
-   Do instead: Execute in waves: Wave 1 = infra/models, Wave 2 = repos/network, Wave 3 = screens/UI, Wave 4 = verify/ship. After EACH wave: `./gradlew compileDebugKotlin`. Zero errors → proceed. Errors → fix in same wave.
-
-2. **[2026-04-01] NO build APK until compile passes clean**
-   Do instead: `./gradlew compileDebugKotlin` first (fast, ~1min). Only when BUILD SUCCESSFUL → `./gradlew assembleDebug`. Building APK with compile errors wastes 2+ minutes.
-
-3. **[2026-04-01] `./gradlew compileDebugKotlin` is the single source of truth**
-   Do instead: Run this after every batch of edits. It catches 99% of issues before APK build. Do NOT trust IDE highlighting — run the actual compiler.
-
-4. **[2026-04-01] GSD atomic commits per fix batch**
-   Do instead: Group related fixes (e.g., "Fix SupabaseClient inline visibility") → git add → commit with descriptive message → compile → proceed. Each commit should be independently testable.
-
-5. **[2026-04-01] LocalAppState.current mandatory in ALL composables**
-   Do instead: Every screen must access `val app = LocalAppState.current` from CompositionLocal. Never use ViewModels, never access AppState via constructor. Pattern: `val app = LocalAppState.current; LaunchedEffect(Unit) { ... }`
-
-6. **[2026-04-01] LaunchedEffect for ALL data fetch, no init blocks**
-   Do instead: Move all network calls from `init {}` to `LaunchedEffect(Unit) { ... }`. This ensures recomposition safety and proper state management.
-
-7. **[2026-04-01] Match algorithm follows SPEC.md exactly**
-   Do instead: Score = (especialidade_match * 30) + (nota_media * 20) + (pontualidade * 20) + (1 - cancelamentos_normalizado * 10) + (horas_experiencia_normalizado * 10) + (distancia_normalizado * 10). Max ~100pts.
-
-8. **[2026-04-01] Color scheme: Azul #1E3A5F → Celeste #87CEEB degradê**
-   Do instead: Primary (#1E3A5F) for headers/bold. Secondary (#4A90D9) for buttons/accents. Accent (#87CEEB) for lighter elements. Never use hardcoded hex—use Theme.kt exports.
-
-9. **[2026-04-01] SUPABASE_ANON_KEY in MainActivity is PLACEHOLDER**
-   Do instead: Before ANY runtime test, replace `s0_placeholder_XXXXXXXX...` with real value from Supabase dashboard → project → Settings → API keys. This is BLOCKING runtime auth.
-
-10. **[2026-04-01] Admin screens deprioritized — keep as stubs**
-    Do instead: 5 admin files kept as functional stubs with minimal UI. Not blocking MVP. Replace when Wave 8 starts.
+5. **[2026-04-01] SHA-1 debug keystore: `77:91:24:95:44:76:40:F7:98:13:E0:3A:25:23:52:15:7E:42:9B:5B`**
+   Se Auth falhar com 401, verificar se este SHA-1 está registrado no Supabase.
 
 ---
 
-## 🏗️ Architecture & Code Patterns
+## 🔐 SUPABASE CONFIG (REAL)
 
-1. **[2026-04-01] SupabaseClient: inline reified with @PublishedApi internal fields**
-   Do instead: `class SupabaseClient(@PublishedApi internal val baseUrl, @PublishedApi internal val anonKey)`. All inline methods (get, getById, insert, etc.) use these fields directly. HTTP logic inlined — no private helpers for inline methods.
-
-2. **[2026-04-01] SupabaseClient raw OkHttp (no Retrofit)**
-   Do instead: All HTTP via inline methods: `client.get<T>(table)`, `client.getById<T>(table, id)`, `client.insert(table, item)`, `client.update(table, column, value, fields)`. No Retrofit.
-
-3. **[2026-04-01] Repositories return Result<T>**
-   Do instead: All repo methods return `Result<T>`. Error handling is caller's responsibility. Never throw exceptions in repos. Pattern: `when (val result = app.repo.fetch()) { ... }`.
-
-4. **[2026-04-01] All repositories use the SAME SupabaseClient instance**
-   Do instead: AppState creates ONE SupabaseClient and passes it to all repos. Don't create multiple clients.
-
-5. **[2026-04-01] Models.kt helper functions: getPerfil(), getPacote(), getVeiculo()**
-   Do instead: Use `candidato.getPerfil()` to extract nested objects, `candidato.withPerfil()` to update. Avoids null-safety boilerplate.
+| Item | Valor |
+|------|-------|
+| Projeto | `ibyngfqddoefatqtojfj` (DeiviTech, sa-east-1) |
+| Anon Key | `sb_publishable_SvWV-VYW4WbqLVoPL_VTTg_SZGF3e2P` |
+| URL | `https://ibyngfqddoefatqtojfj.supabase.co` |
+| Email confirm | **DESATIVADA** para dev |
+| Trigger | `handle_new_user` — auto-cria profiles (verificar search_path) |
 
 ---
 
-## 📱 Screen Patterns
+## 📱 Test Accounts
 
-1. **[2026-04-01] Standard screen: Scaffold + LaunchedEffect + mutable states**
-   Do instead: `val app = LocalAppState.current` → `var loading by remember { mutableStateOf(false) }` → `LaunchedEffect(Unit) { ... }` → `Scaffold(...) { ... }`.
-
-2. **[2026-04-01] NavHost: 2 separate blocks per role (Candidato ≠ Instrutor)**
-   Do instead: 2 separate NavHost blocks — Candidato (5 tabs), Instrutor (5 tabs). Each has bottom navigation. Role switch → route to `Screen.SelectRole`.
-
-3. **[2026-04-01] CompositionLocalProvider wraps NavHost in MainActivity**
-   Do instead: `CompositionLocalProvider(LocalAppState provides app) { NavHost(...) }`. This ensures all child composables access same AppState.
-
-4. **[2026-04-01] SurfaceColor alias needed (Material3 clash with Surface)**
-   Do instead: Import `SurfaceColor` from `ui/theme/Colors.kt` instead of `Surface` color which conflicts with Material3 Surface composable.
+| Email | Senha | Role | Status |
+|-------|-------|------|--------|
+| `deivilsantana@outlook.com` | `33484@Cnh.` | candidato | ✅ Criado, email verified, profile OK |
 
 ---
 
-## 🚨 Known Gotchas
+## 🎯 GSD Execution Workflow
 
-1. Video recording requires Camera + storage permissions → Add to AndroidManifest.xml + runtime check.
-2. Zero EmulatedData in production screens → Admin screens exempt (intentional, deprioritized).
-3. `kotlinx.serialization.encodeToString` needs `Json.encodeToString(obj)` when called outside inline context.
+### Waves Sequenciais (CADA wave DEVE compilar antes de avançar)
+1. **Wave 1**: infra/models/datastore
+2. **Wave 2**: repos/network (SupabaseClient)
+3. **Wave 3**: screens/UI/auth flow
+4. **Wave 4**: verify/compile/APK → release
+
+### Regras de Execução
+1. **Fail fast**: `./gradlew compileDebugKotlin` ANTES de `assembleDebug`. Zero erros → procede.
+2. **Atomic commits**: 1 batch de fixes = 1 commit descritivo.
+3. **Congelado**: `demo-pwa/` e `index.html` — zero alterações até auth + nav estarem sólidos.
+4. **Escopo cirúrgico**: Focar em auth + state management antes de telas/features.
 
 ---
 
-**Last updated:** 2026-04-01 — Release v0.0.5, ALL compilation errors fixed
+## 🏗️ Architecture Patterns
+
+1. **SupabaseClient**: inline reified + `@PublishedApi internal` fields. HTTP inline em cada método.
+2. **AppState**: SINGULAR instance → CompositionLocalProvider → todos composables.
+3. **NavHost**: 2 blocos (Candidato 5 tabs ≠ Instrutor 5 tabs). Role switch → SelectRole.
+4. **Auth flow**: SignUp → delay(1s) → getProfile() → se null, fallback create → saveSession → Authenticated.
+5. **Repos**: return `Result<T>` — caller handles errors, never throw.
+
+---
+
+## 🚨 Known Gotchas & Fix History
+
+1. **Gradle cache servia APK com placeholder** → "401 Invalid API key" → rebuild com `--no-build-cache`
+2. **Email confirmation ativada** → signup sem token → "registro falhou" → desativar no dashboard
+3. **Profile create duplicado** → trigger + app criavam mesmo profile → remover create após signup
+4. **Supabase API key NO build.gradle.kt debug** → campo `buildConfigField` com placeholder → ignorado, MainActivity.kt sobrescreve
+
+---
+
+## 📋 Próximos Passos (Prioridade)
+
+- [x] **AppState.kt register() fix** — retry 3x com backoff, fallback create profile
+- [x] **WelcomeScreen.kt** — 3 slides com Compose Foundation Pager nativo
+- [x] **RegisterSuccessScreen** — animação + feedback visual de sucesso
+- [x] **Navigation** — Welcome → Register → Success → SelectRole → Onboarding
+- [ ] **PerfilCompletoScreen** — upload foto + formulário completo (nome, CPF, celular)
+- [ ] **Permissões** — CAMERA + READ_MEDIA_IMAGES no AndroidManifest
+- [ ] **SupabaseClient.uploadFile()** — método para Supabase Storage
+- [ ] **Onboarding** — perfil comportamental após escolher role
+- [ ] **RLS policies** — verificar policies nas tabelas profiles, candidatos, instrutores
+
+---
+
+**Last updated:** 2026-04-01 — v0.06 com Welcome + RegisterSuccess + auth fix
 **Author:** DevSan (@deivisan)
-**Version:** 0.0.5
+**SHA1 debug:** `77:91:24:95:44:76:40:F7:98:13:E0:3A:25:23:52:15:7E:42:9B:5B`
+**Debug tip:** `strings classes.dex | grep -i "ibyngfq"` confirma key no APK

@@ -4,9 +4,13 @@ package com.cnhplus.navigation
  * Sealed class com todas as rotas do app.
  */
 sealed class Screen(val route: String) {
+    // Welcome & Onboarding First Run
+    object Welcome : Screen("welcome")
+    
     // Auth
     object Login : Screen("login")
     object Register : Screen("register")
+    object RegisterSuccess : Screen("register_success")
     object SelectRole : Screen("select_role")
     
     // Candidato Onboarding

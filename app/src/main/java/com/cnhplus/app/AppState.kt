@@ -221,13 +221,15 @@ class AppState(
     }
 
     private suspend fun saveSession(token: String, userId: String) {
+        val profile = profileRepo.getProfile(userId).getOrNull()
         dataStore.edit { prefs ->
             prefs[SessionKeys.ACCESS_TOKEN] = token
             prefs[SessionKeys.USER_ID] = userId
+            if (profile != null) {
+                prefs[SessionKeys.USER_ROLE] = profile.role
+            }
         }
-        val profile = profileRepo.getProfile(userId).getOrNull()
         if (profile != null) {
-            prefs[SessionKeys.USER_ROLE] = profile.role
             _currentUser.value = profile
             _currentRole.value = profile.role
             _sessionState.value = SessionState.Authenticated

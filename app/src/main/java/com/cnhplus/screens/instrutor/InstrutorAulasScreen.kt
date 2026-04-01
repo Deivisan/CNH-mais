@@ -1,22 +1,124 @@
 package com.cnhplus.screens.instrutor
 
 import androidx.compose.foundation.background
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.foundation.layout.*
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.foundation.lazy.LazyColumn
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.foundation.lazy.items
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.foundation.shape.RoundedCornerShape
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.material.icons.Icons
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.material.icons.filled.*
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.material3.*
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.runtime.*
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.ui.Alignment
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.ui.Modifier
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.ui.graphics.Color
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.ui.text.font.FontWeight
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import androidx.compose.ui.unit.dp
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import com.cnhplus.*
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import com.cnhplus.data.AulaDto
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 import com.cnhplus.ui.theme.LocalAppState
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Warning
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,16 +152,16 @@ fun AulaRealizadaCard(aula: AulaDto) {
         Column(Modifier.fillMaxWidth().padding(16.dp)) {
             Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
-                    Text(aula.data_hora ?: "N/A", MaterialTheme.typography.titleSmall, FontWeight.Bold)
-                    Text("${aula.duracao ?: 50}min", MaterialTheme.typography.bodySmall, TextSecondary)
+                    Text(text=aula.data_hora ?: "N/A", style=MaterialTheme.typography.titleSmall, color=FontWeight.Bold)
+                    Text(text="${aula.duracao ?: 50}min", style=MaterialTheme.typography.bodySmall, color=TextSecondary)
                 }
-                Surface(Success.copy(0.2f), RoundedCornerShape(6.dp)) { Text("Concluída", MaterialTheme.typography.labelSmall, Success, Modifier.padding(6.dp)) }
+                Surface(Success.copy(0.2f), RoundedCornerShape(6.dp)) { Text(text="Concluída", style=MaterialTheme.typography.labelSmall, color=Success, Modifier.padding(6.dp)) }
             }
             Spacer(Modifier.height(12.dp))
             Row(Alignment.CenterVertically) {
                 Icon(Icons.Default.Star, null, Warning, Modifier.size(16.dp))
                 Spacer(Modifier.width(4.dp))
-                Text("${aula.valor ?: 0.0} R$", MaterialTheme.typography.bodySmall, TextSecondary)
+                Text(text="${aula.valor ?: 0.0} R$", style=MaterialTheme.typography.bodySmall, color=TextSecondary)
             }
         }
     }

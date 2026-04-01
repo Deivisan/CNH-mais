@@ -19,7 +19,7 @@ import com.cnhplus.navigation.CNHNavHost
 import com.cnhplus.navigation.Screen
 import com.cnhplus.ui.theme.CNHMaisTheme
 import com.cnhplus.ui.theme.LocalAppState
-import com.cnhplus.Secondary
+import com.cnhplus.ui.theme.Secondary
 
 const val SUPABASE_URL = "https://ibyngfqddoefatqtojfj.supabase.co"
 const val SUPABASE_ANON_KEY = "sb_publishable_REPLACE_WITH_REAL_ANON_KEY_BEFORE_BUILD"

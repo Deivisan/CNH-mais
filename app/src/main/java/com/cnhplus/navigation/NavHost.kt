@@ -29,6 +29,7 @@ import com.cnhplus.screens.auth.RegisterSuccessScreen
 import com.cnhplus.screens.auth.SelectRoleScreen
 import com.cnhplus.screens.candidato.*
 import com.cnhplus.screens.instrutor.*
+import com.cnhplus.presentation.instrutor.onboarding.InstrutorOnboardingScreen
 import com.cnhplus.screens.WelcomeScreen
 import com.cnhplus.screens.chat.ChatScreen
 import com.cnhplus.screens.denuncia.DenunciaScreen
@@ -175,13 +176,10 @@ fun CNHNavHost(
         }
 
 
-        // ===== INSTRUTOR ONBOARDING =====
+        // ===== INSTRUTOR ONBOARDING (NOVO WIZARD 5 STEPS) =====
         composable(Screen.PerfilInstrutor.route) {
-            PerfilInstrutorScreen(
+            InstrutorOnboardingScreen(
                 onComplete = { navController.navigate(Screen.InstrutorHome.route) {
-                    popUpTo(Screen.PerfilInstrutor.route) { inclusive = true }
-                }},
-                onSkip = { navController.navigate(Screen.InstrutorHome.route) {
                     popUpTo(Screen.PerfilInstrutor.route) { inclusive = true }
                 }}
             )

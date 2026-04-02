@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.devtools.ksp")
     id("kotlinx-serialization")
+    // id("io.gitlab.arturbosch.detekt") // Temporariamente desativado - compatibilidade Kotlin 1.9.24
 }
 
 android {

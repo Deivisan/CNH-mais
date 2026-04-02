@@ -535,7 +535,7 @@ Primeira vez:
   Login → SelectRole ────────────────────────┤
                                              ├→ Instrutor: PerfilInstrutor → InstrutorHome
                                              │
-                                             └→ Admin: AdminHome
+                                              └→ Instrutor: PerfilInstrutor → InstrutorHome
 ```
 
 ### 📦 APK
@@ -547,8 +547,53 @@ Primeira vez:
 
 ---
 
-**Última atualização:** 01/04/2026 — v0.07a + Branch restructuring + Anti-dup rules
+## 📋 Changelog — v0.08 Alpha (2026-04-01)
+
+### ✅ Novas Funcionalidades
+1. **ChatScreen.kt** — Chat entre candidato e instrutor
+   - Polling a cada 3 segundos para novas mensagens
+   - Bubbles com distinção visual (enviada vs recebida)
+   - Scroll automático para última mensagem
+   - Integração com MensagemRepository
+
+2. **DenunciaScreen.kt** — Sistema de denúncias
+   - 7 motivos pré-definidos (assédio, comportamento inadequado, etc.)
+   - Campo de descrição com contador (max 1000 chars)
+   - Placeholder para upload de mídia (câmera/galeria)
+   - Tela de sucesso com feedback visual
+   - Integração com DenunciaRepository
+
+3. **Upload Documentos (PerfilInstrutorScreen)**
+   - File picker para CNH (ActivityResultContracts.GetContent)
+   - File picker para CRLV
+   - Upload para bucket 'documentos' no Supabase Storage
+   - Feedback visual: card verde quando documento enviado
+   - Helper readBytesFromUri para leitura de arquivos
+
+4. **Botões de Ação nas Aulas**
+   - CandidatoAulasScreen: Chat + Denunciar (para aulas agendada/em_andamento)
+   - InstrutorAulasScreen: Chat (sempre visível) + Iniciar/Concluir Aula
+
+### 🗑️ Remoções
+- **Módulo Admin completo**: 6 telas deletadas (AdminHome, AdminInstrutores, AdminAlunos, AdminAulas, AdminFinanceiro, AdminConfig)
+- Rotas admin removidas do NavHost.kt
+- Screen.Admin* removidos do Screen.kt
+- Case "admin" removido do navigateByRole e MainActivity
+
+### 🔧 Navegação
+- Screen.Chat com rota dinâmica: `chat/{aulaId}`
+- Screen.Denuncia com rota dinâmica: `denuncia/{aulaId}`
+- SavedStateHandle para passar receiverId/receiverName/denunciadoId/denunciadoNome
+
+### 📦 Release
+- **v0.08-alpha**: https://github.com/Deivisan/CNH-mais/releases/tag/v0.08-alpha
+- Asset: `cnhmais.apk` (19MB)
+- SHA256: `a57585b85345efb0071da854ebad1bc4d5ab5f53f862f729269d05219191d7bb`
+
+---
+
+**Última atualização:** 01/04/2026 — v0.08 Alpha
 **Autor:** Deivison Santana (@deivisan)
-**Versão:** 0.07a — Perfis completos + Storage + RLS + Branches master/web limpas
+**Versão:** 0.08 Alpha — Chat + Denúncias + Upload Documentos + Admin removido
 **Asset naming:** `cnhmais.apk` (genérico, sem versão) → landing usa `latest/download/cnhmais.apk`
 **Supabase MCP:** ✅ Ativo em opencode.jsonc — project_ref=ibyngfqddoefatqtojfj

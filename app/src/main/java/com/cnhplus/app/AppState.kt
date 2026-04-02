@@ -96,7 +96,7 @@ class AppState(
         }
     }
 
-    fun register(email: String, password: String, onComplete: (Result<Unit>) -> Unit) {
+    fun register(email: String, password: String, nome: String, onComplete: (Result<Unit>) -> Unit) {
         _isLoading.value = true
         CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
             val authResult = _supabase.signUpWithEmail(email, password)
@@ -122,8 +122,12 @@ class AppState(
 
                         // If trigger didn't create profile, create manually
                         if (profile == null) {
-                            profile = ProfileDto(id = userId, email = email, role = "candidato")
+                            profile = ProfileDto(id = userId, email = email, role = "candidato", nome = nome)
                             profileRepo.createProfile(profile!!)
+                        } else {
+                            // Update nome if profile was created by trigger without nome
+                            profileRepo.updateProfile(userId, mapOf("nome" to nome))
+                            profile = profile!!.copy(nome = nome)
                         }
 
                         // Save session with role from profile
@@ -187,9 +191,6 @@ class AppState(
                         "instrutor" -> {
                             val instrutor = InstrutorDto(id = userId, status = "pendente")
                             instrutorRepo.createInstrutor(instrutor)
-                        }
-                        "admin" -> {
-                            // No additional records needed
                         }
                     }
                     _sessionState.value = SessionState.Authenticated

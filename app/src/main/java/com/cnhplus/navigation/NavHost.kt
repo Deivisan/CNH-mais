@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.School
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
@@ -22,7 +23,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.cnhplus.screens.admin.*
 import com.cnhplus.screens.auth.LoginScreen
 import com.cnhplus.screens.auth.RegisterScreen
 import com.cnhplus.screens.auth.RegisterSuccessScreen
@@ -30,6 +30,10 @@ import com.cnhplus.screens.auth.SelectRoleScreen
 import com.cnhplus.screens.candidato.*
 import com.cnhplus.screens.instrutor.*
 import com.cnhplus.screens.WelcomeScreen
+import com.cnhplus.screens.chat.ChatScreen
+import com.cnhplus.screens.denuncia.DenunciaScreen
+import androidx.navigation.navArgument
+import androidx.navigation.NavType
 
 @Composable
 fun CNHNavHost(
@@ -125,7 +129,22 @@ fun CNHNavHost(
 
         composable(Screen.CandidatoAulas.route) {
             CandidatoScaffold(navController, Screen.CandidatoAulas.route) {
-                CandidatoAulasScreen()
+                CandidatoAulasScreen(
+                    onNavigateToChat = { aulaId, receiverId, receiverName ->
+                        navController.currentBackStackEntry?.savedStateHandle?.apply {
+                            set("receiverId", receiverId)
+                            set("receiverName", receiverName)
+                        }
+                        navController.navigate(Screen.Chat.createRoute(aulaId))
+                    },
+                    onNavigateToDenuncia = { aulaId, denunciadoId, denunciadoNome ->
+                        navController.currentBackStackEntry?.savedStateHandle?.apply {
+                            set("denunciadoId", denunciadoId)
+                            set("denunciadoNome", denunciadoNome)
+                        }
+                        navController.navigate(Screen.Denuncia.createRoute(aulaId))
+                    }
+                )
             }
         }
 
@@ -175,7 +194,15 @@ fun CNHNavHost(
 
         composable(Screen.InstrutorAulas.route) {
             InstrutorScaffold(navController, Screen.InstrutorAulas.route) {
-                InstrutorAulasScreen()
+                InstrutorAulasScreen(
+                    onNavigateToChat = { aulaId, receiverId, receiverName ->
+                        navController.currentBackStackEntry?.savedStateHandle?.apply {
+                            set("receiverId", receiverId)
+                            set("receiverName", receiverName)
+                        }
+                        navController.navigate(Screen.Chat.createRoute(aulaId))
+                    }
+                )
             }
         }
 
@@ -185,36 +212,38 @@ fun CNHNavHost(
             }
         }
 
-        // ===== ADMIN =====
-        composable(Screen.AdminHome.route) {
-            AdminHomeScreen(
-                onNavigateToInstrutores = { navController.navigate(Screen.AdminInstrutores.route) },
-                onNavigateToAlunos = { navController.navigate(Screen.AdminAlunos.route) },
-                onNavigateToAulas = { navController.navigate(Screen.AdminAulas.route) },
-                onNavigateToFinanceiro = { navController.navigate(Screen.AdminFinanceiro.route) },
-                onNavigateToConfig = { navController.navigate(Screen.AdminConfig.route) },
+        composable(Screen.InstrutorPerfil.route) {
+            InstrutorScaffold(navController, Screen.InstrutorPerfil.route) {
+                InstrutorPerfilScreen()
+            }
+        }
+
+        // ===== CHAT & DENÚNCIA (shared) =====
+        composable(
+            route = Screen.Chat.route,
+            arguments = listOf(navArgument("aulaId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val aulaId = backStackEntry.arguments?.getString("aulaId") ?: ""
+            // Get params from previous navigation
+            ChatScreen(
+                aulaId = aulaId,
+                receiverId = backStackEntry.savedStateHandle.get<String>("receiverId") ?: "",
+                receiverName = backStackEntry.savedStateHandle.get<String>("receiverName") ?: "Chat",
                 onBack = { navController.popBackStack() }
             )
         }
 
-        composable(Screen.AdminInstrutores.route) {
-            AdminInstrutoresScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Screen.AdminAlunos.route) {
-            AdminAlunosScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Screen.AdminAulas.route) {
-            AdminAulasScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Screen.AdminFinanceiro.route) {
-            AdminFinanceiroScreen(onBack = { navController.popBackStack() })
-        }
-
-        composable(Screen.AdminConfig.route) {
-            AdminConfigScreen(onBack = { navController.popBackStack() })
+        composable(
+            route = Screen.Denuncia.route,
+            arguments = listOf(navArgument("aulaId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val aulaId = backStackEntry.arguments?.getString("aulaId") ?: ""
+            DenunciaScreen(
+                aulaId = aulaId,
+                denunciadoId = backStackEntry.savedStateHandle.get<String>("denunciadoId") ?: "",
+                denunciadoNome = backStackEntry.savedStateHandle.get<String>("denunciadoNome") ?: "",
+                onBack = { navController.popBackStack() }
+            )
         }
     }
 }
@@ -225,9 +254,6 @@ private fun navigateByRole(navController: NavHostController, role: String) {
             popUpTo(Screen.Login.route) { inclusive = true }
         }
         "instrutor" -> navController.navigate(Screen.PerfilInstrutor.route) {
-            popUpTo(Screen.Login.route) { inclusive = true }
-        }
-        "admin" -> navController.navigate(Screen.AdminHome.route) {
             popUpTo(Screen.Login.route) { inclusive = true }
         }
     }
@@ -283,7 +309,8 @@ private fun InstrutorScaffold(
         TabItem(Screen.InstrutorHome.route, "Home", Icons.Default.Home),
         TabItem(Screen.InstrutorAgenda.route, "Agenda", Icons.Default.CalendarMonth),
         TabItem(Screen.InstrutorAulas.route, "Aulas", Icons.Default.School),
-        TabItem(Screen.InstrutorFinanceiro.route, "Financeiro", Icons.Default.Person)
+        TabItem(Screen.InstrutorFinanceiro.route, "Financeiro", Icons.Default.Build),
+        TabItem(Screen.InstrutorPerfil.route, "Perfil", Icons.Default.Person)
     )
     Scaffold(
         bottomBar = {

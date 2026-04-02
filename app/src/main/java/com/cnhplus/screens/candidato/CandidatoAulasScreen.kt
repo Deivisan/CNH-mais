@@ -31,9 +31,12 @@ import com.cnhplus.data.AulaDto
 import com.cnhplus.ui.theme.LocalAppState
 import java.text.SimpleDateFormat
 import java.util.Locale
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CandidatoAulasScreen(
+    onNavigateToChat: (aulaId: String, receiverId: String, receiverName: String) -> Unit = { _, _, _ -> },
+    onNavigateToDenuncia: (aulaId: String, denunciadoId: String, denunciadoNome: String) -> Unit = { _, _, _ -> }
 ) {
     val app = LocalAppState.current
     
@@ -176,7 +179,17 @@ fun CandidatoAulasScreen(
             items(aulas) { aula ->
                 AulaItem(
                     aula = aula,
-                    onClick = { aula.id?.let { /* detalhes da aula */ } }
+                    onClick = { aula.id?.let { /* detalhes da aula */ } },
+                    onChatClick = { 
+                        aula.id?.let { aulaId ->
+                            onNavigateToChat(aulaId, aula.instrutor_id ?: "", "Instrutor")
+                        }
+                    },
+                    onDenunciaClick = {
+                        aula.id?.let { aulaId ->
+                            onNavigateToDenuncia(aulaId, aula.instrutor_id ?: "", "Instrutor")
+                        }
+                    }
                 )
             }
             
@@ -190,7 +203,9 @@ fun CandidatoAulasScreen(
 @Composable
 fun AulaItem(
     aula: AulaDto,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    onChatClick: () -> Unit = {},
+    onDenunciaClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -200,74 +215,137 @@ fun AulaItem(
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(16.dp)
         ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = aula.data_hora ?: "Data não definida",
-                    style = MaterialTheme.typography.titleMedium,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = "${aula.duracao ?: 50} min",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = aula.local_encontro ?: "Local a definir",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = TextSecondary
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = aula.data_hora ?: "Data não definida",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = "${aula.duracao ?: 50} min",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondary
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = aula.local_encontro ?: "Local a definir",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = TextSecondary
+                    )
+                }
+                
+                // Status badge
+                when (aula.status) {
+                    "agendada" -> {
+                        Surface(
+                            color = Accent.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text(
+                                text = "Agendada",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Secondary,
+                                modifier = Modifier.padding(6.dp)
+                            )
+                        }
+                    }
+                    "em_andamento" -> {
+                        Surface(
+                            color = Warning.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text(
+                                text = "Em Andamento",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Warning,
+                                modifier = Modifier.padding(6.dp)
+                            )
+                        }
+                    }
+                    "concluida" -> {
+                        Surface(
+                            color = Success.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text(
+                                text = "Concluída",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Success,
+                                modifier = Modifier.padding(6.dp)
+                            )
+                        }
+                    }
+                    "cancelada" -> {
+                        Surface(
+                            color = Error.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(6.dp)
+                        ) {
+                            Text(
+                                text = "Cancelada",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Error,
+                                modifier = Modifier.padding(6.dp)
+                            )
+                        }
+                    }
+                    else -> {}
+                }
             }
             
-            // Status badge
-            when (aula.status) {
-                "agendada" -> {
-                    Surface(
-                        color = Accent.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(6.dp)
-                    ) {
-                        Text(
-                            text = "Agendada",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Secondary,
-                            modifier = Modifier.padding(6.dp)
+            // Botões de ação (Chat + Denunciar)
+            if (aula.status == "agendada" || aula.status == "em_andamento") {
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    // Botão Chat
+                    OutlinedButton(
+                        onClick = onChatClick,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Secondary
                         )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Chat,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Chat")
+                    }
+                    
+                    // Botão Denunciar
+                    OutlinedButton(
+                        onClick = onDenunciaClick,
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            contentColor = Error
+                        )
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Flag,
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("Denunciar")
                     }
                 }
-                "concluida" -> {
-                    Surface(
-                        color = Success.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(6.dp)
-                    ) {
-                        Text(
-                            text = "Concluída",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Success,
-                            modifier = Modifier.padding(6.dp)
-                        )
-                    }
-                }
-                "cancelada" -> {
-                    Surface(
-                        color = Error.copy(alpha = 0.2f),
-                        shape = RoundedCornerShape(6.dp)
-                    ) {
-                        Text(
-                            text = "Cancelada",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = Error,
-                            modifier = Modifier.padding(6.dp)
-                        )
-                    }
-                }
-                else -> {}
             }
         }
     }

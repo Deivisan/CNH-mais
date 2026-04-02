@@ -2,9 +2,9 @@ package com.cnhplus.screens.instrutor
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -14,183 +14,147 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.cnhplus.data.InstrutorDto
-import com.cnhplus.ui.theme.LocalAppState
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.Accent
+import com.cnhplus.ui.theme.*
+import kotlinx.coroutines.launch
 
+/**
+ * Tela de visualização de perfil do instrutor (após onboarding).
+ * Versão simplificada - apenas leitura por enquanto.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InstrutorPerfilScreen() {
     val app = LocalAppState.current
-    var instrutor by remember { mutableStateOf<InstrutorDto?>(null) }
-    var isLoading by remember { mutableStateOf(true) }
-    
-    LaunchedEffect(Unit) {
-        val userId = app.currentUser.value?.id ?: run { isLoading = false; return@LaunchedEffect }
-        app.instrutorRepo.getInstrutor(userId).fold(
-            onSuccess = { i -> instrutor = i; isLoading = false },
-            onFailure = { isLoading = false }
-        )
-    }
-    
-    if (isLoading) { 
-        Box(Modifier.fillMaxSize(), Alignment.Center) { CircularProgressIndicator(color = Secondary) }
-        return 
-    }
-    
+    val scrollState = rememberScrollState()
+    val currentUser = app.currentUser.value
+
     Scaffold(
-        topBar = { 
+        topBar = {
             TopAppBar(
-                title = { Text("Meu Perfil") }, 
+                title = { Text("Meu Perfil") },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Primary, 
+                    containerColor = Primary,
                     titleContentColor = Color.White
                 )
-            ) 
+            )
         }
     ) { padding ->
-        LazyColumn(
-            Modifier
+        Column(
+            modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.background)
+                .verticalScroll(scrollState)
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            item {
+            // Avatar placeholder
+            Surface(
+                modifier = Modifier.size(120.dp),
+                shape = RoundedCornerShape(60.dp),
+                color = Primary.copy(0.1f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = null,
+                        tint = Primary,
+                        modifier = Modifier.size(60.dp)
+                    )
+                }
+            }
+
+            Text(
+                text = currentUser?.nome ?: "Instrutor",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.Bold
+            )
+
+            Text(
+                text = currentUser?.email ?: "N/A",
+                style = MaterialTheme.typography.bodyMedium,
+                color = TextSecondary
+            )
+
+            Spacer(Modifier.height(24.dp))
+
+            // Card de informações
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White)
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(Primary)
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
+                        .padding(20.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .size(80.dp)
-                            .background(Accent, CircleShape),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = instrutor?.id?.take(1)?.uppercase() ?: "I", 
-                            style = MaterialTheme.typography.headlineMedium,
-                            fontWeight = FontWeight.Bold, 
-                            color = Primary
-                        )
-                    }
-                    Spacer(Modifier.height(16.dp))
                     Text(
-                        text = instrutor?.biografia?.take(30) ?: "Instrutor", 
-                        style = MaterialTheme.typography.headlineSmall, 
-                        fontWeight = FontWeight.Bold, 
-                        color = Color.White
+                        text = "Informações",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold
                     )
-                    Text(
-                        text = instrutor?.cidade ?: "Cidade não definida", 
-                        style = MaterialTheme.typography.bodyMedium, 
-                        color = Color.White.copy(0.8f)
+
+                    HorizontalDivider()
+
+                    InfoRow(
+                        icon = Icons.Default.Email,
+                        label = "Email",
+                        value = currentUser?.email ?: "N/A"
+                    )
+
+                    InfoRow(
+                        icon = Icons.Default.Person,
+                        label = "Perfil",
+                        value = "Instrutor"
                     )
                 }
             }
-            
-            item { 
-                Column {
-                    Spacer(Modifier.height(24.dp))
-                    Text(
-                        text = "Informações Profissionais", 
-                        style = MaterialTheme.typography.titleMedium, 
-                        fontWeight = FontWeight.Bold, 
-                        modifier = Modifier.padding(16.dp, 0.dp)
-                    )
-                    Spacer(Modifier.height(12.dp))
-                }
-            }
-            
-            item {
-                instrutor?.let { inst ->
-                    Column {
-                        ProfileField(Icons.Default.Badge, "Status", inst.status?.replaceFirstChar { it.uppercase() } ?: "Pendente")
-                        ProfileField(Icons.Default.School, "Horas Trabalhadas", "${inst.horas_trabalhadas ?: 0}h")
-                        ProfileField(Icons.Default.People, "Alunos Atendidos", "${inst.alunos_atendidos ?: 0}")
-                        ProfileField(Icons.Default.Star, "Avaliação Média", "${inst.nota_media ?: 0.0} ⭐")
-                        ProfileField(Icons.Default.CheckCircle, "Pontualidade", "${inst.pontualidade ?: 100}%")
-                    }
-                }
-            }
-            
-            item { 
-                Column {
-                    Spacer(Modifier.height(24.dp))
-                    Text(
-                        text = "Veículo", 
-                        style = MaterialTheme.typography.titleMedium, 
-                        fontWeight = FontWeight.Bold, 
-                        modifier = Modifier.padding(16.dp, 0.dp)
-                    )
-                    Spacer(Modifier.height(12.dp))
-                }
-            }
-            
-            item {
-                instrutor?.let { inst ->
-                    val veiculo = inst.getVeiculo()
-                    Column {
-                        ProfileField(Icons.Default.DirectionsCar, "Tipo", veiculo.tipo.replace("_", " ").replaceFirstChar { it.uppercase() })
-                        ProfileField(Icons.Default.Info, "Modelo", veiculo.modelo ?: "Não informado")
-                        ProfileField(Icons.Default.DateRange, "Ano", veiculo.ano ?: "Não informado")
-                    }
-                }
-            }
-            
-            item { 
-                Column {
-                    Spacer(Modifier.height(32.dp))
-                    Button(
-                        onClick = { app.logout() }, 
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp, 0.dp)
-                            .height(48.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = androidx.compose.material3.MaterialTheme.colorScheme.error)
-                    ) { 
-                        Icon(Icons.Filled.Close, null, Modifier.size(20.dp))
-                        Spacer(Modifier.width(8.dp))
-                        Text("Sair") 
-                    }
-                    Spacer(Modifier.height(32.dp)) 
-                }
-            }
+
+            Spacer(Modifier.height(16.dp))
+
+            // Placeholder para edição futura
+            Text(
+                text = "Funcionalidade de edição em desenvolvimento",
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary
+            )
+
+            Spacer(Modifier.height(32.dp))
         }
     }
 }
 
 @Composable
-fun ProfileField(
-    icon: androidx.compose.ui.graphics.vector.ImageVector, 
-    label: String, 
+private fun InfoRow(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
     value: String
 ) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp, 6.dp),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(icon, null, tint = Secondary, modifier = Modifier.size(24.dp))
-            Spacer(Modifier.width(16.dp))
-            Column { 
-                Text(text = label, style = MaterialTheme.typography.labelSmall, color = TextSecondary)
-                Text(text = value, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.SemiBold)
-            }
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodySmall,
+                color = TextSecondary
+            )
+            Text(
+                text = value,
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }

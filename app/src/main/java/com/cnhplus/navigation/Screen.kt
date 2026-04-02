@@ -36,11 +36,11 @@ sealed class Screen(val route: String) {
     object InstrutorAulas : Screen("instrutor_aulas")
     object InstrutorFinanceiro : Screen("instrutor_financeiro")
     
-    // Admin (mantido mas não prioridade)
-    object AdminHome : Screen("admin_home")
-    object AdminInstrutores : Screen("admin_instrutores")
-    object AdminAlunos : Screen("admin_alunos")
-    object AdminAulas : Screen("admin_aulas")
-    object AdminFinanceiro : Screen("admin_financeiro")
-    object AdminConfig : Screen("admin_config")
+    // Chat & Denúncia (compartilhadas)
+    object Chat : Screen("chat/{aulaId}") {
+        fun createRoute(aulaId: String) = "chat/$aulaId"
+    }
+    object Denuncia : Screen("denuncia/{aulaId}") {
+        fun createRoute(aulaId: String) = "denuncia/$aulaId"
+    }
 }

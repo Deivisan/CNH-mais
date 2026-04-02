@@ -42,7 +42,6 @@ class MainActivity : ComponentActivity() {
                     is SessionState.Authenticated -> {
                         when (appState.currentRole.value) {
                             "instrutor" -> Screen.InstrutorHome.route
-                            "admin" -> Screen.AdminHome.route
                             "candidato" -> Screen.CandidatoHome.route
                             else -> Screen.Login.route
                         }

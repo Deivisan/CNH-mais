@@ -1,6 +1,7 @@
 package com.cnhplus.screens.instrutor
 
 import android.Manifest
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -45,6 +46,8 @@ fun PerfilInstrutorScreen(
     var cidade by remember { mutableStateOf("") }
     var biografia by remember { mutableStateOf("") }
     var photoBytes by remember { mutableStateOf<ByteArray?>(null) }
+    var cnhBytes by remember { mutableStateOf<ByteArray?>(null) }
+    var crlvBytes by remember { mutableStateOf<ByteArray?>(null) }
     var isLoading by remember { mutableStateOf(false) }
     var error by remember { mutableStateOf<String?>(null) }
 
@@ -221,23 +224,106 @@ fun PerfilInstrutorScreen(
 
                 Spacer(Modifier.height(24.dp))
 
+                // Upload de documentos
+                Text(
+                    text = "Documentos Obrigatórios",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.align(Alignment.Start)
+                )
+                Spacer(Modifier.height(8.dp))
+
+                // CNH
                 Card(
                     modifier = Modifier.fillMaxWidth(),
-                    colors = CardDefaults.cardColors(containerColor = Accent.copy(alpha = 0.1f))
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (cnhBytes != null) Success.copy(0.1f) else SurfaceColor
+                    ),
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Column(Modifier.padding(16.dp)) {
-                        Text(
-                            text = "Documentos necessários (em breve)",
-                            style = MaterialTheme.typography.titleSmall,
-                            fontWeight = FontWeight.Bold
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { /* TODO: abrir seletor de arquivo */ }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Description,
+                            contentDescription = null,
+                            tint = if (cnhBytes != null) Success else TextSecondary
                         )
-                        Spacer(Modifier.height(8.dp))
-                        Text(
-                            text = "Após salvar, voce podera enviar sua CNH e CRLV.",
-                            style = MaterialTheme.typography.bodySmall
+                        Spacer(Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "CNH (Frente e Verso)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = if (cnhBytes != null) "Enviado ✓" else "Toque para enviar",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (cnhBytes != null) Success else TextSecondary
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Default.Upload,
+                            contentDescription = null,
+                            tint = Secondary
                         )
                     }
                 }
+
+                Spacer(Modifier.height(12.dp))
+
+                // CRLV
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = if (crlvBytes != null) Success.copy(0.1f) else SurfaceColor
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { /* TODO: abrir seletor de arquivo */ }
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.DirectionsCar,
+                            contentDescription = null,
+                            tint = if (crlvBytes != null) Success else TextSecondary
+                        )
+                        Spacer(Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "CRLV (Documento do Veículo)",
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
+                                text = if (crlvBytes != null) "Enviado ✓" else "Toque para enviar",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = if (crlvBytes != null) Success else TextSecondary
+                            )
+                        }
+                        Icon(
+                            imageVector = Icons.Default.Upload,
+                            contentDescription = null,
+                            tint = Secondary
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(8.dp))
+                Text(
+                    text = "Formatos aceitos: JPG, PNG, PDF (max 5MB cada)",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TextSecondary,
+                    modifier = Modifier.align(Alignment.Start)
+                )
 
                 Spacer(Modifier.height(32.dp))
 
@@ -270,6 +356,44 @@ fun PerfilInstrutorScreen(
                                         onSuccess = { url -> photoUrl = url },
                                         onFailure = { e ->
                                             error = "Erro ao enviar foto: ${e.message}"
+                                            isLoading = false
+                                            return@launch
+                                        }
+                                    )
+                                }
+
+                                // Upload CNH
+                                var cnhUrl: String? = null
+                                cnhBytes?.let { bytes ->
+                                    val uploadResult = app.supabase.uploadFile(
+                                        bucket = "documentos",
+                                        filePath = "$userId/cnh.jpg",
+                                        fileBytes = bytes,
+                                        contentType = "image/jpeg"
+                                    )
+                                    uploadResult.fold(
+                                        onSuccess = { url -> cnhUrl = url },
+                                        onFailure = { e ->
+                                            error = "Erro ao enviar CNH: ${e.message}"
+                                            isLoading = false
+                                            return@launch
+                                        }
+                                    )
+                                }
+
+                                // Upload CRLV
+                                var crlvUrl: String? = null
+                                crlvBytes?.let { bytes ->
+                                    val uploadResult = app.supabase.uploadFile(
+                                        bucket = "documentos",
+                                        filePath = "$userId/crlv.jpg",
+                                        fileBytes = bytes,
+                                        contentType = "image/jpeg"
+                                    )
+                                    uploadResult.fold(
+                                        onSuccess = { url -> crlvUrl = url },
+                                        onFailure = { e ->
+                                            error = "Erro ao enviar CRLV: ${e.message}"
                                             isLoading = false
                                             return@launch
                                         }

@@ -286,6 +286,7 @@ fun RegisterScreen(
     onRegistered: () -> Unit
 ) {
     val app = LocalAppState.current
+    var nome by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
@@ -342,6 +343,16 @@ fun RegisterScreen(
                 }
                 
                 OutlinedTextField(
+                    value = nome,
+                    onValueChange = { nome = it; error = null },
+                    label = { Text("Nome Completo") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                OutlinedTextField(
                     value = email,
                     onValueChange = { email = it; error = null },
                     label = { Text("Email") },
@@ -376,7 +387,7 @@ fun RegisterScreen(
                 
                 Button(
                     onClick = {
-                        if (email.isBlank() || password.isBlank()) {
+                        if (nome.isBlank() || email.isBlank() || password.isBlank()) {
                             error = "Preencha todos os campos"
                             return@Button
                         }
@@ -389,7 +400,7 @@ fun RegisterScreen(
                             return@Button
                         }
                         isLoading = true
-                        app.register(email, password) { result ->
+                        app.register(email, password, nome) { result ->
                             isLoading = false
                             result.fold(
                                 onSuccess = { onRegistered() },

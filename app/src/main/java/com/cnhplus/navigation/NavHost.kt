@@ -32,6 +32,7 @@ import com.cnhplus.screens.instrutor.*
 import com.cnhplus.screens.WelcomeScreen
 import com.cnhplus.screens.chat.ChatScreen
 import com.cnhplus.screens.denuncia.DenunciaScreen
+import com.cnhplus.screens.avaliacao.AvaliacaoScreen
 import androidx.navigation.navArgument
 import androidx.navigation.NavType
 
@@ -143,6 +144,13 @@ fun CNHNavHost(
                             set("denunciadoNome", denunciadoNome)
                         }
                         navController.navigate(Screen.Denuncia.createRoute(aulaId))
+                    },
+                    onNavigateToAvaliacao = { aulaId, instrutorId, instrutorNome ->
+                        navController.currentBackStackEntry?.savedStateHandle?.apply {
+                            set("instrutorId", instrutorId)
+                            set("instrutorNome", instrutorNome)
+                        }
+                        navController.navigate(Screen.Avaliacao.createRoute(aulaId))
                     }
                 )
             }
@@ -242,6 +250,19 @@ fun CNHNavHost(
                 aulaId = aulaId,
                 denunciadoId = backStackEntry.savedStateHandle.get<String>("denunciadoId") ?: "",
                 denunciadoNome = backStackEntry.savedStateHandle.get<String>("denunciadoNome") ?: "",
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable(
+            route = Screen.Avaliacao.route,
+            arguments = listOf(navArgument("aulaId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val aulaId = backStackEntry.arguments?.getString("aulaId") ?: ""
+            AvaliacaoScreen(
+                aulaId = aulaId,
+                instrutorId = backStackEntry.savedStateHandle.get<String>("instrutorId") ?: "",
+                instrutorNome = backStackEntry.savedStateHandle.get<String>("instrutorNome") ?: "Instrutor",
                 onBack = { navController.popBackStack() }
             )
         }

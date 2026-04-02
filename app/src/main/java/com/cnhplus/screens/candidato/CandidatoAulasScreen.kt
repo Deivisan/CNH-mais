@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -36,7 +37,8 @@ import java.util.Locale
 @Composable
 fun CandidatoAulasScreen(
     onNavigateToChat: (aulaId: String, receiverId: String, receiverName: String) -> Unit = { _, _, _ -> },
-    onNavigateToDenuncia: (aulaId: String, denunciadoId: String, denunciadoNome: String) -> Unit = { _, _, _ -> }
+    onNavigateToDenuncia: (aulaId: String, denunciadoId: String, denunciadoNome: String) -> Unit = { _, _, _ -> },
+    onNavigateToAvaliacao: (aulaId: String, instrutorId: String, instrutorNome: String) -> Unit = { _, _, _ -> }
 ) {
     val app = LocalAppState.current
     
@@ -189,6 +191,11 @@ fun CandidatoAulasScreen(
                         aula.id?.let { aulaId ->
                             onNavigateToDenuncia(aulaId, aula.instrutor_id ?: "", "Instrutor")
                         }
+                    },
+                    onAvaliarClick = {
+                        aula.id?.let { aulaId ->
+                            onNavigateToAvaliacao(aulaId, aula.instrutor_id ?: "", "Instrutor")
+                        }
                     }
                 )
             }
@@ -205,7 +212,8 @@ fun AulaItem(
     aula: AulaDto,
     onClick: () -> Unit = {},
     onChatClick: () -> Unit = {},
-    onDenunciaClick: () -> Unit = {}
+    onDenunciaClick: () -> Unit = {},
+    onAvaliarClick: () -> Unit = {}
 ) {
     Card(
         modifier = Modifier
@@ -321,7 +329,7 @@ fun AulaItem(
                         )
                     ) {
                         Icon(
-                            imageVector = Icons.Default.Chat,
+                            imageVector = Icons.AutoMirrored.Filled.Chat,
                             contentDescription = null,
                             modifier = Modifier.size(18.dp)
                         )
@@ -345,6 +353,27 @@ fun AulaItem(
                         Spacer(modifier = Modifier.width(4.dp))
                         Text("Denunciar")
                     }
+                }
+            }
+            
+            // Botão Avaliar (apenas para aulas concluídas)
+            if (aula.status == "concluida") {
+                Spacer(modifier = Modifier.height(12.dp))
+                HorizontalDivider()
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Button(
+                    onClick = onAvaliarClick,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFC107))
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Avaliar Instrutor")
                 }
             }
         }

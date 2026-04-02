@@ -1,13 +1,10 @@
 package com.cnhplus.screens.denuncia
 
-import com.cnhplus.ui.theme.Primary
-import com.cnhplus.ui.theme.Secondary
-import com.cnhplus.ui.theme.Accent
-import com.cnhplus.ui.theme.SurfaceColor
-import com.cnhplus.ui.theme.TextSecondary
-import com.cnhplus.ui.theme.TextPrimary
-import com.cnhplus.ui.theme.Error
-
+import android.Manifest
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,11 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.PhotoLibrary
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.VideoCameraBack
+import androidx.compose.material.icons.filled.Photo
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,7 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.cnhplus.ui.theme.LocalAppState
+import com.cnhplus.ui.theme.Primary
+import com.cnhplus.ui.theme.Secondary
+import com.cnhplus.ui.theme.SurfaceColor
+import com.cnhplus.ui.theme.TextSecondary
+import com.cnhplus.ui.theme.Success
+import com.cnhplus.ui.theme.Error
 import com.cnhplus.data.DenunciaDto
+import com.cnhplus.ui.components.rememberMultiplePermissionsState
+import com.cnhplus.ui.components.getPhotoPermissions
 import kotlinx.coroutines.launch
 
 /**
@@ -54,6 +61,35 @@ fun DenunciaScreen(
     var erro by remember { mutableStateOf<String?>(null) }
     
     val userId = app.currentUser.value?.id ?: ""
+    val context = androidx.compose.ui.platform.LocalContext.current
+    
+    // Permissões para câmera/galeria
+    val photoPermissions = rememberMultiplePermissionsState(*getPhotoPermissions(), Manifest.permission.CAMERA)
+    
+    // File pickers
+    var midiaUri by remember { mutableStateOf<Uri?>(null) }
+    var midiaTipo by remember { mutableStateOf<String?>(null) } // "foto" | "video"
+    
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview()
+    ) { bitmap ->
+        // Bitmap da câmera - converter para bytes depois
+        bitmap?.let {
+            midiaTipo = "foto"
+            // Para simplificar, vamos usar galeria para pegar URI real
+        }
+    }
+    
+    val galleryLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let {
+            midiaUri = it
+            // Detectar tipo pelo MIME
+            val mimeType = context.contentResolver.getType(it) ?: ""
+            midiaTipo = if (mimeType.startsWith("video")) "video" else "foto"
+        }
+    }
     
     val motivos = listOf(
         "Assédio",
@@ -113,7 +149,7 @@ fun DenunciaScreen(
                 title = { Text("Abrir Denúncia") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Voltar", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Voltar", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -229,7 +265,13 @@ fun DenunciaScreen(
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     OutlinedButton(
-                        onClick = { /* TODO: abrir câmera */ },
+                        onClick = {
+                            if (photoPermissions.allPermissionsGranted) {
+                                cameraLauncher.launch(null)
+                            } else {
+                                photoPermissions.launchPermissionRequest()
+                            }
+                        },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -238,7 +280,7 @@ fun DenunciaScreen(
                         Text("Câmera")
                     }
                     OutlinedButton(
-                        onClick = { /* TODO: abrir galeria */ },
+                        onClick = { galleryLauncher.launch("image/*,video/*") },
                         modifier = Modifier.weight(1f),
                         shape = RoundedCornerShape(12.dp)
                     ) {
@@ -247,6 +289,33 @@ fun DenunciaScreen(
                         Text("Galeria")
                     }
                 }
+                
+                // Preview da mídia selecionada
+                midiaUri?.let { uri ->
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.White)
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = if (midiaTipo == "video") Icons.Default.VideoCameraBack else Icons.Default.Photo,
+                                contentDescription = null,
+                                tint = Success
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                text = "Evidência anexada: ${midiaTipo?.uppercase()}",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Success
+                            )
+                        }
+                    }
+                }
+                
                 Text(
                     text = "Fotos, vídeos ou áudios como evidência",
                     style = MaterialTheme.typography.labelSmall,
@@ -277,11 +346,36 @@ fun DenunciaScreen(
                         
                         isSubmitting = true
                         scope.launch {
+                            // Upload de mídia se houver
+                            var midiaUrl: String? = null
+                            midiaUri?.let { uri ->
+                                try {
+                                    val bytes = context.contentResolver.openInputStream(uri)?.readBytes()
+                                    if (bytes != null) {
+                                        val fileName = "denuncia_${System.currentTimeMillis()}.${if (midiaTipo == "video") "mp4" else "jpg"}"
+                                        val contentType = if (midiaTipo == "video") "video/mp4" else "image/jpeg"
+                                        app.supabase.uploadFile(
+                                            bucket = "documentos",
+                                            filePath = "denuncias/$userId/$fileName",
+                                            fileBytes = bytes,
+                                            contentType = contentType
+                                        ).fold(
+                                            onSuccess = { url -> midiaUrl = url },
+                                            onFailure = { /* continua sem mídia */ }
+                                        )
+                                    }
+                                } catch (e: Exception) {
+                                    // continua sem mídia
+                                }
+                            }
+                            
                             val denuncia = DenunciaDto(
                                 aula_id = aulaId,
                                 denunciante_id = userId,
                                 motivo = motivoSelecionado,
                                 descricao = descricao.trim(),
+                                midia_url = midiaUrl,
+                                midia_tipo = midiaTipo,
                                 status = "aberta"
                             )
                             

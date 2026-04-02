@@ -1,6 +1,10 @@
 package com.cnhplus.screens.instrutor
 
 import android.Manifest
+import android.content.Context
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -36,6 +40,7 @@ fun PerfilInstrutorScreen(
     onSkip: () -> Unit = onComplete // skip por enquanto
 ) {
     val app = LocalAppState.current
+    val context = androidx.compose.ui.platform.LocalContext.current
     val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
 
@@ -53,6 +58,19 @@ fun PerfilInstrutorScreen(
 
     // Permissões
     val photoPermissions = rememberMultiplePermissionsState(*getPhotoPermissions(), Manifest.permission.CAMERA)
+    
+    // File pickers para documentos
+    val cnhLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { cnhBytes = readBytesFromUri(context, it) }
+    }
+    
+    val crlvLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        uri?.let { crlvBytes = readBytesFromUri(context, it) }
+    }
 
     Column(
         modifier = Modifier
@@ -244,7 +262,7 @@ fun PerfilInstrutorScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { /* TODO: abrir seletor de arquivo */ }
+                            .clickable { cnhLauncher.launch("image/*") }
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -287,7 +305,7 @@ fun PerfilInstrutorScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { /* TODO: abrir seletor de arquivo */ }
+                            .clickable { crlvLauncher.launch("image/*") }
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -499,4 +517,16 @@ private fun validateInstrutorForm(
            telefone.replace(Regex("[^0-9]"), "").length >= 10 &&
            cidade.isNotBlank() &&
            biografia.length in 10..300
+}
+
+/**
+ * Lê bytes de um URI (funciona com galeria e file picker).
+ */
+private fun readBytesFromUri(context: Context, uri: Uri): ByteArray? {
+    return try {
+        context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }

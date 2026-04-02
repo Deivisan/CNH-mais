@@ -1,9 +1,9 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("org.jetbrains.kotlin.plugin.compose")
     id("com.google.devtools.ksp")
     id("kotlinx-serialization")
-    // id("io.gitlab.arturbosch.detekt") // Temporariamente desativado - compatibilidade Kotlin 1.9.24
 }
 
 android {
@@ -53,9 +53,7 @@ android {
         buildConfig = true
     }
 
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
-    }
+    // Compose Compiler now handled by kotlin-compose plugin (Kotlin 2.0+)
 
     packaging {
         resources {

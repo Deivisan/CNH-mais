@@ -490,7 +490,10 @@ fun SelectRoleScreen(
             title = "Instrutor de Direção",
             description = "Gerenciar alunos, agenda e recebimentos",
             onClick = { app.selectRole("instrutor") { result ->
-                result.onSuccess { onRoleSelected("instrutor") }
+                result.fold(
+                    onSuccess = { onRoleSelected("instrutor") },
+                    onFailure = { error -> /* TODO: Show error toast */ }
+                )
             }}
         )
         

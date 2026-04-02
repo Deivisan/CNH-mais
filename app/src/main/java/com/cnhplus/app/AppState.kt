@@ -120,9 +120,9 @@ class AppState(
                             if (profile != null) return@repeat
                         }
 
-                        // If trigger didn't create profile, create manually
+                        // If trigger didn't create profile, create manually with role 'pendente'
                         if (profile == null) {
-                            profile = ProfileDto(id = userId, email = email, role = "candidato", nome = nome)
+                            profile = ProfileDto(id = userId, email = email, nome = nome, role = "pendente")
                             profileRepo.createProfile(profile!!)
                         } else {
                             // Update nome if profile was created by trigger without nome

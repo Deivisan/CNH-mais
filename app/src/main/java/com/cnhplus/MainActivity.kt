@@ -38,12 +38,12 @@ class MainActivity : ComponentActivity() {
             val startDestination = remember(session, appState.currentRole.value) {
                 when (session) {
                     is SessionState.Loading -> Screen.Login.route
-                    is SessionState.Unauthenticated -> Screen.Login.route
+                    is SessionState.Unauthenticated -> Screen.Welcome.route  // 🎯 Mostrar Welcome primeiro!
                     is SessionState.Authenticated -> {
                         when (appState.currentRole.value) {
                             "instrutor" -> Screen.InstrutorHome.route
                             "candidato" -> Screen.CandidatoHome.route
-                            else -> Screen.Login.route
+                            else -> Screen.Welcome.route  // Novo usuário → Welcome
                         }
                     }
                     is SessionState.OnboardingRequired -> Screen.OnboardingCandidato.route

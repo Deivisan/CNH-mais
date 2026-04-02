@@ -14,8 +14,8 @@ android {
         applicationId = "com.cnhplus"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "0.5.0"
+        versionCode = 8
+        versionName = "0.8.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -9,6 +9,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import kotlinx.serialization.encodeToString
+import com.cnhplus.core.di.JsonConfig
 
 // ==================== PROFILE ====================
 
@@ -140,7 +141,7 @@ data class InstrutorDto(
     fun getDisponibilidade(): DiasTurnos {
         return if (disponibilidadeJson != null) {
             try {
-                Json { ignoreUnknownKeys = true }.decodeFromString<DiasTurnos>(disponibilidadeJson)
+                JsonConfig.default.decodeFromString<DiasTurnos>(disponibilidadeJson)
             } catch (e: Exception) {
                 DiasTurnos()
             }
@@ -150,7 +151,7 @@ data class InstrutorDto(
     fun getVeiculo(): Veiculo {
         return if (veiculoJson != null && veiculoJson != "{}") {
             try {
-                Json { ignoreUnknownKeys = true }.decodeFromString<Veiculo>(veiculoJson)
+                JsonConfig.default.decodeFromString<Veiculo>(veiculoJson)
             } catch (e: Exception) {
                 Veiculo()
             }
@@ -158,11 +159,11 @@ data class InstrutorDto(
     }
     
     fun withDisponibilidade(d: DiasTurnos): InstrutorDto {
-        return copy(disponibilidadeJson = Json.encodeToString(d))
+        return copy(disponibilidadeJson = JsonConfig.default.encodeToString(d))
     }
     
     fun withVeiculo(v: Veiculo): InstrutorDto {
-        return copy(veiculoJson = Json.encodeToString(v))
+        return copy(veiculoJson = JsonConfig.default.encodeToString(v))
     }
 }
 

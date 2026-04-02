@@ -5,7 +5,7 @@ import com.cnhplus.data.PacoteCandidato
 import com.cnhplus.data.PerfilCandidato
 import com.cnhplus.network.SupabaseClient
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.cnhplus.core.di.JsonConfig
 
 class CandidatoRepository(
     private val client: SupabaseClient
@@ -25,12 +25,12 @@ class CandidatoRepository(
     }
 
     fun updateProfile(id: String, perfil: PerfilCandidato): Result<Unit> {
-        val perfilJson = Json { encodeDefaults = true }.encodeToString(perfil)
+        val perfilJson = JsonConfig.default.encodeToString(perfil)
         return client.update(table, "id", id, mapOf("perfil" to perfilJson))
     }
 
     fun updatePacote(id: String, pacote: PacoteCandidato): Result<Unit> {
-        val pacoteJson = Json { encodeDefaults = true }.encodeToString(pacote)
+        val pacoteJson = JsonConfig.default.encodeToString(pacote)
         return client.update(table, "id", id, mapOf("pacote" to pacoteJson))
     }
 

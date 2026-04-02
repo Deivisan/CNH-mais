@@ -278,48 +278,53 @@ Esses arquivos são a referência oficial de progresso, validação e aderência
 
 ## ✅ Checklists de Desenvolvimento
 
-### Fase 1: Especificação (100%) ✅
-- [x] Visão geral do projeto
-- [x] Fluxo candidato (8 etapas)
-- [x] Fluxo instrutor (10 abas)
-- [x] Sistema de agenda
-- [x] Backoffice (12 blocos)
-- [x] Algoritmo de match
-- [x] Sistema de bonificações
+### Fase 1: Foundation (Week 1-2) — EM ANDAMENTO 🚧
+- [ ] **Kotlin 2.1.20** — upgrade toolchain
+- [ ] **Gradle 8.12** — performance build  
+- [ ] **Hilt DI** — injeção de dependência
+- [ ] **JsonConfig** — singleton para serialização
+- [ ] **Estrutura core/data/domain/presentation**
 
-### Fase 2: Landing Page (100%) ✅
-- [x] Design responsivo
-- [x] Cores CNH+ (azul/celeste)
-- [x] Seções: Hero, Sobre, Como Funciona, Diferenciais, Instrutores, CTA, Footer
-- [x] Dados emulados com tooltips interativos
-- [x] Hospedagem GitHub Pages
+### Fase 2: Architecture (Week 3-4)
+- [ ] BaseViewModel pattern
+- [ ] Use Cases implementation
+- [ ] Repository interfaces
+- [ ] Migração LocalAppState → Hilt
 
-### Fase 3: App Android (100%) ✅
-- [x] Setup Android (Kotlin + Compose)
-- [x] Tema com cores CNH+
-- [x] Telas de candidato
-- [x] Telas de instrutor
-- [x] Telas admin (stubs)
-- [x] Navegação
-- [x] Integração Supabase API
-- [x] APK compilado v0.0.5 (BUILD SUCCESSFUL)
+### Fase 3: UI/UX Premium (Week 5-6)
+- [ ] Design System completo
+- [ ] Animações de transição
+- [ ] Shimmer loading
+- [ ] Screens < 250 linhas
 
-### Fase 4: Backend (0%)
-- [ ] Setup Bun + Express
-- [ ] API REST
-- [ ] Database Supabase
-- [ ] Sistema de match
-- [ ] Mercado Pago
-- [ ] FCM
+### Fase 4: Features (Week 7-8)
+- [ ] Wizard Instrutor refatorado
+- [ ] Componentes removidos recriados
+- [ ] Agenda interativa
 
-### Fase 5: Testes (0%)
-- [ ] Unitários
-- [ ] Integração
-- [ ] UI
+### Fase 5: Quality (Week 9-10)
+- [ ] Testes unitários > 60%
+- [ ] CI/CD pipeline
+- [ ] APK otimizado < 25MB
 
-### Fase 6: Lançamento (0%)
-- [ ] Play Store
-- [ ] Marketing
+---
+
+## 🏗️ Nova Arquitetura (Fase 2+)
+
+```
+core/         → DI + Network + Utils
+data/         → Local + Remote + Repository
+domain/       → Models + Use Cases (NOVO!)
+presentation/ → UI organizada por fluxo
+```
+
+### Padrões
+- **MVVM**: ViewModels injetados via Hilt
+- **Use Cases**: Cada operação de negócio = 1 use case
+- **Repository**: Interfaces + implementações
+- **State**: Unidirecional (UI → Event → ViewModel → State → UI)
+
+---
 
 ---
 

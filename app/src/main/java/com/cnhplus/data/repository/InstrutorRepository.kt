@@ -5,7 +5,7 @@ import com.cnhplus.data.InstrutorDto
 import com.cnhplus.data.Veiculo
 import com.cnhplus.network.SupabaseClient
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import com.cnhplus.core.di.JsonConfig
 
 class InstrutorRepository(
     private val client: SupabaseClient
@@ -33,12 +33,12 @@ class InstrutorRepository(
     }
 
     fun updateDisponibilidade(id: String, disponibilidade: DiasTurnos): Result<Unit> {
-        val json = Json { encodeDefaults = true }.encodeToString(disponibilidade)
+        val json = JsonConfig.default.encodeToString(disponibilidade)
         return client.update(table, "id", id, mapOf("disponibilidade" to json))
     }
 
     fun updateVeiculo(id: String, veiculo: Veiculo): Result<Unit> {
-        val json = Json { encodeDefaults = true }.encodeToString(veiculo)
+        val json = JsonConfig.default.encodeToString(veiculo)
         return client.update(table, "id", id, mapOf("veiculo" to json))
     }
 }

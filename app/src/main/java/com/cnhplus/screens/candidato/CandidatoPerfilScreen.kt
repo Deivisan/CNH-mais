@@ -26,7 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
+import com.cnhplus.data.BannerDto
 import com.cnhplus.data.CandidatoDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import com.cnhplus.ui.theme.LocalAppState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,11 +37,18 @@ fun CandidatoPerfilScreen() {
     val app = LocalAppState.current
     
     var candidato by remember { mutableStateOf<CandidatoDto?>(null) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
     
-    // Fetch candidato profile
+    // Fetch candidato profile e banners
     LaunchedEffect(Unit) {
+        // Fetch banners
+        app.bannerRepo.getActiveBanners().fold(
+            onSuccess = { banners = it },
+            onFailure = { /* silently fail */ }
+        )
+        
         try {
             val userId = app.currentUser.value?.id ?: run {
                 errorMsg = "Usuário não autenticado"

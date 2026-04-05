@@ -24,15 +24,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
 import com.cnhplus.data.AulaDto
+import com.cnhplus.data.BannerDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import com.cnhplus.ui.theme.LocalAppState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InstrutorAgendaScreen() {
     val app = LocalAppState.current
     var aulas by remember { mutableStateOf<List<AulaDto>>(emptyList()) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     
     LaunchedEffect(Unit) {
+        // Fetch banners
+        app.bannerRepo.getActiveBanners().fold(
+            onSuccess = { banners = it },
+            onFailure = { /* silently fail */ }
+        )
+        
         val userId = app.currentUser.value?.id ?: run { isLoading = false; return@LaunchedEffect }
         app.aulaRepo.getAulasByInstrutor(userId).fold(
             onSuccess = { a -> aulas = a.filter { it.status == "agendada" }.sortedBy { it.data_hora }; isLoading = false },

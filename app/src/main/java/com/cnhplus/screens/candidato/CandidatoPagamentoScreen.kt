@@ -24,7 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
+import com.cnhplus.data.BannerDto
 import com.cnhplus.data.PagamentoDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import com.cnhplus.ui.theme.LocalAppState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -32,8 +35,17 @@ fun CandidatoPagamentoScreen() {
     val app = LocalAppState.current
     
     var selectedPackage by remember { mutableIntStateOf(0) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var isProcessing by remember { mutableStateOf(false) }
     var successMsg by remember { mutableStateOf<String?>(null) }
+    
+    // Fetch banners
+    LaunchedEffect(Unit) {
+        app.bannerRepo.getActiveBanners().fold(
+            onSuccess = { banners = it },
+            onFailure = { /* silently fail */ }
+        )
+    }
     
     val packages = listOf(
         Triple("Básico", 10, 99.0),

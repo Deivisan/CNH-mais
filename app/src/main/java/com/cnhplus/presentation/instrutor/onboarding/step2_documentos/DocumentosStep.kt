@@ -21,15 +21,14 @@ import com.cnhplus.ui.theme.Primary
 import com.cnhplus.ui.theme.Shapes
 import com.cnhplus.ui.theme.Success
 
+import com.cnhplus.presentation.instrutor.onboarding.InstrutorWizardViewModel
+
 /**
  * Step 2: Documentos do Instrutor
  */
 @Composable
 fun DocumentosStep(
-    cnhUri: Uri?,
-    onCnhSelected: (Uri) -> Unit,
-    crlvUri: Uri?,
-    onCrlvSelected: (Uri) -> Unit,
+    viewModel: InstrutorWizardViewModel,
     onNext: () -> Unit,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
@@ -37,14 +36,26 @@ fun DocumentosStep(
     val scrollState = rememberScrollState()
     val context = LocalContext.current
     
-    // File pickers
+    // File pickers - agora atualizam tanto URI quanto Bytes no ViewModel
     val cnhLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri -> uri?.let { onCnhSelected(it) } }
+    ) { uri -> 
+        uri?.let { 
+            viewModel.cnhUri = it
+            // Converter URI para ByteArray
+            viewModel.cnhBytes = readBytesFromUri(context, it)
+        }
+    }
     
     val crlvLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ) { uri -> uri?.let { onCrlvSelected(it) } }
+    ) { uri -> 
+        uri?.let { 
+            viewModel.crlvUri = it
+            // Converter URI para ByteArray
+            viewModel.crlvBytes = readBytesFromUri(context, it)
+        }
+    }
 
     Column(
         modifier = modifier
@@ -82,7 +93,7 @@ fun DocumentosStep(
         DocumentUploadCard(
             title = "CNH (Frente e Verso)",
             icon = Icons.Default.Description,
-            isUploaded = cnhUri != null,
+            isUploaded = viewModel.cnhUri != null,
             onClick = { cnhLauncher.launch("image/*") }
         )
         
@@ -92,7 +103,7 @@ fun DocumentosStep(
         DocumentUploadCard(
             title = "CRLV (Documento do Veículo)",
             icon = Icons.Default.DirectionsCar,
-            isUploaded = crlvUri != null,
+            isUploaded = viewModel.crlvUri != null,
             onClick = { crlvLauncher.launch("image/*") }
         )
         
@@ -125,7 +136,7 @@ fun DocumentosStep(
                 onClick = onNext,
                 modifier = Modifier.weight(1f),
                 shape = Shapes.large,
-                enabled = cnhUri != null && crlvUri != null
+                enabled = viewModel.cnhUri != null && viewModel.crlvUri != null
             ) {
                 Text("Próximo")
                 Spacer(modifier = Modifier.width(8.dp))
@@ -192,5 +203,17 @@ private fun DocumentUploadCard(
                        else MaterialTheme.colorScheme.primary
             )
         }
+    }
+}
+
+/**
+ * Função helper para ler bytes de uma URI
+ */
+private fun readBytesFromUri(context: android.content.Context, uri: Uri): ByteArray? {
+    return try {
+        context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }

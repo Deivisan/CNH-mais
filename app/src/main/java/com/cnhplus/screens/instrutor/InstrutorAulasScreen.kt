@@ -27,6 +27,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
 import com.cnhplus.data.AulaDto
+import com.cnhplus.data.BannerDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import com.cnhplus.ui.theme.LocalAppState
 import kotlinx.coroutines.launch
 
@@ -38,12 +41,19 @@ fun InstrutorAulasScreen(
     val app = LocalAppState.current
     val scope = rememberCoroutineScope()
     var todasAulas by remember { mutableStateOf<List<AulaDto>>(emptyList()) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var selectedTab by remember { mutableStateOf(0) }
-    var showConfirmDialog by remember { mutableStateOf<Pair<String, String>?>(null) } // (aulaId, acao)
+    var showConfirmDialog by remember { mutableStateOf<Pair<String, String>?>(null) }
     
-    // Carregar aulas
+    // Carregar aulas e banners
     LaunchedEffect(Unit) {
+        // Fetch banners
+        app.bannerRepo.getActiveBanners().fold(
+            onSuccess = { banners = it },
+            onFailure = { /* silently fail */ }
+        )
+        
         val userId = app.currentUser.value?.id ?: run { isLoading = false; return@LaunchedEffect }
         app.aulaRepo.getAulasByInstrutor(userId).fold(
             onSuccess = { a -> 

@@ -115,9 +115,12 @@ fun OnboardingCandidatoScreen(
                 
                 Spacer(modifier = Modifier.height(16.dp))
                 
+                // CPF com máscara
                 OutlinedTextField(
                     value = cpf,
-                    onValueChange = { cpf = it },
+                    onValueChange = { 
+                        cpf = formatCPF(it)
+                    },
                     label = { Text("CPF") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -126,9 +129,12 @@ fun OnboardingCandidatoScreen(
                 
                 Spacer(modifier = Modifier.height(12.dp))
                 
+                // Celular com máscara
                 OutlinedTextField(
                     value = celular,
-                    onValueChange = { celular = it },
+                    onValueChange = { 
+                        celular = formatPhone(it)
+                    },
                     label = { Text("Celular") },
                     singleLine = true,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
@@ -214,5 +220,25 @@ fun OnboardingCandidatoScreen(
         }
         
         Spacer(modifier = Modifier.height(32.dp))
+    }
+}
+
+// Funções de máscara para CPF e telefone
+private fun formatCPF(raw: String): String {
+    val digits = raw.filter { it.isDigit() }.take(11)
+    return when {
+        digits.length <= 3 -> digits
+        digits.length <= 6 -> "${digits.take(3)}.${digits.drop(3)}"
+        digits.length <= 9 -> "${digits.take(3)}.${digits.drop(3).take(3)}.${digits.drop(6)}"
+        else -> "${digits.take(3)}.${digits.drop(3).take(3)}.${digits.drop(6).take(3)}-${digits.drop(9)}"
+    }
+}
+
+private fun formatPhone(raw: String): String {
+    val digits = raw.filter { it.isDigit() }.take(11)
+    return when {
+        digits.length <= 2 -> digits
+        digits.length <= 7 -> "(${digits.take(2)}) ${digits.drop(2)}"
+        else -> "(${digits.take(2)}) ${digits.drop(2).take(5)}-${digits.drop(7)}"
     }
 }

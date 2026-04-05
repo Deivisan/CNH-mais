@@ -29,6 +29,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
 import com.cnhplus.data.AulaDto
+import com.cnhplus.data.BannerDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import com.cnhplus.ui.theme.LocalAppState
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -43,11 +46,18 @@ fun CandidatoAulasScreen(
     val app = LocalAppState.current
     
     var aulas by remember { mutableStateOf<List<AulaDto>>(emptyList()) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
     
-    // Fetch aulas do candidato via Supabase
+    // Fetch aulas do candidato e banners
     LaunchedEffect(Unit) {
+        // Fetch banners
+        app.bannerRepo.getActiveBanners().fold(
+            onSuccess = { banners = it },
+            onFailure = { /* silently fail */ }
+        )
+        
         try {
             val userId = app.currentUser.value?.id ?: run {
                 errorMsg = "Usuário não autenticado"
@@ -98,6 +108,17 @@ fun CandidatoAulasScreen(
                 .padding(padding)
                 .background(SurfaceColor)
         ) {
+            // Banner Carrossel
+            if (banners.isNotEmpty()) {
+                item {
+                    BannerCarrossel(
+                        banners = banners,
+                        onBannerClick = { /* TODO: handle click */ },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+            
             if (aulas.isEmpty()) {
                 item {
                     Box(
@@ -202,6 +223,17 @@ fun CandidatoAulasScreen(
             
             item {
                 Spacer(modifier = Modifier.height(16.dp))
+                
+                // Footer Banners
+                FooterBanners(
+                    onGasolinaClick = { /* TODO */ },
+                    onSeguroClick = { /* TODO */ },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+            
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }

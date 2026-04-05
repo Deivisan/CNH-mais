@@ -275,6 +275,11 @@ private fun navigateByRole(navController: NavHostController, role: String) {
         "instrutor" -> navController.navigate(Screen.PerfilInstrutor.route) {
             popUpTo(Screen.Login.route) { inclusive = true }
         }
+        "admin" -> {
+            // Admin ainda não implementado - mostrar mensagem e ficar na tela
+            // TODO: Implementar AdminHomeScreen
+            // Por enquanto, não faz nada (usuário permanece em SelectRole)
+        }
     }
 }
 

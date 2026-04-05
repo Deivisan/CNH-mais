@@ -15,7 +15,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
+import com.cnhplus.data.BannerDto
 import com.cnhplus.data.InstrutorDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import com.cnhplus.ui.theme.LocalAppState
 import com.cnhplus.ui.theme.Accent
 import com.cnhplus.ui.theme.Secondary
@@ -35,17 +38,24 @@ fun InstrutorHomeScreen(
     val app = LocalAppState.current
     
     var instrutor by remember { mutableStateOf<InstrutorDto?>(null) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var aulasHoje by remember { mutableStateOf(0) }
     var ganhosDia by remember { mutableStateOf(0.0) }
     var isLoading by remember { mutableStateOf(true) }
     
-    // Fetch instrutor e dados de dashboard
+    // Fetch instrutor, banners e dados de dashboard
     LaunchedEffect(Unit) {
         try {
             val userId = app.currentUser.value?.id ?: run {
                 isLoading = false
                 return@LaunchedEffect
             }
+            
+            // Fetch banners
+            app.bannerRepo.getActiveBanners().fold(
+                onSuccess = { banners = it },
+                onFailure = { /* silently fail */ }
+            )
             
             app.instrutorRepo.getInstrutor(userId).fold(
                 onSuccess = { inst ->
@@ -110,6 +120,19 @@ fun InstrutorHomeScreen(
                 .padding(padding)
                 .background(MaterialTheme.colorScheme.background)
         ) {
+            // Banner Carrossel
+            if (banners.isNotEmpty()) {
+                item {
+                    BannerCarrossel(
+                        banners = banners,
+                        onBannerClick = { banner ->
+                            // TODO: Handle banner click
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+            
             item {
                 // Stats Card — Dashboard
                 Card(
@@ -225,6 +248,17 @@ fun InstrutorHomeScreen(
             
             item {
                 Spacer(modifier = Modifier.height(16.dp))
+                
+                // Footer Banners
+                FooterBanners(
+                    onGasolinaClick = { /* TODO: navegar parceiros */ },
+                    onSeguroClick = { /* TODO: navegar seguro */ },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+            
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }

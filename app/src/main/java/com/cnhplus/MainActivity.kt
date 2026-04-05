@@ -43,7 +43,8 @@ class MainActivity : ComponentActivity() {
                         when (appState.currentRole.value) {
                             "instrutor" -> Screen.InstrutorHome.route
                             "candidato" -> Screen.CandidatoHome.route
-                            else -> Screen.Welcome.route  // Novo usuário → Welcome
+                            "pendente", null, "" -> Screen.SelectRole.route  // NOVO: Completar cadastro
+                            else -> Screen.Welcome.route  // Fallback
                         }
                     }
                     is SessionState.OnboardingRequired -> Screen.OnboardingCandidato.route

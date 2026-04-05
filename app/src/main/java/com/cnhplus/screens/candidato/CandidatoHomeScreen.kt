@@ -26,6 +26,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.*
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
+import com.cnhplus.data.BannerDto
 import com.cnhplus.data.CandidatoDto
 import com.cnhplus.data.InstrutorDto
 import com.cnhplus.ui.theme.LocalAppState
@@ -41,10 +44,11 @@ fun CandidatoHomeScreen(
     
     var candidato by remember { mutableStateOf<CandidatoDto?>(null) }
     var instrutor by remember { mutableStateOf<InstrutorDto?>(null) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMsg by remember { mutableStateOf<String?>(null) }
     
-    // Fetch candidato e instrutor de verdade via Supabase
+    // Fetch candidato, instrutor e banners - com controle de loading independente
     LaunchedEffect(Unit) {
         try {
             val userId = app.currentUser.value?.id ?: run {
@@ -53,7 +57,15 @@ fun CandidatoHomeScreen(
                 return@LaunchedEffect
             }
             
-            // Fetch candidato
+            // Fetch banners (não bloqueia loading)
+            launch {
+                app.bannerRepo.getActiveBanners().fold(
+                    onSuccess = { banners = it },
+                    onFailure = { /* silently fail, banners são opcionais */ }
+                )
+            }
+            
+            // Fetch candidato (bloqueia loading)
             app.candidatoRepo.getCandidato(userId).fold(
                 onSuccess = { c ->
                     candidato = c
@@ -134,6 +146,19 @@ fun CandidatoHomeScreen(
                 .padding(padding)
                 .background(SurfaceColor)
         ) {
+            // Banner Carrossel
+            if (banners.isNotEmpty()) {
+                item {
+                    BannerCarrossel(
+                        banners = banners,
+                        onBannerClick = { banner ->
+                            // TODO: Handle banner click
+                        },
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+            
             item {
                 // Progress Card — usando dados reais do candidato
                 candidato?.let { cand ->
@@ -406,6 +431,17 @@ fun CandidatoHomeScreen(
             
             item {
                 Spacer(modifier = Modifier.height(16.dp))
+                
+                // Footer Banners
+                FooterBanners(
+                    onGasolinaClick = { /* TODO: navegar parceiros */ },
+                    onSeguroClick = { /* TODO: navegar seguro */ },
+                    modifier = Modifier.padding(horizontal = 16.dp)
+                )
+            }
+            
+            item {
+                Spacer(modifier = Modifier.height(32.dp))
             }
         }
     }

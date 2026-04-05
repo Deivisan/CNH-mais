@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.cnhplus.ui.theme.*
+import com.cnhplus.data.BannerDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import kotlinx.coroutines.launch
 
 /**
@@ -27,6 +30,15 @@ fun InstrutorPerfilScreen() {
     val app = LocalAppState.current
     val scrollState = rememberScrollState()
     val currentUser = app.currentUser.value
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
+    
+    // Fetch banners
+    LaunchedEffect(Unit) {
+        app.bannerRepo.getActiveBanners().fold(
+            onSuccess = { banners = it },
+            onFailure = { /* silently fail */ }
+        )
+    }
 
     Scaffold(
         topBar = {

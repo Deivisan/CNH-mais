@@ -14,7 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.cnhplus.*
+import com.cnhplus.data.BannerDto
 import com.cnhplus.data.RepasseDto
+import com.cnhplus.ui.components.BannerCarrossel
+import com.cnhplus.ui.components.FooterBanners
 import com.cnhplus.ui.theme.LocalAppState
 import com.cnhplus.ui.theme.Primary
 import com.cnhplus.ui.theme.Accent
@@ -28,11 +32,18 @@ import com.cnhplus.ui.theme.TextSecondary
 fun InstrutorFinanceiroScreen() {
     val app = LocalAppState.current
     var repasses by remember { mutableStateOf<List<RepasseDto>>(emptyList()) }
+    var banners by remember { mutableStateOf<List<BannerDto>>(emptyList()) }
     var totalPendente by remember { mutableStateOf(0.0) }
     var totalPago by remember { mutableStateOf(0.0) }
     var isLoading by remember { mutableStateOf(true) }
     
     LaunchedEffect(Unit) {
+        // Fetch banners
+        app.bannerRepo.getActiveBanners().fold(
+            onSuccess = { banners = it },
+            onFailure = { /* silently fail */ }
+        )
+        
         val userId = app.currentUser.value?.id ?: run { isLoading = false; return@LaunchedEffect }
         app.repasseRepo.getRepassesByInstrutor(userId).fold(
             onSuccess = { r ->

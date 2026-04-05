@@ -442,6 +442,21 @@ fun SelectRoleScreen(
     onRoleSelected: (role: String) -> Unit
 ) {
     val app = LocalAppState.current
+    var errorMessage by remember { mutableStateOf<String?>(null) }
+
+    // Mostrar dialog de erro se existir
+    errorMessage?.let { msg ->
+        AlertDialog(
+            onDismissRequest = { errorMessage = null },
+            title = { Text("Erro") },
+            text = { Text(msg) },
+            confirmButton = {
+                TextButton(onClick = { errorMessage = null }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -479,7 +494,12 @@ fun SelectRoleScreen(
             title = "Candidato à CNH",
             description = "Encontrar instrutores e agendar aulas práticas",
             onClick = { app.selectRole("candidato") { result ->
-                result.onSuccess { onRoleSelected("candidato") }
+                result.fold(
+                    onSuccess = { onRoleSelected("candidato") },
+                    onFailure = { error ->
+                        errorMessage = error.message ?: "Erro ao selecionar perfil. Tente novamente."
+                    }
+                )
             }}
         )
         
@@ -492,7 +512,9 @@ fun SelectRoleScreen(
             onClick = { app.selectRole("instrutor") { result ->
                 result.fold(
                     onSuccess = { onRoleSelected("instrutor") },
-                    onFailure = { error -> /* TODO: Show error toast */ }
+                    onFailure = { error ->
+                        errorMessage = error.message ?: "Erro ao selecionar perfil. Tente novamente."
+                    }
                 )
             }}
         )
@@ -504,7 +526,12 @@ fun SelectRoleScreen(
             title = "Administrador",
             description = "Gerenciar a plataforma e usuários",
             onClick = { app.selectRole("admin") { result ->
-                result.onSuccess { onRoleSelected("admin") }
+                result.fold(
+                    onSuccess = { onRoleSelected("admin") },
+                    onFailure = { error ->
+                        errorMessage = error.message ?: "Erro ao selecionar perfil. Tente novamente."
+                    }
+                )
             }}
         )
     }

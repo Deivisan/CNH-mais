@@ -12,6 +12,7 @@ import com.cnhplus.domain.model.EstiloEnsino
 import com.cnhplus.domain.model.Instrutor
 import com.cnhplus.domain.model.TipoVeiculo
 import com.cnhplus.domain.model.Veiculo
+import com.cnhplus.data.repository.InstrutorRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -22,7 +23,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class InstrutorWizardViewModel @Inject constructor(
-    private val createInstrutorUseCase: com.cnhplus.domain.usecase.instrutor.CreateInstrutorUseCase
+    private val createInstrutorUseCase: com.cnhplus.domain.usecase.instrutor.CreateInstrutorUseCase,
+    private val instrutorRepository: InstrutorRepository
 ) : ViewModel() {
 
     // Estado do step atual
@@ -40,6 +42,8 @@ class InstrutorWizardViewModel @Inject constructor(
     // Documentos
     var cnhUri by mutableStateOf<android.net.Uri?>(null)
     var crlvUri by mutableStateOf<android.net.Uri?>(null)
+    var cnhBytes by mutableStateOf<ByteArray?>(null)
+    var crlvBytes by mutableStateOf<ByteArray?>(null)
 
     // Veículo
     var tipoVeiculo by mutableStateOf(TipoVeiculo.CARRO_PROPRIO)
@@ -115,39 +119,57 @@ class InstrutorWizardViewModel @Inject constructor(
         }
     }
 
-    // Finalizar cadastro
+    // Finalizar cadastro com upload de documentos
     fun finalizarCadastro(userId: String, onSuccess: () -> Unit) {
         viewModelScope.launch {
             isLoading = true
             error = null
 
-            val instrutor = Instrutor(
-                id = userId,
-                cidade = cidade,
-                biografia = biografia,
-                estilo = estilo.toList(),
-                especialidades = especialidades.toList(),
-                disponibilidade = disponibilidade,
-                veiculo = Veiculo(
-                    tipo = tipoVeiculo,
-                    modelo = modelo.takeIf { it.isNotBlank() },
-                    ano = ano.takeIf { it.isNotBlank() },
-                    temPedal = temPedal
-                ),
-                telefone = telefone,
-                cpf = cpf
-            )
-
-            createInstrutorUseCase(instrutor).fold(
-                onSuccess = {
-                    isLoading = false
-                    onSuccess()
-                },
-                onFailure = { e ->
-                    isLoading = false
-                    error = e.message ?: "Erro ao cadastrar instrutor"
+            try {
+                // 1. Upload CNH se existir
+                cnhBytes?.let { bytes ->
+                    instrutorRepository.uploadDocumento(userId, "cnh", bytes)
+                        .onFailure { throw Exception("Falha ao enviar CNH: ${it.message}") }
                 }
-            )
+
+                // 2. Upload CRLV se existir
+                crlvBytes?.let { bytes ->
+                    instrutorRepository.uploadDocumento(userId, "crlv", bytes)
+                        .onFailure { throw Exception("Falha ao enviar CRLV: ${it.message}") }
+                }
+
+                // 3. Criar instrutor
+                val instrutor = Instrutor(
+                    id = userId,
+                    cidade = cidade,
+                    biografia = biografia,
+                    estilo = estilo.toList(),
+                    especialidades = especialidades.toList(),
+                    disponibilidade = disponibilidade,
+                    veiculo = Veiculo(
+                        tipo = tipoVeiculo,
+                        modelo = modelo.takeIf { it.isNotBlank() },
+                        ano = ano.takeIf { it.isNotBlank() },
+                        temPedal = temPedal
+                    ),
+                    telefone = telefone,
+                    cpf = cpf
+                )
+
+                createInstrutorUseCase(instrutor).fold(
+                    onSuccess = {
+                        isLoading = false
+                        onSuccess()
+                    },
+                    onFailure = { e ->
+                        isLoading = false
+                        error = e.message ?: "Erro ao cadastrar instrutor"
+                    }
+                )
+            } catch (e: Exception) {
+                isLoading = false
+                error = e.message ?: "Erro ao enviar documentos"
+            }
         }
     }
 }

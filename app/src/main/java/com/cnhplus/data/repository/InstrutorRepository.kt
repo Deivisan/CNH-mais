@@ -41,4 +41,38 @@ class InstrutorRepository(
         val json = JsonConfig.default.encodeToString(veiculo)
         return client.update(table, "id", id, mapOf("veiculo" to json))
     }
+
+    /**
+     * Upload documento (CNH ou CRLV) para Supabase Storage.
+     * @param userId ID do instrutor
+     * @param tipo "cnh" ou "crlv"
+     * @param fileBytes Bytes do arquivo (imagem ou PDF)
+     * @return URL pública do documento
+     */
+    fun uploadDocumento(
+        userId: String,
+        tipo: String,
+        fileBytes: ByteArray
+    ): Result<String> {
+        // Validações
+        if (fileBytes.isEmpty()) {
+            return Result.failure(Exception("Arquivo vazio"))
+        }
+        
+        // Limite de 10MB
+        val maxSize = 10 * 1024 * 1024 // 10MB em bytes
+        if (fileBytes.size > maxSize) {
+            return Result.failure(Exception("Arquivo muito grande (máx 10MB)"))
+        }
+        
+        // Validar tipo
+        val tiposValidos = listOf("cnh", "crlv")
+        if (tipo !in tiposValidos) {
+            return Result.failure(Exception("Tipo de documento inválido: $tipo"))
+        }
+        
+        val bucket = "documentos"
+        val filePath = "$userId/$tipo.jpg"
+        return client.uploadFile(bucket, filePath, fileBytes, "image/jpeg")
+    }
 }

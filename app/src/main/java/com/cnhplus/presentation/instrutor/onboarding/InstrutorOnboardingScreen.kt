@@ -70,10 +70,7 @@ fun InstrutorOnboardingScreen(
         )
         
         2 -> DocumentosStep(
-            cnhUri = viewModel.cnhUri,
-            onCnhSelected = { uri: Uri -> viewModel.cnhUri = uri },
-            crlvUri = viewModel.crlvUri,
-            onCrlvSelected = { uri: Uri -> viewModel.crlvUri = uri },
+            viewModel = viewModel,
             onNext = { viewModel.nextStep() },
             onBack = { viewModel.previousStep() }
         )

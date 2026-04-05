@@ -1,15 +1,21 @@
-# 🚗 CNH+
+# 🚗 CNH+ (NOME PENDENTE DE ALTERAÇÃO)
+
+> ⚠️ **NOTA IMPORTANTE:** O nome "CNH+" já existe e está sendo alterado. O cliente está buscando uma nova marca não patentada.
 
 > Marketplace Inteligente de Aulas Práticas de Direção - Conectando candidatos à CNH com instrutores qualificados.
 
 ![Platform](https://img.shields.io/badge/Platform-Android-green)
 ![Language](https://img.shields.io/badge/Language-Kotlin-blue)
 ![Status](https://img.shields.io/badge/Status-Pre--Alpha-orange)
-![Version](https://img.shields.io/badge/Version-0.07a--Alpha-blue)
+![Version](https://img.shields.io/badge/Version-0.03--PreAlpha-blue)
 
 ## 📱 Sobre o Projeto
 
 **CNH+** é uma plataforma mobile que conecta candidatos à CNH (Carteira Nacional de Habilitação) com instrutores de direção de forma segura, transparente e inteligente.
+
+> 📝 **Mudança de Marca:** Este projeto está em processo de rebranding. O nome atual "CNH+" já existe no mercado e será alterado para uma marca única e não patentada.
+> 
+> 🔧 **Status do Código:** A versão 0.03 foi implementada mas **AINDA NÃO FOI BUILDADA NEM TESTADA**. Aguardando build para validação.
 
 ### 🎯 Missão
 **Conectar** candidatos à CNH com instrutores qualificados através de um **match inteligente** baseado em perfil comportamental e operacional.
@@ -24,16 +30,20 @@
 
 ## ⬇️ Download APK
 
-**Versão atual:** [v0.07a Alpha](https://github.com/Deivisan/CNH-mais/releases/tag/v0.07a)
+**Versão atual:** [v0.03 Pre-Alpha - EM DESENVOLVIMENTO](https://github.com/Deivisan/CNH-mais/releases)
 
 ```
-📦 cnhmais-v0.07.apk (19 MB)
-📅 Data: 01/04/2026
-🔧 Build: Kotlin 1.9.24 + Jetpack Compose 1.6.0
+📦 NOME DO APP v0.03 (Pre-Release)
+📅 Data: 05/04/2026
+🔧 Status: Código implementado, aguardando build e testes
+⚠️ NOTA: Ainda não compilado/testado
 ```
 
-> ⏸️ **Status atual da landing principal do APK:** aguardando aprovação de visual e designer.
-> Enquanto isso, a equipe pode usar a **Demo PWA emulada** para validar o fluxo completo: `./demo-pwa/`
+> ⏸️ **Status atual:** Código v0.03 finalizado, aguardando build para testes.
+> 
+> 📱 **Versão anterior:** v0.02 (funcional emulador)
+> 
+> 🌐 **Demo PWA:** `./demo-pwa/` para validação de fluxo
 
 ---
 
@@ -121,24 +131,55 @@
 ## 📂 Estrutura
 
 ```
-CNH-mais/
+CNH-mais/  (REPO SERÁ RENOMEADO)
 ├── app/                        # Android (Kotlin + Compose)
 │   └── src/main/
-│       └── java/com/cnhplus/
+│       └── java/com/cnhplus/  (PACKAGE SERÁ ALTERADO)
 │           ├── MainActivity.kt
 │           ├── navigation/     # NavHost + Screen
 │           ├── screens/       # 16 telas
-│           ├── data/          # Models + EmulatedData
-│           └── ui/theme/      # Theme CNH+
-├── docs/                       # 8 documentos
-├── CNH-mais-debug.apk         # APK release
+│           ├── data/          # Models + Repositories
+│           └── ui/theme/      # Theme
+├── docs/                       # Documentação
+├── releases/                   # APKs (quando buildados)
 ├── AGENTS.md                   # Contexto IA
-└── PROJECT_README.md
+└── README.md                   # Este arquivo
 ```
+
+> 📝 **Nota:** O nome do repositório e package serão alterados conforme novo nome da marca.
 
 ---
 
 ## 🔄 Changelog
+
+### v0.03 Pre-Alpha (05/04/2026) — Implementação Completa (NÃO BUILDADO)
+- ⚠️ **AINDA NÃO TESTADO:** Código implementado, aguardando build
+- ✅ **Fase 1:** 5 bugs críticos corrigidos
+  - Fix navegação WelcomeScreen loop
+  - Tratamento de erro em SelectRole
+  - Upload de documentos CNH/CRLV
+  - Navegação admin
+  - Máscaras CPF/Telefone
+- ✅ **Fase 2:** Onboarding candidato completo (telas já existentes)
+- ✅ **Fase 3:** Telas instrutor verificadas (Agenda + Financeiro)
+- ✅ **Fase 4:** Componentes criados
+  - LocalizacaoAulaCard.kt
+  - DenunciaDialog.kt
+- ✅ **Fase 5:** Banners integrados em 10 telas
+- ✅ **Revisão profunda:** Erros de lógica corrigidos
+  - Condição de corrida no loading
+  - Validação de upload (10MB max)
+  - Feedback visual para admin
+- 📚 **Documentação:** 3 documentos criados
+  - DOCUMENTACAO_FUNCOES.md
+  - REVISAO_ERROS_LOGICA.md
+  - RELATORIO_FINAL_IMPLEMENTACAO.md
+- 📝 **Nota:** Nome da marca será alterado (CNH+ já existe)
+
+### v0.02 Rebase (04/04/2026) — Versão Base
+- ✅ Código base para desenvolvimento
+- ✅ Estrutura de navegação implementada
+- ✅ Telas base criadas
 
 ### v0.07a Alpha (01/04/2026) — Build Corrigido
 - ✅ **Build limpo**: rm -rf app/build + compile sem cache
@@ -172,9 +213,15 @@ CNH-mais/
 
 ## 📌 Próximos Passos
 
-- [ ] Upload de documentos (CRLV, CNH) no PerfilInstrutor
+### Imediatos (Pré-Build):
+- [ ] **BUILD v0.03:** Compilar e testar toda a implementação
+- [ ] **Testes integrais:** Fluxo candidato e instrutor ponta-a-ponta
+- [ ] **Rebranding:** Definir novo nome da marca (CNH+ já existe)
+- [ ] **Renomear repo:** Alterar `CNH-mais` para novo nome
+
+### Pós-Build:
 - [ ] OnboardingCandidatoScreen (perfil comportamental real)
-- [ ] Tela de agenda para instrutores
+- [ ] Tela de agenda para instrutores (funcionalidade completa)
 - [ ] Backend API (Bun + Supabase)
 - [ ] Algoritmo de match
 - [ ] Pagamento (Mercado Pago)
@@ -184,4 +231,4 @@ CNH-mais/
 
 ## 👤 Autor
 
-**Deivison Santana** (@deivisan) | **Versão:** 0.07 Alpha
+**Deivison Santana** (@deivisan) | **Versão:** 0.03 Pre-Alpha (Não Buildado)
